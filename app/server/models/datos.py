@@ -3,7 +3,7 @@ from datetime import  datetime
 from pydantic import BaseModel, Field
 
 class DatosSchema(BaseModel):
-    dato: str = Field(...)
+    d: str = Field(...)
     estado: Optional[int] | None =1
     #fecha: Optional[datetime] | None =datetime.now()
     #size: Optional[int] | None =3200
