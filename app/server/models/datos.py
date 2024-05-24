@@ -10,7 +10,7 @@ class DatosSchema(BaseModel):
     class Config:
         json_schema_extra = {
             "example": {
-                "dato": "Aqui va todo lo que se necesita insertar",
+                "d": "Aqui va todo lo que se necesita insertar",
                 "estado": 1,
                 #"fecha": "2024-04-18T11:11:04",
             }
