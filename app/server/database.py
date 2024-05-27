@@ -17,3 +17,7 @@ def collection(data):
     data_collection = database.get_collection(data)
     return data_collection
 
+def collectionTotal():
+    #student_collection = database.get_collection("students_collection")
+    data_collection = database.collection_names()
+    return data_collection

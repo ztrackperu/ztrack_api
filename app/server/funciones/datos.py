@@ -1,32 +1,39 @@
 import json
-from server.database import collection
+from server.database import collection ,collectionTotal
 from bson import regex
 from datetime import datetime,timedelta
 from fastapi_pagination.ext.motor import paginate
 
-def bd_gene():
+def bd_gene(imei):
     fet =datetime.now()
-    part = fet.strftime('%d_%m_%Y')
-    colect ="Datos_"+part
-    #print(colect)
-    #data_collection = collection(colect)
+    #part = fet.strftime('%d_%m_%Y')
+    part = fet.strftime('_%m_%Y')
+    colect ="D_"+imei+part
     return colect
 
 
 async def Guardar_Datos(ztrack_data: dict) -> dict:
     #dat = ztrack_data['fecha']
-    #fet =datetime.now()
+    fet =datetime.now()
     #part = fet.strftime('%d_%m_%Y')
     #colect ="Datos_"+part
     #print(colect)
-    #ztrack_data['fecha'] = fet
+    ztrack_data['fecha'] = fet
     #print(ztrack_data)
-    data_collection = collection(bd_gene())
+    data_collection = collection(bd_gene(ztrack_data['i']))
     notificacion = await data_collection.insert_one(ztrack_data)
     new_notificacion = await data_collection.find_one({"_id": notificacion.inserted_id},{"_id":0})
     return new_notificacion
 
-async def retrieve_datos():
+async def retrieve_datos(imei: str):
+    notificacions = []
+    data_collection = collection(bd_gene(imei))
+    async for notificacion in data_collection.find({"estado":1},{"_id":0}):
+        #print(notificacion)
+        notificacions.append(notificacion)
+    return notificacions
+
+async def retrieve_datos_e():
     notificacions = []
     data_collection = collection(bd_gene())
     async for notificacion in data_collection.find({"estado":1},{"_id":0}):

@@ -22,9 +22,9 @@ async def add_data(datos: DatosSchema = Body(...)):
     print(new_notificacion)
     return ResponseModel(new_notificacion, "ok")
 
-@router.get("/", response_description="Datos recuperados")
-async def get_notificacions():
-    notificacions = await retrieve_datos()
+@router.get("/{imei}", response_description="Datos recuperados")
+async def get_notificacions(imei:str):
+    notificacions = await retrieve_datos(imei)
     if notificacions:
         return ResponseModel(notificacions, "Datos  recuperados exitosamente.")
     return ResponseModel(notificacions, "Lista vacía devuelta")

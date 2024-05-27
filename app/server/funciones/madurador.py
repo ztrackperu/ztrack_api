@@ -1,5 +1,5 @@
 import json
-from server.database import client
+from server.database import client, database
 from bson import regex
 from datetime import datetime,timedelta
 from fastapi_pagination.ext.motor import paginate
