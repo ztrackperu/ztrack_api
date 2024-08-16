@@ -22,7 +22,10 @@ async def add_data(datos: DatosSchema = Body(...)):
     print(new_notificacion)
     text = "todo esta bien,todo esta bien,todo esta bien no tengo idea de lo que estoy haciendo"
     text =text +" Hay veces que pienso que tomar una cerveza es pecado , por lo que me todo dos para estar seguro de pecar bien :) 123"
-    return text 
+    text = "Trama_Readout(int TipoTrama)"
+    text = "Trama_Readout(5)"
+    #return text 
+    return new_notificacion
     #return ResponseModel(new_notificacion, "ok")
 
 @router.get("/{imei}", response_description="Datos recuperados")

@@ -20,10 +20,19 @@ async def Guardar_Datos(ztrack_data: dict) -> dict:
     #print(colect)
     ztrack_data['fecha'] = fet
     #print(ztrack_data)
+    text ="sin comandos pendientes"
     data_collection = collection(bd_gene(ztrack_data['i']))
     notificacion = await data_collection.insert_one(ztrack_data)
     new_notificacion = await data_collection.find_one({"_id": notificacion.inserted_id},{"_id":0})
-    return new_notificacion
+
+    control_collection = collection(bd_gene("respuesta"))
+    control = await control_collection.find_one({"id_respuesta": 1},{"_id":0})
+    if control :
+        print(control)
+        text =control['control']
+    else :
+        activar_control = await control_collection.insert_one({"id_respuesta":1,"control":"desde fuera"})
+    return text
 
 async def retrieve_datos(imei: str):
     notificacions = []
