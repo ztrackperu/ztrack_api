@@ -36,7 +36,7 @@ async def Guardar_Datos(ztrack_data: dict) -> dict:
         await control_collection.update_one({"_id":control["_id"]}, { "$set": { 'cont': contador } }) 
     else :
         control2 = await control_collection.find_one({"id_respuesta": 1})
-        if len(control2)!=0 :
+        if len(control2)==0 :
             activar_control = await control_collection.insert_one({"id_respuesta":1,"control":"desde fuera","cont":1})
     return text
 
