@@ -26,12 +26,16 @@ async def Guardar_Datos(ztrack_data: dict) -> dict:
     new_notificacion = await data_collection.find_one({"_id": notificacion.inserted_id},{"_id":0})
 
     control_collection = collection(bd_gene("respuesta"))
-    control = await control_collection.find_one({"id_respuesta": 1},{"_id":0})
+    #control = await control_collection.find_one({"id_respuesta": 1,"cont":{"$gt":0}},{"_id":0})
+    control = await control_collection.find_one({"id_respuesta": 1,"cont":{"$gt":0}})
+
     if control :
         print(control)
         text =control['control']
+        contador = control['cont']-1
+        await control_collection.update_one({"_id":control["_id"]}, { "$set": { 'cont': contador } }) 
     else :
-        activar_control = await control_collection.insert_one({"id_respuesta":1,"control":"desde fuera"})
+        activar_control = await control_collection.insert_one({"id_respuesta":1,"control":"desde fuera","cont":1})
     return text
 
 async def retrieve_datos(imei: str):
