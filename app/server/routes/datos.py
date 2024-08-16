@@ -20,7 +20,8 @@ async def add_data(datos: DatosSchema = Body(...)):
     datos = jsonable_encoder(datos)   
     new_notificacion = await Guardar_Datos(datos)
     print(new_notificacion)
-    return ResponseModel(new_notificacion, "ok")
+    return "todo esta bien "
+    #return ResponseModel(new_notificacion, "ok")
 
 @router.get("/{imei}", response_description="Datos recuperados")
 async def get_notificacions(imei:str):
