@@ -20,8 +20,8 @@ async def add_data(datos: DatosSchema = Body(...)):
     datos = jsonable_encoder(datos)   
     new_notificacion = await Guardar_Datos(datos)
     print(new_notificacion)
-    text = "todo esta bien ,todo esta bien.todo esta bien,todo esta bien,todo esta bien,todo esta bien no tengo idea de lo que estoy haciendo"
-    text =text +" Hay veces que pienso que tomar una cerveza es pecado , por lo que me todo dos para estar seguro de pecar bien :)"
+    text = "todo esta bien,todo esta bien,todo esta bien no tengo idea de lo que estoy haciendo"
+    text =text +" Hay veces que pienso que tomar una cerveza es pecado , por lo que me todo dos para estar seguro de pecar bien :) 123"
     return text 
     #return ResponseModel(new_notificacion, "ok")
 
