@@ -7,6 +7,7 @@ from server.funciones.comando import (
     GuardarComandos,
     RetrieveComandos,
     ProcesarData,
+    GuardarComandos_libre,
 )
 #Aqui importamos el modelo necesario para la clase 
 from server.models.comando import (
@@ -21,6 +22,15 @@ router = APIRouter()
 async def add_comando(datos: ComandoSchema = Body(...)):
     datos = jsonable_encoder(datos)   
     new_notificacion = await GuardarComandos(datos)
+    print("*******")
+    print(new_notificacion)
+    print("*******")
+
+    return new_notificacion
+@router.post("/libre", response_description="Datos agregados a la base de datos.")
+async def add_comando_2(datos: ComandoSchema = Body(...)):
+    datos = jsonable_encoder(datos)   
+    new_notificacion = await GuardarComandos_libre(datos)
     print("*******")
     print(new_notificacion)
     print("*******")
