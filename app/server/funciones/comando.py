@@ -46,7 +46,7 @@ async def ProcesarData():
         datos_dispositivo =bd_gene(notificacion['imei'])
         print(datos_dispositivo)
         unidad_collection = collection(datos_dispositivo)
-        async for trama in unidad_collection.find({"estado":0},{"_id":0}):
+        async for trama in unidad_collection.find({"estado":1},{"_id":0}):
             dato_id = await dispositivos_collection.find_one({"estado":1,"imei":"866782048942516"},{"_id":0})
             id_con = int(dato_id['id_cont']) +1 if dato_id['id_cont'] else 300000000
 
@@ -129,8 +129,8 @@ async def ProcesarData():
                             "hot_gas_valve": convertir_a_float(vali[54]),
                             "economizer_valve": convertir_a_float(vali[55]),
                             "ethylene": convertir_a_float(vali[56]),
-                            "stateProcess": vali[1],
-                            "stateInyection": vali[1],
+                            "stateProcess": vali[57],
+                            "stateInyection": vali[64],
                             "timerOfProcess": convertir_a_float(vali[1]),
                             "battery_voltage": convertir_a_float(vali[1]),
                             "power_trip_duration":convertir_a_float(vali[1]),
@@ -142,7 +142,7 @@ async def ProcesarData():
                             "inyeccion_etileno": 0,
                             "defrost_prueba": 0,
                             "ripener_prueba": 0,
-                            "sp_ethyleno": convertir_a_float(vali[1]),
+                            "sp_ethyleno": convertir_a_float(vali[61]),
                             "inyeccion_hora": convertir_a_float(vali[1]),
                             "inyeccion_pwm": convertir_a_float(vali[63]),
                             "extra_1": 0,
@@ -156,10 +156,10 @@ async def ProcesarData():
                     }
                     print(objetoV)
                     #conectar a la base de datos 
-                    unidad_collection3 = conexion_externa("madurador")
+                    unidad_collection3 = conexion_externa("madurador_usa")
                     await unidad_collection3.insert_one(objetoV)
                     #actualizar estado a 0 
-                    await unidad_collection.update_one({"fecha": trama['fecha']},{"$set":{"estado":1}})
+                    await unidad_collection.update_one({"fecha": trama['fecha']},{"$set":{"estado":0}})
                     await dispositivos_collection.update_one({"imei": trama['i']},{"$set":{"id_cont":idProgre}})
 
 
