@@ -71,7 +71,7 @@ async def ProcesarData():
                     #idProgre=1
                     idProgre=id_con
                     tele_dispositivo =14872
-                    valorP = 5 if vali[58]>0 else 0
+                    valorP = 5 if int(vali[58])>0 else 0
                     objetoV = {
                             "id": idProgre,
                             "set_point": convertir_a_float(vali[1]), 
