@@ -15,6 +15,12 @@ async def GuardarComandos(ztrack_data: dict) -> dict:
     #dat = ztrack_data['fecha']
     #print(ztrack_data)
     data_collection = collection(bd_gene("control"))
+    fet =datetime.now()
+    ztrack_data['fecha_creacion'] = fet
+    #primero consultar si ya existe un comando pendiente 
+    encontrado = await data_collection.find_one({"imei":ztrack_data['imei'],"estado":1},{"_id":0})
+    if encontrado :
+        return 0
     notificacion = await data_collection.insert_one(ztrack_data)
     new_notificacion = await data_collection.find_one({"_id": notificacion.inserted_id},{"_id":0})
     return new_notificacion
