@@ -156,7 +156,7 @@ async def ProcesarData():
                     }
                     print(objetoV)
                     #conectar a la base de datos 
-                    unidad_collection3 = conexion_externa("madurador_usa")
+                    unidad_collection3 = conexion_externa("madurador")
                     await unidad_collection3.insert_one(objetoV)
                     #actualizar estado a 0 
                     await unidad_collection.update_one({"fecha": trama['fecha']},{"$set":{"estado":0}})
