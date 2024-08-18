@@ -47,7 +47,7 @@ async def ProcesarData():
         print(datos_dispositivo)
         unidad_collection = collection(datos_dispositivo)
         async for trama in unidad_collection.find({"estado":1},{"_id":0}):
-            dato_id = await dispositivos_collection.find_one({"estado":1,"imei":"866782048942516"},{"_id":0})
+            dato_id = await dispositivos_collection.find_one({"estado":0,"imei":"866782048942516"},{"_id":0})
             id_con = int(dato_id['id_cont']) +1 if dato_id['id_cont'] else 300000000
 
             #print("ya no tan jodido")
@@ -71,6 +71,7 @@ async def ProcesarData():
                     #idProgre=1
                     idProgre=id_con
                     tele_dispositivo =14872
+                    valorP = 5 if vali[58]>0 else 0
                     objetoV = {
                             "id": idProgre,
                             "set_point": convertir_a_float(vali[1]), 
@@ -129,12 +130,13 @@ async def ProcesarData():
                             "hot_gas_valve": convertir_a_float(vali[54]),
                             "economizer_valve": convertir_a_float(vali[55]),
                             "ethylene": convertir_a_float(vali[56]),
-                            "stateProcess": vali[57],
+                            "stateProcess": valorP ,
                             "stateInyection": vali[64],
-                            "timerOfProcess": convertir_a_float(vali[1]),
-                            "battery_voltage": convertir_a_float(vali[1]),
-                            "power_trip_duration":convertir_a_float(vali[1]),
-                            "modelo": vali[1],
+                            #$document['stateProcess']==5.00 vali[57]
+                            "timerOfProcess": convertir_a_float(0),
+                            "battery_voltage": convertir_a_float(0),
+                            "power_trip_duration":convertir_a_float(0),
+                            "modelo": "THERMOKING",
                             "latitud": 35.7396,
                             "longitud":  -119.238,
                             "created_at": trama['fecha'],
@@ -143,7 +145,7 @@ async def ProcesarData():
                             "defrost_prueba": 0,
                             "ripener_prueba": 0,
                             "sp_ethyleno": convertir_a_float(vali[61]),
-                            "inyeccion_hora": convertir_a_float(vali[1]),
+                            "inyeccion_hora": convertir_a_float(vali[58]),
                             "inyeccion_pwm": convertir_a_float(vali[63]),
                             "extra_1": 0,
                             "extra_2": 0,
@@ -156,10 +158,10 @@ async def ProcesarData():
                     }
                     print(objetoV)
                     #conectar a la base de datos 
-                    unidad_collection3 = conexion_externa("madurador")
+                    unidad_collection3 = conexion_externa("madurador_usa")
                     await unidad_collection3.insert_one(objetoV)
                     #actualizar estado a 0 
-                    await unidad_collection.update_one({"fecha": trama['fecha']},{"$set":{"estado":0}})
+                    await unidad_collection.update_one({"fecha": trama['fecha']},{"$set":{"estado":1}})
                     await dispositivos_collection.update_one({"imei": trama['i']},{"$set":{"id_cont":idProgre}})
 
 
