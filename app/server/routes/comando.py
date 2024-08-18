@@ -27,7 +27,7 @@ async def add_comando(datos: ComandoSchema = Body(...)):
     print("*******")
 
     return new_notificacion
-@router.post("/libre", response_description="Datos agregados a la base de datos.")
+@router.post("/libre/", response_description="Datos agregados a la base de datos.")
 async def add_comando_2(datos: ComandoSchema = Body(...)):
     datos = jsonable_encoder(datos)   
     new_notificacion = await GuardarComandos_libre(datos)
