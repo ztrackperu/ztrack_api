@@ -2,6 +2,7 @@ import json
 from server.database import collection ,collectionTotal ,conexion_externa
 from bson import regex
 from datetime import datetime,timedelta
+import mysql.connector
 
 
 def bd_gene(imei):
