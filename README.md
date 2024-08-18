@@ -22,6 +22,11 @@ MONGO_DETAILS="mongodb://localhost:27017"
 pip install mysqlclient
 pip install sqlalchemy
 pip install pymysql
+
+
+pip install mysqlclient
+pip install sqlalchemy
+pip install pymysql
 pip install python-dotenv
 #para paginacion
 pip install fastapi-pagination
