@@ -44,10 +44,10 @@ async def ProcesarData():
     async for notificacion in dispositivos_collection.find({"estado":1,"imei":"866782048942516"},{"_id":0}):
         #aqui procesamos 
         datos_dispositivo =bd_gene(notificacion['imei'])
-        id_con = int(notificacion['id_cont']) +1 if notificacion['id_cont'] else 300000000
         print(datos_dispositivo)
         unidad_collection = collection(datos_dispositivo)
-        async for trama in unidad_collection.find({"estado":0},{"_id":0}):
+        async for trama in unidad_collection.find({"estado":1},{"_id":0}):
+            id_con = int(notificacion['id_cont']) +1 if notificacion['id_cont'] else 300000000
 
             #print("ya no tan jodido")
             #print(trama)
@@ -158,7 +158,7 @@ async def ProcesarData():
                     unidad_collection3 = conexion_externa("madurador_usa")
                     await unidad_collection3.insert_one(objetoV)
                     #actualizar estado a 0 
-                    await unidad_collection.update_one({"fecha": trama['fecha']},{"$set":{"estado":1}})
+                    await unidad_collection.update_one({"fecha": trama['fecha']},{"$set":{"estado":0}})
                     await dispositivos_collection.update_one({"imei": trama['i']},{"$set":{"id_cont":idProgre}})
 
 
