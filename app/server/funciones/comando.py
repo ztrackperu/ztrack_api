@@ -46,8 +46,8 @@ async def ProcesarData():
         datos_dispositivo =bd_gene(notificacion['imei'])
         print(datos_dispositivo)
         unidad_collection = collection(datos_dispositivo)
-        async for trama in unidad_collection.find({"estado":1},{"_id":0}):
-            dato_id = await dispositivos_collection.find_one({"estado":0,"imei":"866782048942516"},{"_id":0})
+        async for trama in unidad_collection.find({"estado":0},{"_id":0}):
+            dato_id = await dispositivos_collection.find_one({"estado":1,"imei":"866782048942516"},{"_id":0})
             id_con = int(dato_id['id_cont']) +1 if dato_id['id_cont'] else 300000000
 
             #print("ya no tan jodido")
