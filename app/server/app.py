@@ -3,6 +3,8 @@ from fastapi import FastAPI
 #from server.routes.usuarios import router as UsuariosRouter
 #from server.routes.madurador import router as MaduradorRouter
 from server.routes.datos import router as DatosRouter
+from server.routes.comando import router as ComandosRouter
+
 
 app = FastAPI(
     title="Integracion ZTRACK API TEST",
@@ -13,6 +15,8 @@ app = FastAPI(
 #añadir el conjunto de rutas de notificaciones
 #app.include_router(UsuariosRouter, tags=["usuarios"], prefix="/usuarios")
 app.include_router(DatosRouter, tags=["Datos"], prefix="/Datos")
+app.include_router(ComandosRouter, tags=["Comandos"], prefix="/Comandos")
+
 
 @app.get("/", tags=["Root"])
 async def read_root():

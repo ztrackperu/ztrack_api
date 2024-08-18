@@ -20,25 +20,35 @@ async def Guardar_Datos(ztrack_data: dict) -> dict:
     #print(colect)
     ztrack_data['fecha'] = fet
     #print(ztrack_data)
-    text ="sin comandos pendientes"
+    comando ="sin comandos pendientes"
+    Hay_dispositivo=""
+    #COLECCION ESPECIFICA PARA DISPOSITIVO
     data_collection = collection(bd_gene(ztrack_data['i']))
+    #COLECCION PARA TODOS LOS DISPOSITIVOS
+    dispositivos_collection = collection(bd_gene('dispositivos'))
+    #COLECCION ESPECIFICA PARA EL CONTROL
+    control_collection = collection(bd_gene("control"))
+    #AQUI SE GUARDA LA TRAMA 
     notificacion = await data_collection.insert_one(ztrack_data)
     new_notificacion = await data_collection.find_one({"_id": notificacion.inserted_id},{"_id":0})
+    #Verificar que exista el dispositivo en el registro
+    dispositivo_encontrado = await dispositivos_collection.find_one({"imei": ztrack_data['i'],"estado":1},{"_id":0})
+    
+    if dispositivo_encontrado is not None:
+        try:
+            Hay_dispositivo= dispositivo_encontrado['imei'] 
+            print("Elemento encontrado")
+        except ValueError:
+            print("NO SE ENCONTRO CONTROL")
+    verificar_dispositivo = await dispositivos_collection.update_one({"imei": ztrack_data['i'],"estado":1},{"$set":{"ultimo_dato":fet}}) if Hay_dispositivo else await dispositivos_collection.insert_one({"imei":ztrack_data['i'],"estado":1,"fecha":fet})
+    control_encontrado =    await control_collection.find_one({"imei": ztrack_data['i'],"estado":1},{"_id":0})
+    #if control_encontrado['comando'] :
+    if control_encontrado :
+        veces_control = control_encontrado['estado']-1 if control_encontrado['comando'] else 0
+        comando = control_encontrado['comando']
+        actualizar_comando = await control_collection.update_one({"imei": ztrack_data['i'],"estado":1},{"$set":{"estado": veces_control,"fecha_ejecucion":fet}})
 
-    control_collection = collection(bd_gene("respuesta"))
-    #control = await control_collection.find_one({"id_respuesta": 1,"cont":{"$gt":0}},{"_id":0})
-    control = await control_collection.find_one({"id_respuesta": 1,"cont":{"$gt":0}})
-
-    if control :
-        print(control)
-        text =control['control']
-        contador = control['cont']-1
-        await control_collection.update_one({"_id":control["_id"]}, { "$set": { 'cont': contador } }) 
-    else :
-        control2 = await control_collection.find_one({"id_respuesta": 1})
-        if len(control2)==0 :
-            activar_control = await control_collection.insert_one({"id_respuesta":1,"control":"desde fuera","cont":1})
-    return text
+    return comando
 
 async def retrieve_datos(imei: str):
     notificacions = []

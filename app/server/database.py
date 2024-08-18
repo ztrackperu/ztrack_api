@@ -17,6 +17,11 @@ def collection(data):
     data_collection = database.get_collection(data)
     return data_collection
 
+def conexion_externa(data):
+    database1 = client["ztrack_ja"]
+    data_collection = database1.get_collection(data)
+    return data_collection
+
 def collectionTotal():
     #student_collection = database.get_collection("students_collection")
     data_collection = database.collection_names()
