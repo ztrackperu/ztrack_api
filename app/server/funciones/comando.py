@@ -33,7 +33,7 @@ async def GuardarComandos_libre(ztrack_data: dict) -> dict:
     ztrack_data['fecha_creacion'] = fet
     #primero consultar si ya existe un comando pendiente 
     conteo =[]
-    async for notificacionok in await data_collection.find({"estado":1},{"_id":0}):
+    async for notificacionok in  data_collection.find({"estado":1},{"_id":0}):
         conteo.append(notificacionok)
   
     if len(conteo)>2 :
