@@ -36,7 +36,7 @@ async def GuardarComandos_libre(ztrack_data: dict) -> dict:
     async for notificacionok in  data_collection.find({"estado":1},{"_id":0}):
         conteo.append(notificacionok)
   
-    if len(conteo)>2 :
+    if len(conteo)>=2 :
         return 0
 
     notificacion = await data_collection.insert_one(ztrack_data)
