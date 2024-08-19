@@ -32,15 +32,13 @@ async def GuardarComandos_libre(ztrack_data: dict) -> dict:
     fet =datetime.now()
     ztrack_data['fecha_creacion'] = fet
     #primero consultar si ya existe un comando pendiente 
-    encontrado = await data_collection.find_one({"comando":"Trama_Writeout(9,0,1)","estado":1},{"_id":0})
-    if encontrado :
+    conteo =[]
+    async for notificacionok in await data_collection.find({"estado":1},{"_id":0}):
+        conteo.append(notificacionok)
+  
+    if len(conteo)>2 :
         return 0
-    encontrado = await data_collection.find_one({"comando":"Trama_Writeout(9,1,1)","estado":1},{"_id":0})
-    if encontrado :
-        return 0   
-    encontrado = await data_collection.find_one({"comando":"Trama_Writeout(9,2,1)","estado":1},{"_id":0})
-    if encontrado :
-        return 0
+
     notificacion = await data_collection.insert_one(ztrack_data)
     new_notificacion = await data_collection.find_one({"_id": notificacion.inserted_id},{"_id":0})
     return new_notificacion
