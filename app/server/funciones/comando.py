@@ -85,7 +85,7 @@ async def ProcesarData():
             #print(trama['c'])
             #print("**********************")
             transformado = trama_ok.split(',')
-            longitud_trama = 1 if len(transformado)>65 else 0
+            longitud_trama = 1 if len(transformado)>=65 else 0
 
             print("**********************")
             print(transformado)
@@ -98,7 +98,12 @@ async def ProcesarData():
                     #idProgre=1
                     idProgre=id_con
                     tele_dispositivo =14872
-                    valorP = 5 if int(vali[65])==1 else 0
+                    comparador1 = vali[65] if len(transformado)>65 else 0
+                    comparador2 = vali[66] if len(transformado)>66 else 0
+
+
+                    valorP = 5 if int(comparador1)==1 else 0
+
                     objetoV = {
                             "id": idProgre,
                             "set_point": convertir_a_float(vali[1]), 
@@ -180,7 +185,7 @@ async def ProcesarData():
                             "extra_4": 0,
                             "extra_5": 0,
                             "imei":trama['i'],
-                            "tiempo_paso":vali[66],
+                            "tiempo_paso":comparador2,
                             "device":vali[0]
 
                     }
