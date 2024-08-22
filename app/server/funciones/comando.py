@@ -105,11 +105,13 @@ async def ProcesarData():
 
                     comparador1 = vali[65] if len(transformado)>65 else 0
                     comparador2 = vali[66] if len(transformado)>66 else 0
-                    valorP = 5 if int(comparador1)==1 else 0
 
                     if(notificacion['imei']=="868428040102299"):
                         tele_dispositivo =14874
                         valorP =  0
+                    else:
+                        valorP = 5 if int(comparador1)==1 else 0
+
 
                     objetoV = {
                             "id": idProgre,
