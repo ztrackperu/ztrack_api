@@ -58,7 +58,7 @@ def convertir_a_float(dato):
         return dato
     try:
         float_value = float(dato)
-        return float_value
+        return round(float_value,1)
     except ValueError:
         return None
 
