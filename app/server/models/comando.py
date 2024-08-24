@@ -9,7 +9,8 @@ class ComandoSchema(BaseModel):
     fecha_ejecucion : Optional[datetime] |None =None
     comando : str = Field(...)
     dispositivo : Optional[str] |None = "FAIL"
-
+    evento : Optional[str] |None = "SIN REGISTRO "
+    user :Optional[int] |None =1
     class Config:
         json_schema_extra = {
             "example": {
