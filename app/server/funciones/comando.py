@@ -43,6 +43,17 @@ async def GuardarComandos_libre(ztrack_data: dict) -> dict:
     new_notificacion = await data_collection.find_one({"_id": notificacion.inserted_id},{"_id":0})
     return new_notificacion
 
+async def GuardarComandos_super_libre(ztrack_data: dict) -> dict:
+    #dat = ztrack_data['fecha']
+    #print(ztrack_data)
+    data_collection = collection(bd_gene("control"))
+    fet =datetime.now()
+    ztrack_data['fecha_creacion'] = fet
+
+    notificacion = await data_collection.insert_one(ztrack_data)
+    new_notificacion = await data_collection.find_one({"_id": notificacion.inserted_id},{"_id":0})
+    return new_notificacion
+
 async def RetrieveComandos(imei: str):
     notificacions = []
     print("me voy a casa")
