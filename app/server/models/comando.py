@@ -13,6 +13,8 @@ class ComandoSchema(BaseModel):
     user :Optional[str] |None ="default"
     receta : Optional[str] |None ="sin receta"
     tipo : Optional[int] |None =0
+    status : Optional[int] |None =1
+
     class Config:
         json_schema_extra = {
             "example": {
