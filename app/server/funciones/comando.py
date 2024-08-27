@@ -82,12 +82,13 @@ async def comando_jhon_vena(imei: str):
 
 
 
-    async for notificacion in data_collection.find({"fecha_creacion": {"$lte": fecha_modificada}},{"_id":0}):
+    async for notificacion in data_collection.find({"fecha_creacion": {"$lte": fecha_modificada}},{"_id":0}).sort({"fecha_creacion":-1}):
         cont =cont+1
         notificacions.append(notificacion)
     print(cont)
     res ={
         "contador":cont,
+        "fecha_menor" :fecha_modificada,
         "lista":notificacions
     }
 
