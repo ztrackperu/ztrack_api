@@ -71,7 +71,7 @@ async def comando_jhon_vena(imei: str):
     print("me voy a casa")
     data_collection = collection(bd_gene("control"))
     fecha_actual = datetime.now()
-    fecha_modificada = fecha_actual - timedelta(hours=10)
+    fecha_modificada = fecha_actual - timedelta(hours=9)
     #fecha_modificada = fecha_actual - timedelta(hours=1)
     cont =0
     print(fecha_actual)
