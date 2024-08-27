@@ -42,6 +42,7 @@ async def EditarReceta(id: int, data: dict) -> dict:
         return False
     notificacion_collection = collection("recetas")
     notificacion = await notificacion_collection.find_one({"id": id})
+    data["id"]=id
     if notificacion:
         updated_notificacion = await notificacion_collection.update_one(
             {"id": id}, {"$set": data}
