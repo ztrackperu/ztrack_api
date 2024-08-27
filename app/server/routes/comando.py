@@ -65,9 +65,9 @@ async def procesar_comandos():
     return ResponseModel(notificacions, "Lista vacía devuelta xx")
 
 #secuencua para homologara datos a la plataforma ztrack
-@router.get("/JhonVena/", response_description="Datos procesados")
-async def procesar_comandos_jhon_vena():
-    notificacions = await comando_jhon_vena()
+@router.get("/JhonVena/{imei}", response_description="Datos procesados")
+async def procesar_comandos_jhon_vena(imei:str):
+    notificacions = await comando_jhon_vena(imei)
     if notificacions:
         return ResponseModel(notificacions, "Datos  recuperados exitosamente.")
     return ResponseModel(notificacions, "Lista vacía devuelta xx")
