@@ -24,7 +24,7 @@ from server.models.proceso import (
 #aqui se definen las rutas de la API REST
 router = APIRouter()
 
-@router.get("/", response_description="recetas recuperados")
+@router.get("/analisis/proceso", response_description="recetas recuperados")
 async def analisis_proceso_ok():
     notificacions = await analisis_proceso()
     if notificacions:
