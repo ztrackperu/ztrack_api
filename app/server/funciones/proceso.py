@@ -16,7 +16,9 @@ async def analisis_proceso():
     encontrado = await data_collection.find_one({"estado":1},{"_id":0})
     if encontrado :
         print(encontrado)
-    return 0
+        return encontrado
+    else :
+        return 0
 
 
 
