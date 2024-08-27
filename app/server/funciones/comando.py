@@ -117,7 +117,7 @@ async def comando_jhon_vena(imei: str):
         "contador":cont,
         "fecha_menor" :fecha_modificada,
         "consulta_mysql" :consulta_mysql,
-        "menbrete":consulta_mysql[4],
+        "menbrete":consulta_mysql[0][4],
         "lista":notificacions
     }
     #async for notificacion in data_collection.find({"imei":imei},{"_id":0}):
