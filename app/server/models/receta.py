@@ -16,7 +16,7 @@ class RecetaSchema(BaseModel):
     humedad_ripener : float  = Field(...)
     horas_ripener : float  = Field(...)
     ventilacion : float  = Field(...)
-    temepartura_ventilacion : float  = Field(...)
+    temperatura_ventilacion : float  = Field(...)
     temperatura_producto : float  = Field(...)
     estado : Optional[int] |None =1
     nombre_receta : Optional[str] |None = "default"
@@ -35,6 +35,8 @@ class RecetaSchema(BaseModel):
                 "horas_ripener": 18.0,
                 "ventilacion": 200.0,
                 "temperatura_producto": 10.5,
+                "temperatura_ventilacion" : 14,
+
                 "nombre_receta": "Banano tropical"
 
             }
