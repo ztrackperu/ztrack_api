@@ -67,10 +67,10 @@ async def RetrieveComandos(imei: str):
 def validar_tipo(dato,tipo,json_v):
     res=None
     if(tipo==1):
-        if(json_v['power_sate']==dato):
+        if(json_v['power_state']==dato):
             res="ok"
     elif(tipo==2):
-        if(json_v['power_sate']==dato):
+        if(json_v['power_state']==dato):
             res="ok"
     elif(tipo==3):
         if(json_v['set_point_co2']==dato):
