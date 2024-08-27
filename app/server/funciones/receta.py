@@ -29,6 +29,7 @@ async def GuardarReceta(ztrack_data: dict) -> dict:
     encontrado = await data_collection.find_one({"nombre_receta":ztrack_data['nombre_receta'],"estado":1},{"_id":0})
     if encontrado :
         return 0
+    ztrack_data['id']=id_receta
     notificacion = await data_collection.insert_one(ztrack_data)
     updated_ids = await ids_collection.update_one(
             {"id": 1}, {"$set": {"receta_id":id_receta}}
