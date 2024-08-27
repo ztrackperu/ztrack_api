@@ -72,8 +72,15 @@ async def comando_jhon_vena(imei: str):
     data_collection = collection(bd_gene("control"))
     fecha_actual = datetime.now()
     fecha_modificada = fecha_actual - timedelta(hours=1)
+    print(fecha_actual)
+    print(fecha_modificada)
+    fechaI=datetime.fromisoformat(fecha_actual)
+    fechaF=datetime.fromisoformat(fecha_modificada)
 
-    async for notificacion in data_collection.find({"fecha_creacion": {"$gte": fecha_modificada}},{"_id":0}):
+
+
+
+    async for notificacion in data_collection.find({"fecha_creacion": {"$gte": fechaI}},{"_id":0}):
         notificacions.append(notificacion)
 
 
