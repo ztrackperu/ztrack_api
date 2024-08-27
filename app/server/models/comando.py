@@ -14,6 +14,8 @@ class ComandoSchema(BaseModel):
     receta : Optional[str] |None ="sin receta"
     tipo : Optional[int] |None =0
     status : Optional[int] |None =1
+    dato : Optional[float] |None 
+
 
     class Config:
         json_schema_extra = {

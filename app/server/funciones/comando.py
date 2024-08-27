@@ -64,6 +64,49 @@ async def RetrieveComandos(imei: str):
         notificacions.append(notificacion)
     return notificacions
 
+def validar_tipo(dato,tipo,json_v):
+    res=None
+    if(tipo==1):
+        if(json_v['power_sate']==dato):
+            res="ok"
+    elif(tipo==2):
+        if(json_v['power_sate']==dato):
+            res="ok"
+    elif(tipo==3):
+        if(json_v['set_point_co2']==dato):
+            res="ok"
+    elif(tipo==4):
+        if(json_v['sp_ethyleno']==dato):
+            res="ok"
+    elif(tipo==5):
+        if(json_v['inyeccion_hora']==dato):
+            res="ok"
+    elif(tipo==6):
+        if(json_v['humidity_set_point']==dato):
+            res="ok"
+    elif(tipo==7):
+        if(json_v['set_point']==dato):
+            res="ok"
+    elif(tipo==8):
+        if(json_v['avl']==dato):
+            res="ok"
+    elif(tipo==9):
+        if(json_v['avl']==dato):
+            res="ok"
+    elif(tipo==10):
+        if(json_v['controlling_mode']==dato):
+            res="ok"
+    #elif(tipo==11):
+        #if(json_v['power_sate']==dato):
+            #res="ok"
+    elif(tipo==12):
+        if(json_v['fresh_air_mode']==dato):
+            res="ok"
+    else:
+        res=None
+    return res
+    
+    
 async def comando_jhon_vena(imei: str):
     notificacions = []
     print("me voy a casa")
@@ -79,18 +122,6 @@ async def comando_jhon_vena(imei: str):
     #fechaI=datetime.fromisoformat(fecha_actual)
     #fechaF=datetime.fromisoformat(fecha_modificada)
 
-
-
-
-    async for notificacion in data_collection.find({"$and": [{"fecha_creacion": {"$lte": fecha_modificada}},{"estado":3},{"user":"jhonvena"}]},{"_id":0}).sort({"fecha_creacion":-1}):
-        cont =cont+1
-        notificacion['validacion']=None
-        notificacions.append(notificacion)
-    async for notificacion in data_collection.find({"$and": [{"fecha_creacion": {"$gte": fecha_modificada}},{"user":"jhonvena"}]},{"_id":0}).sort({"fecha_creacion":-1}):
-        cont =cont+1
-        notificacion['validacion']=None
-        notificacions.append(notificacion)
-    print(cont)
     consulta_mysql =[]
     #pedir ultimos datos con esas carcteristicas
     cnx = mysql.connector.connect(
@@ -107,16 +138,7 @@ async def comando_jhon_vena(imei: str):
     for data in curB :
         consulta_mysql.append(data)
         #print(data[0])
-
-    
-    curB.close()
-    cnx.close()
-
-    
-    res ={
-        "contador":cont,
-        "fecha_menor" :fecha_modificada,
-        "consulta_mysql" :consulta_mysql,
+    obj_vali ={
         "menbrete":consulta_mysql[0][4],
         "power_state":consulta_mysql[0][53],
         "set_point_co2":consulta_mysql[0][61],
@@ -127,7 +149,31 @@ async def comando_jhon_vena(imei: str):
         "avl":consulta_mysql[0][27],
         "controlling_mode":consulta_mysql[0][54],
         "fresh_air_mode":consulta_mysql[0][57],
+    }
+    curB.close()
+    cnx.close()
 
+
+
+
+    async for notificacion in data_collection.find({"$and": [{"fecha_creacion": {"$lte": fecha_modificada}},{"estado":3},{"user":"jhonvena"}]},{"_id":0}).sort({"fecha_creacion":-1}):
+        cont =cont+1
+        #validar_tipo(dato,tipo,json_v):
+        valor =validar_tipo(notificacion['dato'],notificacion['tipo'],obj_vali)
+        notificacion['validacion']=valor
+        notificacions.append(notificacion)
+    async for notificacion in data_collection.find({"$and": [{"fecha_creacion": {"$gte": fecha_modificada}},{"user":"jhonvena"}]},{"_id":0}).sort({"fecha_creacion":-1}):
+        cont =cont+1
+        valor =validar_tipo(notificacion['dato'],notificacion['tipo'],obj_vali)
+        notificacion['validacion']=valor
+        notificacions.append(notificacion)
+    print(cont)
+
+
+    res ={
+        "contador":cont,
+        "fecha_menor" :fecha_modificada,
+        "consulta_mysql" :consulta_mysql,
 
         "lista":notificacions
     }
