@@ -24,7 +24,7 @@ async def GuardarReceta(ztrack_data: dict) -> dict:
     async for notificacion in ids_collection.find({"id":1},{"_id":0}):
         print(notificacion)
         traer_id.append(notificacion)
-    id_receta =  traer_id[0].receta_id +1 if len(traer_id)!=0 else 1
+    id_receta =  traer_id[0]['receta_id'] +1 if len(traer_id)!=0 else 1
 
     encontrado = await data_collection.find_one({"nombre_receta":ztrack_data['nombre_receta'],"estado":1},{"_id":0})
     if encontrado :
