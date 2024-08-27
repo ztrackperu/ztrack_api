@@ -6,6 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 #from server.routes.madurador import router as MaduradorRouter
 from server.routes.datos import router as DatosRouter
 from server.routes.comando import router as ComandosRouter
+from server.routes.receta import router as RecetasRouter
+
 
 
 app = FastAPI(
@@ -27,6 +29,8 @@ app.add_middleware(
 #app.include_router(UsuariosRouter, tags=["usuarios"], prefix="/usuarios")
 app.include_router(DatosRouter, tags=["Datos"], prefix="/Datos")
 app.include_router(ComandosRouter, tags=["Comandos"], prefix="/Comandos")
+app.include_router(RecetasRouter, tags=["Recetas"], prefix="/Recetas")
+
 
 
 @app.get("/", tags=["Root"])

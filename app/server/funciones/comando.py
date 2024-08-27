@@ -156,7 +156,7 @@ async def comando_jhon_vena(imei: str):
 
 
 
-    async for notificacion in data_collection.find({"$and": [{"fecha_creacion": {"$lte": fecha_modificada}},{"estado":3},{"user":"jhonvena"}]},{"_id":0}).sort({"fecha_creacion":-1}):
+    async for notificacion in data_collection.find({"$and": [{"fecha_creacion": {"$lte": fecha_modificada}},{"estado":1},{"user":"jhonvena"}]},{"_id":0}).sort({"fecha_creacion":-1}):
         cont =cont+1
         #validar_tipo(dato,tipo,json_v):
         valor =validar_tipo(notificacion['dato'],notificacion['tipo'],obj_vali)
@@ -172,6 +172,7 @@ async def comando_jhon_vena(imei: str):
 
     res ={
         "contador":cont,
+        "objeto_datos":obj_vali,
         "fecha_menor" :fecha_modificada,
         "consulta_mysql" :consulta_mysql,
 
