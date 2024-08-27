@@ -118,6 +118,17 @@ async def comando_jhon_vena(imei: str):
         "fecha_menor" :fecha_modificada,
         "consulta_mysql" :consulta_mysql,
         "menbrete":consulta_mysql[0][4],
+        "power_state":consulta_mysql[0][53],
+        "set_point_co2":consulta_mysql[0][61],
+        "sp_ethyleno":consulta_mysql[0][79],
+        "inyeccion_hora":consulta_mysql[0][77],
+        "humidity_set_point":consulta_mysql[0][56],
+        "set_point":consulta_mysql[0][10],
+        "avl":consulta_mysql[0][27],
+        "controlling_mode":consulta_mysql[0][54],
+        "fresh_air_mode":consulta_mysql[0][57],
+
+
         "lista":notificacions
     }
     #async for notificacion in data_collection.find({"imei":imei},{"_id":0}):
