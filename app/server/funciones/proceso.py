@@ -11,6 +11,16 @@ def bd_gene(imei):
     colect ="D_"+imei+part
     return colect
 
+async def analisis_proceso():
+    data_collection = collection("procesos")
+    encontrado = await data_collection.find_one({"estado":1},{"_id":0})
+    if encontrado :
+        print(encontrado)
+    return 0
+
+
+
+
 async def GuardarProceso(ztrack_data: dict) -> dict:
     #dat = ztrack_data['fecha']
     #print(ztrack_data)

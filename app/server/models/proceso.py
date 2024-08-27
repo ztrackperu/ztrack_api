@@ -33,6 +33,7 @@ class ProcesoSchema(BaseModel):
     fin_horas_ventilacion : Optional[datetime] |None =None
     inicio_horas_cooling :Optional[datetime] |None =None
     fin_horas_cooling :Optional[datetime] |None =None
+    estado_proceso: Optional[int] |None =0
 
     class Config:
         json_schema_extra = {

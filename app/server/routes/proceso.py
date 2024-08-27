@@ -11,6 +11,7 @@ from server.funciones.proceso import (
     traer_procesos,
     buscar_proceso,
     delete_proceso,
+    analisis_proceso,
  
 )
 #Aqui importamos el modelo necesario para la clase 
@@ -22,6 +23,14 @@ from server.models.proceso import (
 )
 #aqui se definen las rutas de la API REST
 router = APIRouter()
+
+@router.get("/", response_description="recetas recuperados")
+async def analisis_proceso_ok():
+    notificacions = await analisis_proceso()
+    if notificacions:
+        return ResponseModel(notificacions, "Datos de las recetas recuperados exitosamente.")
+    return ResponseModel(notificacions, "Lista vacía devuelta")
+
 
 @router.post("/", response_description="Datos de los recetas agregados a la base de datos.")
 #La funcion espera "ConceptoOTSchema"
