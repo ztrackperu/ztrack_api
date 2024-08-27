@@ -106,6 +106,8 @@ async def comando_jhon_vena(imei: str):
     curB.execute(consulta_J, (14872,))
     for data in curB :
         consulta_mysql.append(data)
+        #print(data[0])
+
     
     curB.close()
     cnx.close()
@@ -115,6 +117,7 @@ async def comando_jhon_vena(imei: str):
         "contador":cont,
         "fecha_menor" :fecha_modificada,
         "consulta_mysql" :consulta_mysql,
+        "menbrete":consulta_mysql[4],
         "lista":notificacions
     }
     #async for notificacion in data_collection.find({"imei":imei},{"_id":0}):
@@ -183,7 +186,7 @@ async def ProcesarData():
 
 
                     objetoV = {
-                            "id": idProgre,
+                            "id": idProgre, 
                             "set_point": convertir_a_float(vali[1]), 
                             "temp_supply_1": convertir_a_float(vali[2]),
                             "temp_supply_2": convertir_a_float(vali[3]),
