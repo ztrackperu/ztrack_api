@@ -72,6 +72,8 @@ async def comando_jhon_vena(imei: str):
     data_collection = collection(bd_gene("control"))
     fecha_actual = datetime.now()
     fecha_modificada = fecha_actual - timedelta(hours=1)
+    fecha_modificada = fecha_actual - timedelta(hours=1)
+    cont =0
     print(fecha_actual)
     print(fecha_modificada)
     #fechaI=datetime.fromisoformat(fecha_actual)
@@ -81,12 +83,18 @@ async def comando_jhon_vena(imei: str):
 
 
     async for notificacion in data_collection.find({"fecha_creacion": {"$lte": fecha_modificada}},{"_id":0}):
+        cont =cont+1
         notificacions.append(notificacion)
-
+    print(cont)
+    res ={
+        "contador":cont,
+        "lista":notificacions
+    }
 
     #async for notificacion in data_collection.find({"imei":imei},{"_id":0}):
         #notificacions.append(notificacion)
-    return notificacions
+    #return notificacions
+    return res
 
 def convertir_a_float(dato):
     if isinstance(dato, float):
