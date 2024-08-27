@@ -63,3 +63,7 @@ Rip_Setpoint
 Rip_Delay
 Rip_Tiempo
 Rip_Active
+
+
+#busqueda de fechas en mongodb
+

@@ -9,6 +9,7 @@ from server.funciones.comando import (
     ProcesarData,
     GuardarComandos_libre,
     GuardarComandos_super_libre,
+    comando_jhon_vena,
 )
 #Aqui importamos el modelo necesario para la clase 
 from server.models.comando import (
@@ -63,3 +64,10 @@ async def procesar_comandos():
         return ResponseModel(notificacions, "Datos  recuperados exitosamente.")
     return ResponseModel(notificacions, "Lista vacía devuelta xx")
 
+#secuencua para homologara datos a la plataforma ztrack
+@router.get("/JhonVena/", response_description="Datos procesados")
+async def procesar_comandos_jhon_vena():
+    notificacions = await comando_jhon_vena()
+    if notificacions:
+        return ResponseModel(notificacions, "Datos  recuperados exitosamente.")
+    return ResponseModel(notificacions, "Lista vacía devuelta xx")

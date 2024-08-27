@@ -10,7 +10,8 @@ class ComandoSchema(BaseModel):
     comando : str = Field(...)
     dispositivo : Optional[str] |None = "FAIL"
     evento : Optional[str] |None = "SIN REGISTRO "
-    user :Optional[int] |None =1
+    user :Optional[str] |None ="default"
+    receta : Optional[str] |None ="sin receta"
     class Config:
         json_schema_extra = {
             "example": {

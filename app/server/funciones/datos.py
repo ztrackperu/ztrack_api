@@ -15,6 +15,7 @@ def bd_gene(imei):
 async def Guardar_Datos(ztrack_data: dict) -> dict:
     #dat = ztrack_data['fecha']
     fet =datetime.now()
+    
     #part = fet.strftime('%d_%m_%Y')
     #colect ="Datos_"+part
     #print(colect)

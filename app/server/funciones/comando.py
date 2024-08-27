@@ -64,6 +64,23 @@ async def RetrieveComandos(imei: str):
         notificacions.append(notificacion)
     return notificacions
 
+async def comando_jhon_vena(imei: str):
+    notificacions = []
+    print("me voy a casa")
+    print(imei)
+    print("me voy a casa")
+    data_collection = collection(bd_gene("control"))
+    fecha_actual = datetime.now()
+    fecha_modificada = fecha_actual - timedelta(hours=1)
+
+    async for notificacion in data_collection.find({"fecha_creacion": {"$gte": fecha_modificada}},{"_id":0}):
+        notificacions.append(notificacion)
+
+
+    #async for notificacion in data_collection.find({"imei":imei},{"_id":0}):
+        #notificacions.append(notificacion)
+    return notificacions
+
 def convertir_a_float(dato):
     if isinstance(dato, float):
         return dato
