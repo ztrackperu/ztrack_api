@@ -12,6 +12,7 @@ class ComandoSchema(BaseModel):
     evento : Optional[str] |None = "SIN REGISTRO "
     user :Optional[str] |None ="default"
     receta : Optional[str] |None ="sin receta"
+    tipo : Optional[int] |None =0
     class Config:
         json_schema_extra = {
             "example": {
