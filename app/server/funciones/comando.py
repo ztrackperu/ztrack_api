@@ -91,12 +91,32 @@ async def comando_jhon_vena(imei: str):
         notificacion['validacion']=None
         notificacions.append(notificacion)
     print(cont)
+    consulta_mysql =[]
+    #pedir ultimos datos con esas carcteristicas
+    cnx = mysql.connector.connect(
+        host= "localhost",
+        user= "ztrack2023",
+        passwd= "lpmp2018",
+        database="zgroupztrack"
+    )
+    curB = cnx.cursor()
+    consulta_J = (
+        "SELECT * FROM contenedores WHERE telemetria_id = %s"
+    )
+    curB.execute(consulta_J, (14872))
+    for data in curB :
+        consulta_mysql.append(data)
+    
+    curB.close()
+    cnx.close()
+
+    
     res ={
         "contador":cont,
         "fecha_menor" :fecha_modificada,
+        "consulta_mysql" :consulta_mysql,
         "lista":notificacions
     }
-
     #async for notificacion in data_collection.find({"imei":imei},{"_id":0}):
         #notificacions.append(notificacion)
     #return notificacions
@@ -267,14 +287,15 @@ async def ProcesarData():
                     ", ambient_air= %s ,relative_humidity= %s ,avl = %s , defrost_prueba = %s , ripener_prueba = %s , ethylene = %s"
                     " , set_point_co2 = %s , co2_reading = %s , humidity_set_point = %s , sp_ethyleno = %s , compress_coil_1 = %s "
                     ", power_state = %s , evaporation_coil = %s , controlling_mode = %s , stateProcess = %s ,cargo_1_temp = %s "
-                    ", cargo_2_temp = %s  WHERE estado = 1 AND telemetria_id = %s  ")
+                    ", cargo_2_temp = %s , cargo_3_temp = %s , cargo_4_temp = %s , fresh_air_ex_mode = %s  WHERE estado = 1 AND telemetria_id = %s  ")
                     curB.execute(update_old_salary, (trama['fecha'], objetoV['set_point'],objetoV['temp_supply_1'], 
                                                         objetoV['return_air'], objetoV['ambient_air'], objetoV['relative_humidity'], 
                                                         objetoV['avl'], objetoV['inyeccion_pwm'], objetoV['inyeccion_hora'], 
                                                         objetoV['ethylene'], objetoV['set_point_co2'], objetoV['co2_reading'], 
                                                         objetoV['humidity_set_point'], objetoV['sp_ethyleno'],objetoV['compress_coil_1'], 
                                                         objetoV['power_state'],objetoV['evaporation_coil'],objetoV['controlling_mode'],
-                                                        objetoV['stateProcess'], objetoV['cargo_1_temp'], objetoV['cargo_2_temp'],objetoV['telemetria_id']  ))
+                                                        objetoV['stateProcess'], objetoV['cargo_1_temp'], objetoV['cargo_2_temp'],
+                                                        objetoV['cargo_3_temp'], objetoV['cargo_4_temp'], objetoV['fresh_air_ex_mode'],objetoV['telemetria_id']  ))
                     cnx.commit()
 
 
