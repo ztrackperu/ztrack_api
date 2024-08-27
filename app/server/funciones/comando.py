@@ -71,8 +71,8 @@ async def comando_jhon_vena(imei: str):
     print("me voy a casa")
     data_collection = collection(bd_gene("control"))
     fecha_actual = datetime.now()
-    fecha_modificada = fecha_actual - timedelta(hours=9)
     #fecha_modificada = fecha_actual - timedelta(hours=1)
+    fecha_modificada = fecha_actual - timedelta(hours=1)
     cont =0
     print(fecha_actual)
     print(fecha_modificada)
@@ -82,7 +82,10 @@ async def comando_jhon_vena(imei: str):
 
 
 
-    async for notificacion in data_collection.find({"fecha_creacion": {"$lte": fecha_modificada}},{"_id":0}).sort({"fecha_creacion":-1}):
+    async for notificacion in data_collection.find({"$and": [{"fecha_creacion": {"$lte": fecha_modificada}},{"estado":3},{"user":"jhonvena"}]},{"_id":0}).sort({"fecha_creacion":-1}):
+        cont =cont+1
+        notificacions.append(notificacion)
+    async for notificacion in data_collection.find({"$and": [{"fecha_creacion": {"$gte": fecha_modificada}},{"user":"jhonvena"}]},{"_id":0}).sort({"fecha_creacion":-1}):
         cont =cont+1
         notificacions.append(notificacion)
     print(cont)
