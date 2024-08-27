@@ -103,7 +103,7 @@ async def comando_jhon_vena(imei: str):
     consulta_J = (
         "SELECT * FROM contenedores WHERE telemetria_id = %s"
     )
-    curB.execute(consulta_J, (14872))
+    curB.execute(consulta_J, (14872,))
     for data in curB :
         consulta_mysql.append(data)
     
