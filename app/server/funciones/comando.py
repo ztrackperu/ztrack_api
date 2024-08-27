@@ -84,9 +84,11 @@ async def comando_jhon_vena(imei: str):
 
     async for notificacion in data_collection.find({"$and": [{"fecha_creacion": {"$lte": fecha_modificada}},{"estado":3},{"user":"jhonvena"}]},{"_id":0}).sort({"fecha_creacion":-1}):
         cont =cont+1
+        notificacion['validacion']=None
         notificacions.append(notificacion)
     async for notificacion in data_collection.find({"$and": [{"fecha_creacion": {"$gte": fecha_modificada}},{"user":"jhonvena"}]},{"_id":0}).sort({"fecha_creacion":-1}):
         cont =cont+1
+        notificacion['validacion']=None
         notificacions.append(notificacion)
     print(cont)
     res ={
