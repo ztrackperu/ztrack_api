@@ -128,17 +128,9 @@ async def Guardar_Datos(ztrack_data: dict) -> dict:
     #COLECCION ESPECIFICA PARA EL CONTROL
     control_collection = collection(bd_gene("control"))
     #AQUI SE GUARDA LA TRAMA 
-    traer_id = []
-    ids_collection = collection("ids")
-    async for notificacion in ids_collection.find({"id":1},{"_id":0}):
-        print(notificacion)
-        traer_id.append(notificacion)
-    id_comando =  traer_id[0]['comando_id'] +1 if len(traer_id)!=0 else 1
-    ztrack_data['id']=id_comando
+
     notificacion = await data_collection.insert_one(ztrack_data)
-    updated_ids = await ids_collection.update_one(
-        {"id": 1}, {"$set": {"comando_id":id_comando}}
-    )
+
     new_notificacion = await data_collection.find_one({"_id": notificacion.inserted_id},{"_id":0})
     #Verificar que exista el dispositivo en el registro
     dispositivo_encontrado = await dispositivos_collection.find_one({"imei": ztrack_data['i'],"estado":1},{"_id":0})

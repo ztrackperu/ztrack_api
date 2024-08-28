@@ -14,6 +14,15 @@ def bd_gene(imei):
 async def GuardarComandos(ztrack_data: dict) -> dict:
     #dat = ztrack_data['fecha']
     #print(ztrack_data)
+    traer_id = []
+    ids_collection = collection("ids")
+    async for notificacion in ids_collection.find({"id":1},{"_id":0}):
+        print(notificacion)
+        traer_id.append(notificacion)
+    print(traer_id)
+    id_comando =  traer_id[0]['comando_id'] +1 if len(traer_id)!=0 else 1
+    ztrack_data['id']=id_comando
+
     data_collection = collection(bd_gene("control"))
     fet =datetime.now()
     ztrack_data['fecha_creacion'] = fet
@@ -22,6 +31,9 @@ async def GuardarComandos(ztrack_data: dict) -> dict:
     if encontrado :
         return 0
     notificacion = await data_collection.insert_one(ztrack_data)
+    updated_ids = await ids_collection.update_one(
+        {"id": 1}, {"$set": {"comando_id":id_comando}}
+    )
     new_notificacion = await data_collection.find_one({"_id": notificacion.inserted_id},{"_id":0})
     return new_notificacion
 
@@ -33,6 +45,16 @@ async def GuardarComandos_libre(ztrack_data: dict) -> dict:
     ztrack_data['fecha_creacion'] = fet
     #primero consultar si ya existe un comando pendiente 
     conteo =[]
+
+    traer_id = []
+    ids_collection = collection("ids")
+    async for notificacion in ids_collection.find({"id":1},{"_id":0}):
+        print(notificacion)
+        traer_id.append(notificacion)
+    print(traer_id)
+    id_comando =  traer_id[0]['comando_id'] +1 if len(traer_id)!=0 else 1
+    ztrack_data['id']=id_comando
+
     async for notificacionok in  data_collection.find({"estado":1},{"_id":0}):
         conteo.append(notificacionok)
   
@@ -40,6 +62,9 @@ async def GuardarComandos_libre(ztrack_data: dict) -> dict:
         return 0
 
     notificacion = await data_collection.insert_one(ztrack_data)
+    updated_ids = await ids_collection.update_one(
+        {"id": 1}, {"$set": {"comando_id":id_comando}}
+    )
     new_notificacion = await data_collection.find_one({"_id": notificacion.inserted_id},{"_id":0})
     return new_notificacion
 
@@ -50,7 +75,19 @@ async def GuardarComandos_super_libre(ztrack_data: dict) -> dict:
     fet =datetime.now()
     ztrack_data['fecha_creacion'] = fet
 
+    traer_id = []
+    ids_collection = collection("ids")
+    async for notificacion in ids_collection.find({"id":1},{"_id":0}):
+        print(notificacion)
+        traer_id.append(notificacion)
+    print(traer_id)
+    id_comando =  traer_id[0]['comando_id'] +1 if len(traer_id)!=0 else 1
+    ztrack_data['id']=id_comando
+
     notificacion = await data_collection.insert_one(ztrack_data)
+    updated_ids = await ids_collection.update_one(
+        {"id": 1}, {"$set": {"comando_id":id_comando}}
+    )
     new_notificacion = await data_collection.find_one({"_id": notificacion.inserted_id},{"_id":0})
     return new_notificacion
 
