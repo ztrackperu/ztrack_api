@@ -2,7 +2,8 @@ import json
 from server.database import collection ,collectionTotal ,conexion_externa
 from bson import regex
 from datetime import datetime,timedelta
-#import mysql.connector
+import mysql.connector
+
 
 def bd_gene(imei):
     fet =datetime.now()
@@ -13,9 +14,120 @@ def bd_gene(imei):
 
 async def analisis_proceso():
     data_collection = collection("procesos")
+    comandos_collection = collection(bd_gene("control"))
+
     encontrado = await data_collection.find_one({"estado":1},{"_id":0})
     if encontrado :
-        print(encontrado)
+        print(encontrado)      
+        consulta_mysql =[]
+        #pedir ultimos datos con esas carcteristicas
+        cnx = mysql.connector.connect(
+            host= "localhost",
+            user= "ztrack2023",
+            passwd= "lpmp2018",
+            database="zgroupztrack"
+        )
+        curB = cnx.cursor()
+        consulta_J = (
+            "SELECT * FROM contenedores WHERE telemetria_id = %s"
+        )
+        curB.execute(consulta_J, (14872,))
+        for data in curB :
+            consulta_mysql.append(data)
+            #print(data[0])
+        obj_vali ={
+            "menbrete":consulta_mysql[0][4],
+            "power_state":consulta_mysql[0][53],
+            "set_point_co2":consulta_mysql[0][61],
+            "sp_ethyleno":consulta_mysql[0][79],
+            "inyeccion_hora":consulta_mysql[0][77],
+            "humidity_set_point":consulta_mysql[0][56],
+            "set_point":consulta_mysql[0][10],
+            "avl":consulta_mysql[0][27],
+            "controlling_mode":consulta_mysql[0][54],
+            "fresh_air_mode":consulta_mysql[0][57],
+        }
+        notificacion = await comandos_collection.insert_one(comando_json)
+
+        curB.close()
+        cnx.close()
+
+        if(encontrado['estado_proceso']==0):
+            #analizar que todo los parametrso de homogenizacion esten listos 
+            if(obj_vali['set_point']==1) :
+                if(encontrado['temperatura_homogenizacion']==obj_vali['set_point']) :
+                    if(encontrado['humedad_homogenizacion']==obj_vali['humidity_set_point']) :
+                        #actualizar proceso a 1 
+                        updated_notificacion = await data_collection.update_one(
+                        {"id": encontrado['id']
+                        }, {"$set": {"estado_proceso":1}}
+                        )
+                        print("parametros de homogenizacion validados")
+                    else:
+                        #enviar comando de humedad de no existir
+                        buscar_comando = await comandos_collection.find_one({"tipo": 6, "estado":3,"user":"jhonvena"},{"_id":0})
+                        if buscar_comando  :
+                            # no hacer nada ,esperar a que se termine
+                            print("esperamos que se ejecute la humedad")
+                        else :
+                            #ingresar comando de humedad 
+                            #humedad_homogenizacion
+                            comando_json = {
+                                "imei": "866782048942516",
+                                "estado": 3,
+                                "comando": "Trama_Writeout(4,"+encontrado['humedad_homogenizacion']+",100)",
+                                "evento": "change order for humidity ",
+                                "user": "jhonvena",
+                                "receta": encontrado['id'],
+                                "tipo": 6,
+                                "dato": encontrado['humedad_homogenizacion']
+                            }
+                            notificacion = await comandos_collection.insert_one(comando_json)
+
+                else :
+                    #enviar comando de humedad de no existir
+                    buscar_comando = await comandos_collection.find_one({"tipo": 7, "estado":3,"user":"jhonvena"},{"_id":0})
+                    if buscar_comando  :
+                        # no hacer nada ,esperar a que se termine
+                        print("esperamos que se ejecute la temperatura")
+                    else :
+                        #ingresar comando de humedad 
+                        #humedad_homogenizacion
+                        comando_json = {
+                            "imei": "866782048942516",
+                            "estado": 3,
+                            "comando": "Trama_Writeout(0,"+encontrado['temperatura_homogenizacion']+",100)",
+                            "evento": "change order for temperature",
+                            "user": "jhonvena",
+                            "receta": encontrado['id'],
+                            "tipo": 7,
+                            "dato": encontrado['temperatura_homogenizacion']
+                        }
+                        notificacion = await comandos_collection.insert_one(comando_json)
+
+            else :
+                #enviar comando de humedad de no existir
+                buscar_comando = await comandos_collection.find_one({"tipo": 1, "estado":3,"user":"jhonvena"},{"_id":0})
+                if buscar_comando  :
+                    # no hacer nada ,esperar a que se termine
+                    print("esperamos que se ejecute el encendido")
+                else :
+                    #ingresar comando de humedad 
+                    #humedad_homogenizacion
+                    comando_json = {
+                        "imei": "866782048942516",
+                        "estado": 3,
+                        "comando": "Trama_Writeout(29,1,1)",
+                        "evento": "change order for temperature",
+                        "user": "jhonvena",
+                        "receta": encontrado['id'],
+                        "tipo": 1,
+                        "dato": 1
+                    }
+                    notificacion = await comandos_collection.insert_one(comando_json)
+
+
+
         return encontrado
     else :
         return 0

@@ -64,6 +64,22 @@ async def RetrieveComandos(imei: str):
         notificacions.append(notificacion)
     return notificacions
 
+async def RetrieveComandos_oficial(imei: str):
+    notificacions = []
+    data_collection = collection(bd_gene("control"))
+    async for notificacion in data_collection.find({"imei":imei,"estado":3,},{"_id":0}).sort({"fecha_creacion":-1}):
+        notificacions.append(notificacion)
+    return notificacions
+
+async def RetrieveComandos_oficial(imei: str):
+    notificacions = []
+    data_collection = collection(bd_gene("control"))
+    #{user:"jhonvena",$or:[{status:0},{status:2}]}
+    async for notificacion in data_collection.find({"imei":imei ,"user":"jhonvena","$or":[{"status":1},{"status":2}]},{"_id":0}).sort({"fecha_creacion":-1}):
+        notificacions.append(notificacion)
+    return notificacions
+
+
 def validar_tipo(dato,tipo,json_v):
     res=None
     if(tipo==1):

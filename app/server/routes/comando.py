@@ -10,6 +10,8 @@ from server.funciones.comando import (
     GuardarComandos_libre,
     GuardarComandos_super_libre,
     comando_jhon_vena,
+    RetrieveComandos_test,
+    RetrieveComandos_oficial,
 )
 #Aqui importamos el modelo necesario para la clase 
 from server.models.comando import (
@@ -48,6 +50,20 @@ async def add_comando_2(datos: ComandoSchema = Body(...)):
     print("*******")
 
     return new_notificacion
+
+@router.get("/buscar/testapi/{imei}", response_description="Datos recuperados")
+async def get_comandos_testapi(imei:str):
+    notificacions = await RetrieveComandos_test(imei)
+    if notificacions:
+        return ResponseModel(notificacions, "Datos  recuperados exitosamente.")
+    return ResponseModel(notificacions, "Lista vacía devuelta")
+
+@router.get("/buscar/oficial/{imei}", response_description="Datos recuperados")
+async def get_comandos_oficial(imei:str):
+    notificacions = await RetrieveComandos_oficial(imei)
+    if notificacions:
+        return ResponseModel(notificacions, "Datos  recuperados exitosamente.")
+    return ResponseModel(notificacions, "Lista vacía devuelta")
 
 @router.get("/buscar/{imei}", response_description="Datos recuperados")
 async def get_comandos(imei:str):
