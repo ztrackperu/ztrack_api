@@ -94,17 +94,18 @@ async def validar_comando():
 
 
     #consultamos con mysql los datos en cuestion para validarlos de forma automatica
-    async for notificacion in control_collection.find({"$or":[{"status":1},{"status":2}] }):
+    async for notificacion in control_collection.find({"$or":[{"status":1},{"status":2}] },{"_id":0}):
         #print(notificacion)
-        notificacions.append(notificacion)
         valor =validar_tipo(notificacion['dato'],notificacion['tipo'],obj_vali)
         if valor=="ok":
             #actualizar status a 3 y estado a 0 
-            actualizar_comando = await control_collection.update_one({"_id": notificacion['_id']},{"$set":{"estado": 0,"status":3,"fecha_ejecucion":fecha_actual}})
+            actualizar_comando = await control_collection.update_one({"id": notificacion['id']},{"$set":{"estado": 0,"status":3,"fecha_ejecucion":fecha_actual}})
         else:
             if fecha_modificada>notificacion['fecha_creacion'] :
                 #cancelar comando
-                actualizar_comando = await control_collection.update_one({"_id": notificacion['_id']},{"$set":{"estado": 0,"status":4,"fecha_ejecucion":fecha_actual}})
+                actualizar_comando = await control_collection.update_one({"id": notificacion['id']},{"$set":{"estado": 0,"status":4,"fecha_ejecucion":fecha_actual}})
+        #notificacion['_id']=0
+        notificacions.append(notificacion)
 
     return notificacions
 
@@ -127,7 +128,17 @@ async def Guardar_Datos(ztrack_data: dict) -> dict:
     #COLECCION ESPECIFICA PARA EL CONTROL
     control_collection = collection(bd_gene("control"))
     #AQUI SE GUARDA LA TRAMA 
+    traer_id = []
+    ids_collection = collection("ids")
+    async for notificacion in ids_collection.find({"id":1},{"_id":0}):
+        print(notificacion)
+        traer_id.append(notificacion)
+    id_comando =  traer_id[0]['comando_id'] +1 if len(traer_id)!=0 else 1
+    ztrack_data['id']=id_comando
     notificacion = await data_collection.insert_one(ztrack_data)
+    updated_ids = await ids_collection.update_one(
+        {"id": 1}, {"$set": {"comando_id":id_comando}}
+    )
     new_notificacion = await data_collection.find_one({"_id": notificacion.inserted_id},{"_id":0})
     #Verificar que exista el dispositivo en el registro
     dispositivo_encontrado = await dispositivos_collection.find_one({"imei": ztrack_data['i'],"estado":1},{"_id":0})

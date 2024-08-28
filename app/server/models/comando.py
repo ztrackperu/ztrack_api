@@ -15,6 +15,8 @@ class ComandoSchema(BaseModel):
     tipo : Optional[int] |None =0
     status : Optional[int] |None =1
     dato : Optional[float] | None =None
+    id : Optional[int] |None =0
+
 
 
     class Config:
