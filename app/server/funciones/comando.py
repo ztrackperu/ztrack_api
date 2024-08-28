@@ -64,7 +64,7 @@ async def RetrieveComandos(imei: str):
         notificacions.append(notificacion)
     return notificacions
 
-async def RetrieveComandos_oficial(imei: str):
+async def RetrieveComandos_test(imei: str):
     notificacions = []
     data_collection = collection(bd_gene("control"))
     async for notificacion in data_collection.find({"imei":imei,"estado":3,},{"_id":0}).sort({"fecha_creacion":-1}):
