@@ -3,6 +3,8 @@ from server.database import collection ,collectionTotal
 from bson import regex
 from datetime import datetime,timedelta
 from fastapi_pagination.ext.motor import paginate
+import mysql.connector
+
 
 def bd_gene(imei):
     fet =datetime.now()
@@ -10,6 +12,101 @@ def bd_gene(imei):
     part = fet.strftime('_%m_%Y')
     colect ="D_"+imei+part
     return colect
+
+def validar_tipo(dato,tipo,json_v):
+    res=None
+    if(tipo==1):
+        if(json_v['power_state']==dato):
+            res="ok"
+    elif(tipo==2):
+        if(json_v['power_state']==dato):
+            res="ok"
+    elif(tipo==3):
+        if(json_v['set_point_co2']==dato):
+            res="ok"
+    elif(tipo==4):
+        if(json_v['sp_ethyleno']==dato):
+            res="ok"
+    elif(tipo==5):
+        if(json_v['inyeccion_hora']==dato):
+            res="ok"
+    elif(tipo==6):
+        if(json_v['humidity_set_point']==dato):
+            res="ok"
+    elif(tipo==7):
+        if(json_v['set_point']==dato):
+            res="ok"
+    elif(tipo==8):
+        if(json_v['avl']==dato):
+            res="ok"
+    elif(tipo==9):
+        if(json_v['avl']==dato):
+            res="ok"
+    elif(tipo==10):
+        if(json_v['controlling_mode']==dato):
+            res="ok"
+    #elif(tipo==11):
+        #if(json_v['power_sate']==dato):
+            #res="ok"
+    elif(tipo==12):
+        if(json_v['fresh_air_mode']==dato):
+            res="ok"
+    else:
+        res=None
+    return res
+   
+
+async def validar_comando():
+    consulta_mysql =[]
+    #pedir ultimos datos con esas carcteristicas
+    cnx = mysql.connector.connect(
+        host= "localhost",
+        user= "ztrack2023",
+        passwd= "lpmp2018",
+        database="zgroupztrack"
+    )
+    curB = cnx.cursor()
+    consulta_J = (
+        "SELECT * FROM contenedores WHERE telemetria_id = %s"
+    )
+    curB.execute(consulta_J, (14872,))
+    for data in curB :
+        consulta_mysql.append(data)
+        #print(data[0])
+    obj_vali ={
+        "menbrete":consulta_mysql[0][4],
+        "power_state":consulta_mysql[0][53],
+        "set_point_co2":consulta_mysql[0][61],
+        "sp_ethyleno":consulta_mysql[0][79],
+        "inyeccion_hora":consulta_mysql[0][77],
+        "humidity_set_point":consulta_mysql[0][56],
+        "set_point":consulta_mysql[0][10],
+        "avl":consulta_mysql[0][27],
+        "controlling_mode":consulta_mysql[0][54],
+        "fresh_air_mode":consulta_mysql[0][57],
+    }
+    curB.close()
+    cnx.close()
+    control_collection = collection(bd_gene("control"))
+    notificacions = []
+    fecha_actual =datetime.now()
+    fecha_modificada = fecha_actual - timedelta(hours=1)
+
+
+    #consultamos con mysql los datos en cuestion para validarlos de forma automatica
+    async for notificacion in control_collection.find({"$or":[{"status":1},{"status":2}] }):
+        #print(notificacion)
+        notificacions.append(notificacion)
+        valor =validar_tipo(notificacion['dato'],notificacion['tipo'],obj_vali)
+        if valor=="ok":
+            #actualizar status a 3 y estado a 0 
+            actualizar_comando = await control_collection.update_one({"_id": notificacion['_id']},{"$set":{"estado": 0,"status":3,"fecha_ejecucion":fecha_actual}})
+        else:
+            if fecha_modificada>notificacion['fecha_creacion'] :
+                #cancelar comando
+                actualizar_comando = await control_collection.update_one({"_id": notificacion['_id']},{"$set":{"estado": 0,"status":4,"fecha_ejecucion":fecha_actual}})
+
+    return notificacions
 
 
 async def Guardar_Datos(ztrack_data: dict) -> dict:
@@ -47,7 +144,7 @@ async def Guardar_Datos(ztrack_data: dict) -> dict:
     if control_encontrado :
         veces_control = control_encontrado['estado']-1 if control_encontrado['comando'] else 0
         comando = control_encontrado['comando']
-        actualizar_comando = await control_collection.update_one({"imei": ztrack_data['i'],"estado":1},{"$set":{"estado": veces_control,"fecha_ejecucion":fet}})
+        actualizar_comando = await control_collection.update_one({"imei": ztrack_data['i'],"estado":1},{"$set":{"estado": veces_control,"status":2,"fecha_ejecucion":fet}})
 
     return comando
 
@@ -225,4 +322,7 @@ async def obtener_madurador() -> dict:
     async for mad in madurador.find({ "$and": [{"created_at": {"$gte": datetime.fromisoformat("2024-05-07T00:00:00.000Z")}},{"created_at": {"$lte": datetime.fromisoformat("2024-05-09T23:59:59.999Z")}}]},{"_id":0}):
         notificacions.append(mad)
     return  notificacions
+
+
+
 
