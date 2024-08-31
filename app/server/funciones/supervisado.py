@@ -51,6 +51,15 @@ async def analisis_supervisado_ok():
         curB.close()
         cnx.close()
         mensaje = obj_vali
+        print("--------------------")
+        print("sobre le dato validado actual")
+        print(obj_vali['sp_ethyleno'])
+        print("--------------------")
+        print("sobre el control supervisado")
+        print(encontrado['sp_etileno'])
+
+
+
     return mensaje
 
 
