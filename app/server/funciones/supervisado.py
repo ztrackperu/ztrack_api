@@ -57,8 +57,13 @@ async def analisis_supervisado_ok():
         print("--------------------")
         print("sobre el control supervisado")
         print(encontrado['sp_etileno'])
+        print("--------------------")
+        if(float(encontrado['sp_etileno'])==float(obj_vali['sp_ethyleno'])):
+            val ="SONIGUALES NO HACER ACCIONES"
+        else :
+            val = "PROBLEMAS ENVIAR COMANDO PARA REGULIZAR"
 
-
+        print(val)
 
     return mensaje
 
