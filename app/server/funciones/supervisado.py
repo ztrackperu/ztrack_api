@@ -16,6 +16,9 @@ async def analisis_supervisado_ok():
     data_collection = collection("supervisado")
     encontrado = await data_collection.find_one({"estado":1},{"_id":0})
     mensaje = "SIN CONTROL SUPERVISADO"
+    hora_actual = datetime.now()
+    #quitar 20 minutos a hora actual para validar
+    fecha_modificada = hora_actual - timedelta(minutes=20)
     if encontrado :
         print(encontrado)      
         consulta_mysql =[]
@@ -45,11 +48,24 @@ async def analisis_supervisado_ok():
             "avl":consulta_mysql[0][27],
             "controlling_mode":consulta_mysql[0][54],
             "fresh_air_mode":consulta_mysql[0][57],
+            "ultima_conexion": consulta_mysql[0][13],
         }
         #notificacion = await comandos_collection.insert_one(comando_json)
 
         curB.close()
         cnx.close()
+        if(fecha_modificada>obj_vali['ultima_conexion']):
+            mensaje_hora ="SE HA PERIDO CONEXION MAS DE 20 MINUTOS , NO EJCUTAR COMANDOS "
+        else:
+            mensaje_hora ="CONEXION ESTABLE "
+
+        print("--------------------")
+        print(mensaje_hora)
+        print("--------------------")
+
+
+
+        
         mensaje = obj_vali
         print("--------------------")
         print("sobre le dato validado actual")
@@ -57,7 +73,7 @@ async def analisis_supervisado_ok():
         print("--------------------")
         print("sobre el control supervisado")
         print(encontrado['sp_etileno'])
-        print("--------------------")
+        print("--------------------")     
         if(float(encontrado['sp_etileno'])==float(obj_vali['sp_ethyleno'])):
             val ="SONIGUALES NO HACER ACCIONES"
         else :
