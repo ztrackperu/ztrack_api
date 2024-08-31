@@ -8,6 +8,8 @@ from server.routes.datos import router as DatosRouter
 from server.routes.comando import router as ComandosRouter
 from server.routes.receta import router as RecetasRouter
 from server.routes.proceso import router as ProcesosRouter
+from server.routes.supervisado import router as SupervisadosRouter
+
 
 
 
@@ -33,7 +35,7 @@ app.include_router(DatosRouter, tags=["Datos"], prefix="/Datos")
 app.include_router(ComandosRouter, tags=["Comandos"], prefix="/Comandos")
 app.include_router(RecetasRouter, tags=["Recetas"], prefix="/Recetas")
 app.include_router(ProcesosRouter, tags=["Procesos"], prefix="/Procesos")
-
+app.include_router(SupervisadosRouter, tags=["Supervisador"], prefix="/Supervisador")
 
 
 

@@ -7,6 +7,7 @@ class IdSchema(BaseModel):
     receta_id : Optional[int] |None =0
     proceso_id : Optional[int] |None =0
     comando_id : Optional[int] |None =0
+    supervisado_id : Optional[int] |None =0
 
 
     class Config:
