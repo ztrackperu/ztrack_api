@@ -12,8 +12,50 @@ def bd_gene(imei):
     colect ="D_"+imei+part
     return colect
 
+async def analisis_supervisado_ok():
+    data_collection = collection("supervisado")
+    encontrado = await data_collection.find_one({"estado":1},{"_id":0})
+    mensaje = "SIN CONTROL SUPERVISADO"
+    if encontrado :
+        print(encontrado)      
+        consulta_mysql =[]
+        #pedir ultimos datos con esas carcteristicas
+        cnx = mysql.connector.connect(
+            host= "localhost",
+            user= "ztrack2023",
+            passwd= "lpmp2018",
+            database="zgroupztrack"
+        )
+        curB = cnx.cursor()
+        consulta_J = (
+            "SELECT * FROM contenedores WHERE telemetria_id = %s"
+        )
+        curB.execute(consulta_J, (14872,))
+        for data in curB :
+            consulta_mysql.append(data)
+            #print(data[0])
+        obj_vali ={
+            "menbrete":consulta_mysql[0][4],
+            "power_state":consulta_mysql[0][53],
+            "set_point_co2":consulta_mysql[0][61],
+            "sp_ethyleno":consulta_mysql[0][79],
+            "inyeccion_hora":consulta_mysql[0][77],
+            "humidity_set_point":consulta_mysql[0][56],
+            "set_point":consulta_mysql[0][10],
+            "avl":consulta_mysql[0][27],
+            "controlling_mode":consulta_mysql[0][54],
+            "fresh_air_mode":consulta_mysql[0][57],
+        }
+        #notificacion = await comandos_collection.insert_one(comando_json)
+
+        curB.close()
+        cnx.close()
+        mensaje = obj_vali
+    return mensaje
+
+
 async def analisis_supervisado():
-    data_collection = collection("procesos")
+    data_collection = collection("supervisado")
     comandos_collection = collection(bd_gene("control"))
 
     encontrado = await data_collection.find_one({"estado":1},{"_id":0})
@@ -47,7 +89,7 @@ async def analisis_supervisado():
             "controlling_mode":consulta_mysql[0][54],
             "fresh_air_mode":consulta_mysql[0][57],
         }
-        notificacion = await comandos_collection.insert_one(comando_json)
+        #notificacion = await comandos_collection.insert_one(comando_json)
 
         curB.close()
         cnx.close()

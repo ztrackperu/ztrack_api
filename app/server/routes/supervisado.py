@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 #aqui pedimos las funciones que incluyen nuestro CRUD
 from server.funciones.supervisado import (
     GuardarSupervisado,
+    analisis_supervisado_ok,
 )
 #Aqui importamos el modelo necesario para la clase 
 from server.models.supervisado import (
@@ -24,6 +25,17 @@ async def add_comando(datos: SupervisadoSchema = Body(...)):
     print("*******")
 
     return new_notificacion
+
+#secuencua para analizar si proceso sigue activo en  la plataforma ztrack
+@router.get("/Analizar/", response_description="Datos procesados")
+async def procesar_comandos():
+    notificacions = await analisis_supervisado_ok()
+    if notificacions:
+        return ResponseModel(notificacions, "Datos  recuperados exitosamente.")
+    return ResponseModel(notificacions, "Lista vacía devuelta xx")
+
+
+
 
 
 @router.post("/libre/", response_description="Datos agregados a la base de datos.")
