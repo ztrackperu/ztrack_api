@@ -278,7 +278,7 @@ async def ProcesarData():
             print("**********************")
             if longitud_trama==1:
                 #procesar datos 
-                if notificacion['imei']=="866782048942516" or notificacion['imei']=="860389052714546":
+                if notificacion['imei']=="866782048942516" or notificacion['imei']=="860389052714546" or notificacion['imei']=="868428040102299":
                     vali =transformado
                     #idProgre=1
                     idProgre=id_con
@@ -291,6 +291,9 @@ async def ProcesarData():
 
                     if(notificacion['imei']=="860389052714546"):
                         tele_dispositivo =14876
+                        valorP =  0
+                    elif (notificacion['imei']=="868428040102299"):
+                        tele_dispositivo =14873
                         valorP =  0
                     else:
                         valorP = 5 if int(comparador1)==1 else 0
