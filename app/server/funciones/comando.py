@@ -245,6 +245,13 @@ def convertir_a_float(dato):
     except ValueError:
         return None
 
+
+def pasar_temp(numero):
+    if -40 <= numero <= 130:
+        return numero
+    else:
+        return None
+
 async def ProcesarData():
     print("yamos jodidos")
     dispositivos=[]
@@ -292,28 +299,33 @@ async def ProcesarData():
                     if(notificacion['imei']=="860389052714546"):
                         tele_dispositivo =14876
                         valorP =  0
+                        lat = 0
+                        lon =0
                     elif (notificacion['imei']=="868428040102299"):
                         tele_dispositivo =14873
                         valorP =  0
+                        lat = 38.6458
+                        lon = -121.3880
                     else:
                         valorP = 5 if int(comparador1)==1 else 0
-
+                        lat = 35.7396
+                        lon = -119.238
 
                     objetoV = {
                             "id": idProgre, 
-                            "set_point": convertir_a_float(vali[1]), 
-                            "temp_supply_1": convertir_a_float(vali[2]),
-                            "temp_supply_2": convertir_a_float(vali[3]),
-                            "return_air": convertir_a_float(vali[4]), 
-                            "evaporation_coil": convertir_a_float(vali[5]),
-                            "condensation_coil": convertir_a_float(vali[6]),
-                            "compress_coil_1": convertir_a_float(vali[7]),
-                            "compress_coil_2": convertir_a_float(vali[8]), 
-                            "ambient_air": convertir_a_float(vali[9]), 
-                            "cargo_1_temp": convertir_a_float(vali[10]),
-                            "cargo_2_temp": convertir_a_float(vali[11]), 
-                            "cargo_3_temp": convertir_a_float(vali[12]), 
-                            "cargo_4_temp": convertir_a_float(vali[13]), 
+                            "set_point": pasar_temp(convertir_a_float(vali[1])), 
+                            "temp_supply_1": pasar_temp(convertir_a_float(vali[2])),
+                            "temp_supply_2": pasar_temp(convertir_a_float(vali[3])),
+                            "return_air": pasar_temp(convertir_a_float(vali[4])), 
+                            "evaporation_coil": pasar_temp(convertir_a_float(vali[5])),
+                            "condensation_coil": pasar_temp(convertir_a_float(vali[6])),
+                            "compress_coil_1": pasar_temp(convertir_a_float(vali[7])),
+                            "compress_coil_2": pasar_temp(convertir_a_float(vali[8])), 
+                            "ambient_air": pasar_temp(convertir_a_float(vali[9])), 
+                            "cargo_1_temp": pasar_temp(convertir_a_float(vali[10])),
+                            "cargo_2_temp": pasar_temp(convertir_a_float(vali[11])), 
+                            "cargo_3_temp": pasar_temp(convertir_a_float(vali[12])), 
+                            "cargo_4_temp": pasar_temp(convertir_a_float(vali[13])), 
                             "relative_humidity": convertir_a_float(vali[14]), 
                             "avl": convertir_a_float(vali[15]), 
                             "suction_pressure": convertir_a_float(vali[16]), 
@@ -364,8 +376,8 @@ async def ProcesarData():
                             "battery_voltage": convertir_a_float(0),
                             "power_trip_duration":convertir_a_float(0),
                             "modelo": "THERMOKING",
-                            "latitud": 35.7396,
-                            "longitud":  -119.238,
+                            "latitud": lat,
+                            "longitud":  lon,
                             "created_at": trama['fecha'],
                             "telemetria_id": tele_dispositivo,
                             "inyeccion_etileno": 0,
