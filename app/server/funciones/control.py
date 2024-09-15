@@ -33,7 +33,7 @@ async def GuardarControl(ztrack_data: dict) -> dict:
     ztrack_data['inicio_control'] = dentro_10_minutos
     ztrack_data['fin_control'] = dentro_24_horas
     #MANUAL_RIPE(17.80,90,120,5.00)
-    ztrack_data['comando'] = 'MANUAL_RIPE('+ztrack_data['temperatura']+','+ztrack_data['humedad']+','+ztrack_data['etileno']+','+ztrack_data['co2']+')'
+    ztrack_data['comando'] = 'MANUAL_RIPE('+str(ztrack_data['temperatura'])+','+str(ztrack_data['humedad'])+','+str(ztrack_data['etileno'])+','+str(ztrack_data['co2'])+')'
 
     #primero consultar si ya existe un comando pendiente 
     encontrado = await data_collection.find_one({"imei":ztrack_data['imei'],"estado":1},{"_id":0})
