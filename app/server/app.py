@@ -9,10 +9,7 @@ from server.routes.comando import router as ComandosRouter
 from server.routes.receta import router as RecetasRouter
 from server.routes.proceso import router as ProcesosRouter
 from server.routes.supervisado import router as SupervisadosRouter
-
-
-
-
+from server.routes.control import router as ControlRouter
 
 app = FastAPI(
     title="Integracion ZTRACK API TEST",
@@ -36,7 +33,7 @@ app.include_router(ComandosRouter, tags=["Comandos"], prefix="/Comandos")
 app.include_router(RecetasRouter, tags=["Recetas"], prefix="/Recetas")
 app.include_router(ProcesosRouter, tags=["Procesos"], prefix="/Procesos")
 app.include_router(SupervisadosRouter, tags=["Supervisador"], prefix="/Supervisador")
-
+app.include_router(ControlRouter, tags=["Control"], prefix="/Control")
 
 
 @app.get("/", tags=["Root"])
