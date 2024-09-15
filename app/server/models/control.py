@@ -36,7 +36,7 @@ class ControlSchema(BaseModel):
         json_schema_extra = {
             "example": {
                 "imei":"123456789123458",
-                "comando": "MANUAL_RIPE(17.80,90,120,5.00)",
+                #"comando": "MANUAL_RIPE(17.80,90,120,5.00)",
                 "humedad":90,
                 "co2":5,
                 "temperatura":18.5,
