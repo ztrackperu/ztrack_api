@@ -30,8 +30,8 @@ async def GuardarControl(ztrack_data: dict) -> dict:
 
     data_collection = collection(bd_gene("proceso"))
     ztrack_data['fecha_creacion'] = ahora
-    ztrack_data['inicio_control'] = ahora
-    ztrack_data['fin_control'] = ahora
+    ztrack_data['inicio_control'] = dentro_10_minutos
+    ztrack_data['fin_control'] = dentro_24_horas
     #primero consultar si ya existe un comando pendiente 
     encontrado = await data_collection.find_one({"imei":ztrack_data['imei'],"estado":1},{"_id":0})
     if encontrado :
