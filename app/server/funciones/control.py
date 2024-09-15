@@ -91,9 +91,11 @@ async def RetrieveControl_oficial(imei: str,user:str):
 async def Procesar_control_oficial():
     #consultar todos los pendientes en tabla procesos 
     data_collection = collection(bd_gene("control"))
+    print("aqui ocurre la magia jajaja")
     async for control in data_collection.find({"estado":1},{"_id":0}).sort({"fecha_creacion":-1}):
         #aqui tenemos los procesos activos
         #verificar si el la fecha de  ya incio con respecto a la fecha actual
+        print("chelas")
         print(control)
         ahora = datetime.now()
         if(ahora >control['inicio_control']):
