@@ -43,3 +43,10 @@ async def get_control_oficial(imei:str,user:str):
         return ResponseModel(notificacions, "Datos  recuperados exitosamente.")
     return ResponseModel(notificacions, "Lista vacía devuelta")
 
+@router.get("/buscar/procesar", response_description="Datos recuperados")
+async def get_procesar_oficial():
+    notificacions = await Procesar_control_oficial()
+    if notificacions:
+        return ResponseModel(notificacions, "Datos  recuperados exitosamente.")
+    return ResponseModel(notificacions, "Lista vacía devuelta")
+

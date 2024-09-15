@@ -43,9 +43,7 @@ async def GuardarControl(ztrack_data: dict) -> dict:
     if encontrado :
         return 0
     notificacion = await data_collection.insert_one(ztrack_data)
-    updated_ids = await ids_collection.update_one(
-        {"id": 1}, {"$set": {"proceso_id":id_proceso}}
-    )
+
     new_notificacion = await data_collection.find_one({"_id": notificacion.inserted_id},{"_id":0})
     #procesar comando modo ripener directo al inicio
     comando_collection = collection(bd_gene("control"))
@@ -65,7 +63,9 @@ async def GuardarControl(ztrack_data: dict) -> dict:
         "id":id_comando
     }
     comando_inicial = await comando_collection.insert_one(ztrack_comando)
-
+    updated_ids = await ids_collection.update_one(
+        {"id": 1}, {"$set": {"proceso_id":id_proceso,"comando_id":id_comando}}
+    )
     return new_notificacion
 
 
@@ -91,10 +91,19 @@ async def RetrieveControl_oficial(imei: str,user:str):
 async def Procesar_control_oficial():
     #consultar todos los pendientes en tabla procesos 
     data_collection = collection(bd_gene("control"))
-    async for notificacion in data_collection.find({"estado":1},{"_id":0}).sort({"fecha_creacion":-1}):
+    async for control in data_collection.find({"estado":1},{"_id":0}).sort({"fecha_creacion":-1}):
         #aqui tenemos los procesos activos
-        #verificar si el 
-        print(notificacion)
+        #verificar si el la fecha de  ya incio con respecto a la fecha actual
+        print(control)
+        ahora = datetime.now()
+        if(ahora >control['inicio_control']):
+            #consultar en datos de mysql ultimo estado y validar nivel de etileno
+            eest="vamos a evaluar"
+        else :
+            #no pasa nada 
+            est =0 
+
+
 
     return 1
 
