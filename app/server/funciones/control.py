@@ -4,7 +4,9 @@ from bson import regex
 from datetime import datetime,timedelta
 import mysql.connector
 
-
+def formatear_numero(numero):
+    # Formatear con dos decimales
+    return f"{numero:.2f}"
 def bd_gene(imei):
     fet =datetime.now()
     #part = fet.strftime('%d_%m_%Y')
@@ -33,7 +35,7 @@ async def GuardarControl(ztrack_data: dict) -> dict:
     ztrack_data['inicio_control'] = dentro_10_minutos
     ztrack_data['fin_control'] = dentro_24_horas
     #MANUAL_RIPE(17.80,90,120,5.00)
-    ztrack_data['comando'] = 'MANUAL_RIPE('+str(ztrack_data['temperatura'])+','+str(ztrack_data['humedad'])+','+str(ztrack_data['etileno'])+','+str(ztrack_data['co2'])+')'
+    ztrack_data['comando'] = 'MANUAL_RIPE('+str(formatear_numero(ztrack_data['temperatura']))+','+str(ztrack_data['humedad'])+','+str(ztrack_data['etileno'])+','+str(formatear_numero(ztrack_data['co2']))+')'
 
     #primero consultar si ya existe un comando pendiente 
     encontrado = await data_collection.find_one({"imei":ztrack_data['imei'],"estado":1},{"_id":0})

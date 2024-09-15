@@ -12,11 +12,11 @@ class ControlSchema(BaseModel):
     ultimo_evento : Optional[str] |None = "SIN REGISTRO "
     user :Optional[str] |None ="default"
     status : Optional[int] |None =1
-    humedad :float =Field(...)
+    humedad :int =Field(...)
     co2 :float =Field(...)
     temperatura :float =Field(...)
-    etileno :float =Field(...)
-    horas :float =Field(...)
+    etileno :int =Field(...)
+    horas :int =Field(...)
     #incio de control +10 minutos de proceso
     inicio_control :Optional[datetime] |None =None
     fin_control :Optional[datetime] |None =None
