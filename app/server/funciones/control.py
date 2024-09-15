@@ -29,6 +29,7 @@ async def GuardarControl(ztrack_data: dict) -> dict:
     dentro_10_minutos = ahora + timedelta(minutes=10)  
     dentro_24_horas = ahora + timedelta(hours=24)
     ztrack_data['id']=id_proceso
+    id_comando =  traer_id[0]['comando_id'] +1 if len(traer_id)!=0 else 1
 
     data_collection = collection(bd_gene("proceso"))
     ztrack_data['fecha_creacion'] = ahora
@@ -46,6 +47,25 @@ async def GuardarControl(ztrack_data: dict) -> dict:
         {"id": 1}, {"$set": {"proceso_id":id_proceso}}
     )
     new_notificacion = await data_collection.find_one({"_id": notificacion.inserted_id},{"_id":0})
+    #procesar comando modo ripener directo al inicio
+    comando_collection = collection(bd_gene("control"))
+    ztrack_comando={
+        "imei":ztrack_data['imei'],
+        "estado":0,
+        "fecha_creacion":ahora ,
+        "fecha_ejecucion":None,
+        "comando":ztrack_data['comando'],
+        "dispositivo":ztrack_data['dispositivo'],
+        "evento":"Inicio de proceso de maduracion controlado",
+        "user":"ControlSupervisado",
+        "receta":ztrack_data['titulo'],
+        "tipo":0,
+        "status":1,
+        "dato":0,
+        "id":id_comando
+    }
+    comando_inicial = await comando_collection.insert_one(ztrack_comando)
+
     return new_notificacion
 
 
@@ -73,7 +93,7 @@ async def Procesar_control_oficial():
     data_collection = collection(bd_gene("control"))
     async for notificacion in data_collection.find({"estado":1},{"_id":0}).sort({"fecha_creacion":-1}):
         #aqui tenemos los procesos activos
-        
+        #verificar si el 
         print(notificacion)
 
     return 1
