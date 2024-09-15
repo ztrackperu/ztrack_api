@@ -424,7 +424,7 @@ async def ProcesarData():
                                                         objetoV['humidity_set_point'], objetoV['sp_ethyleno'],objetoV['compress_coil_1'], 
                                                         objetoV['power_state'],objetoV['evaporation_coil'],objetoV['controlling_mode'],
                                                         objetoV['stateProcess'], objetoV['cargo_1_temp'], objetoV['cargo_2_temp'],
-                                                        objetoV['cargo_3_temp'], objetoV['cargo_4_temp'], objetoV['fresh_air_ex_mode'], objetoV['fresh_air_ex_mode'],trama['i']  ))
+                                                        objetoV['cargo_3_temp'], objetoV['cargo_4_temp'], objetoV['fresh_air_ex_mode'], trama['i'],objetoV['telemetria_id']  ))
                     cnx.commit()
 
 

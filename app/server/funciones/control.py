@@ -72,6 +72,8 @@ async def Procesar_control_oficial():
     #consultar todos los pendientes en tabla procesos 
     data_collection = collection(bd_gene("control"))
     async for notificacion in data_collection.find({"estado":1},{"_id":0}).sort({"fecha_creacion":-1}):
+        #aqui tenemos los procesos activos
+        
         print(notificacion)
 
     return 1
