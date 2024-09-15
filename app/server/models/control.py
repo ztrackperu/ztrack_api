@@ -3,10 +3,11 @@ from datetime import  datetime
 from pydantic import BaseModel, Field
 
 class ControlSchema(BaseModel):
+    
     imei :str = Field(...)
     estado : Optional[int] |None =1
     fecha_creacion : Optional[datetime] |None = datetime.now()
-    comando : str = Field(...)
+    comando : Optional[str] |None = "No especificado"
     dispositivo : Optional[str] |None = "FAIL"
     ultimo_evento : Optional[str] |None = "SIN REGISTRO "
     user :Optional[str] |None ="default"
@@ -28,9 +29,9 @@ class ControlSchema(BaseModel):
     hora_ultima_inyeccion : Optional[datetime] |None =None
     lista_evento : Optional[List] |None =None
     titulo : Optional[str] |None = "RIPENING MODE ACTIVATED, PLEASE WAIT FOR THE PROCESS TO COMPLETE "
-
-
-
+    descripcion : str = Field(...)
+    flujometro : str = Field(...)
+    producto : str = Field(...)
     class Config:
         json_schema_extra = {
             "example": {
@@ -40,7 +41,10 @@ class ControlSchema(BaseModel):
                 "co2":5,
                 "temperatura":18.5,
                 "etileno":120,
-                "horas":24
+                "horas":24,
+                "descripcion" : "PROCESO PARA QUIMICA SUIZA 12/12/2024",
+                "flujometro" : "2",
+                "producto":"PLATANO COLOMBIANO "
 
             }
         }
