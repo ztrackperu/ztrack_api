@@ -306,6 +306,13 @@ async def ProcesarData():
                         valorP =  0
                         lat = 38.6458
                         lon = -121.3880
+
+                    elif (notificacion['imei']=="863576047417592"):
+                        tele_dispositivo =14921
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                    
                     else:
                         valorP = 5 if int(comparador1)==1 else 0
                         lat = 35.7396

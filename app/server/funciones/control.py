@@ -104,9 +104,6 @@ async def Procesar_control_oficial():
         else :
             #no pasa nada 
             est =0 
-
-
-
     return 1
 
     
