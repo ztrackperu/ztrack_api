@@ -17,11 +17,11 @@ async def GuardarComandos_super_libre_supervisado():
     #print(ztrack_data)
     ztrack_data ={
         "imei": "866782048942516",
-        "estado": 0,
+        "estado": 1,
         "fecha_ejecucion": None,
         "comando": "MANUAL_RIPE(20.00,90,120,5.00)",
         "dispositivo": "FAIL",
-        "evento": "SIN REGISTRO ",
+        "evento": "demonio en accion cada hora  ",
         "user": "supervisado_demonio",
         "receta": "sin receta",
         "tipo": 0,
