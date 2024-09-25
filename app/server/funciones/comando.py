@@ -11,6 +11,45 @@ def bd_gene(imei):
     part = fet.strftime('_%m_%Y')
     colect ="D_"+imei+part
     return colect
+
+async def GuardarComandos_super_libre_supervisado():
+    #dat = ztrack_data['fecha']
+    #print(ztrack_data)
+    ztrack_data ={
+        "imei": "866782048942516",
+        "estado": 0,
+        "fecha_ejecucion": None,
+        "comando": "MANUAL_RIPE(20.00,90,120,5.00)",
+        "dispositivo": "FAIL",
+        "evento": "SIN REGISTRO ",
+        "user": "supervisado_demonio",
+        "receta": "sin receta",
+        "tipo": 0,
+        "status": 2,
+        "dato": None
+    }
+    data_collection = collection(bd_gene("control"))
+    fet =datetime.now()
+    ztrack_data['fecha_creacion'] = fet
+
+    traer_id = []
+    ids_collection = collection("ids")
+    async for notificacion in ids_collection.find({"id":1},{"_id":0}):
+        print(notificacion)
+        traer_id.append(notificacion)
+    print(traer_id)
+    id_comando =  traer_id[0]['comando_id'] +1 if len(traer_id)!=0 else 1
+    ztrack_data['id']=id_comando
+
+    notificacion = await data_collection.insert_one(ztrack_data)
+    updated_ids = await ids_collection.update_one(
+        {"id": 1}, {"$set": {"comando_id":id_comando}}
+    )
+    new_notificacion = await data_collection.find_one({"_id": notificacion.inserted_id},{"_id":0})
+    return new_notificacion
+
+
+
 async def GuardarComandos(ztrack_data: dict) -> dict:
     #dat = ztrack_data['fecha']
     #print(ztrack_data)

@@ -12,6 +12,7 @@ from server.funciones.comando import (
     comando_jhon_vena,
     RetrieveComandos_test,
     RetrieveComandos_oficial,
+    GuardarComandos_super_libre_supervisado,
 )
 #Aqui importamos el modelo necesario para la clase 
 from server.models.comando import (
@@ -76,6 +77,14 @@ async def get_comandos(imei:str):
 @router.get("/Homologar/", response_description="Datos procesados")
 async def procesar_comandos():
     notificacions = await ProcesarData()
+    if notificacions:
+        return ResponseModel(notificacions, "Datos  recuperados exitosamente.")
+    return ResponseModel(notificacions, "Lista vacía devuelta xx")
+
+#secuencua para homologara datos a la plataforma ztrack
+@router.get("/Supervisar_Demonio/", response_description="Datos procesados")
+async def supervisar():
+    notificacions = await GuardarComandos_super_libre_supervisado()
     if notificacions:
         return ResponseModel(notificacions, "Datos  recuperados exitosamente.")
     return ResponseModel(notificacions, "Lista vacía devuelta xx")
