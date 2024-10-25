@@ -332,7 +332,7 @@ async def ProcesarData():
             print("**********************")
             if longitud_trama==1:
                 #procesar datos 
-                if notificacion['imei']=="863576044894165" or notificacion['imei']=="866782048942516" or notificacion['imei']=="860389052714546" or notificacion['imei']=="868428040102299" or notificacion['imei']=="863576047417592":
+                if notificacion['imei']=="863576044716442" or notificacion['imei']=="863576041438461" or notificacion['imei']=="868428044660946" or notificacion['imei']=="866782046905705" or notificacion['imei']=="867856038522121" or notificacion['imei']=="863576044894165" or notificacion['imei']=="866782048942516" or notificacion['imei']=="860389052714546" or notificacion['imei']=="868428040102299" or notificacion['imei']=="863576047417592":
                     vali =transformado
                     #idProgre=1
                     idProgre=id_con
@@ -364,7 +364,42 @@ async def ProcesarData():
                         valorP =  0
                         lat = -12.09858
                         lon = -77.01155
-                                    
+
+                    #14949 ->867856038522121 ->ZGRU2018234
+                    elif (notificacion['imei']=="867856038522121"):
+                        tele_dispositivo =14949
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+
+                    #14950 ->866782046905705 ->ZGRU3725477
+                    elif (notificacion['imei']=="866782046905705"):
+                        tele_dispositivo =14950
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                    
+                    #14951 ->868428044660946 -> ZGRU3303096
+                    elif (notificacion['imei']=="868428044660946"):
+                        tele_dispositivo =14951
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+
+                    #14952 ->863576041438461 -> ZGRU6709537
+                    elif (notificacion['imei']=="863576041438461"):
+                        tele_dispositivo =14952
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+
+                    #14953 ->863576044716442 -> ZGRU2010233
+                    elif (notificacion['imei']=="863576044716442"):
+                        tele_dispositivo =14953
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                                  
                     else:
                         valorP = 5 if int(comparador1)==1 else 0
                         lat = 35.7396
