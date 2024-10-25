@@ -332,14 +332,12 @@ async def ProcesarData():
             print("**********************")
             if longitud_trama==1:
                 #procesar datos 
-                if notificacion['imei']=="866782048942516" or notificacion['imei']=="860389052714546" or notificacion['imei']=="868428040102299" or notificacion['imei']=="863576047417592":
+                if notificacion['imei']=="863576044894165" or notificacion['imei']=="866782048942516" or notificacion['imei']=="860389052714546" or notificacion['imei']=="868428040102299" or notificacion['imei']=="863576047417592":
                     vali =transformado
                     #idProgre=1
                     idProgre=id_con
                     
                     tele_dispositivo =14872
-
-
                     comparador1 = vali[65] if len(transformado)>65 else 0
                     comparador2 = vali[66] if len(transformado)>66 else 0
 
@@ -360,6 +358,13 @@ async def ProcesarData():
                         lat = -12.09858
                         lon = -77.01155
                     
+                    #14948 ->863576044894165 ->ZGRU8708092
+                    elif (notificacion['imei']=="863576044894165"):
+                        tele_dispositivo =14948
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                                    
                     else:
                         valorP = 5 if int(comparador1)==1 else 0
                         lat = 35.7396
