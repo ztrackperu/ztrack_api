@@ -332,7 +332,7 @@ async def ProcesarData():
             print("**********************")
             if longitud_trama==1:
                 #procesar datos 
-                if notificacion['imei']=="863576044716442" or notificacion['imei']=="863576041438461" or notificacion['imei']=="868428044660946" or notificacion['imei']=="866782046905705" or notificacion['imei']=="867856038522121" or notificacion['imei']=="863576044894165" or notificacion['imei']=="866782048942516" or notificacion['imei']=="860389052714546" or notificacion['imei']=="868428040102299" or notificacion['imei']=="863576047417592":
+                if notificacion['imei']=="866782047033366" or notificacion['imei']=="868428048800696" or notificacion['imei']=="863576044716442" or notificacion['imei']=="863576041438461" or notificacion['imei']=="868428044660946" or notificacion['imei']=="866782046905705" or notificacion['imei']=="867856038522121" or notificacion['imei']=="863576044894165" or notificacion['imei']=="866782048942516" or notificacion['imei']=="860389052714546" or notificacion['imei']=="868428040102299" or notificacion['imei']=="863576047417592":
                     vali =transformado
                     #idProgre=1
                     idProgre=id_con
