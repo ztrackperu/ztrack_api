@@ -12,6 +12,13 @@ def bd_gene(imei):
     colect ="D_"+imei+part
     return colect
 
+def con_h(x,y):
+   y = float(y)
+   if 0 < y < 100:
+      x=1
+   return x   
+
+
 async def GuardarComandos_super_libre_supervisado():
     #dat = ztrack_data['fecha']
     #print(ztrack_data)
@@ -19,8 +26,8 @@ async def GuardarComandos_super_libre_supervisado():
         "imei": "866782048942516",
         "estado": 1,
         "fecha_ejecucion": None,
-        #"comando": "MANUAL_RIPE(20.00,90,120,5.00)",
-        "comando": "MANUAL_RIPE(15.60,90,100,5.00)",
+        "comando": "MANUAL_RIPE(16.10,90,200,6.00)",
+        #"comando": "MANUAL_RIPE(15.60,90,120,6.00)",
         "dispositivo": "FAIL",
         "evento": "demonio en accion cada hora  ",
         "user": "supervisado_demonio",
@@ -398,7 +405,7 @@ async def ProcesarData():
                             "power_consumption_avg": convertir_a_float(vali[36]),
                             "alarm_present": convertir_a_float(vali[37]),
                             "capacity_load": convertir_a_float(vali[38]),
-                            "power_state": convertir_a_float(vali[39]), 
+                            "power_state":convertir_a_float(con_h( vali[39],vali[14])), 
                             "controlling_mode": vali[40],
                             "humidity_control": convertir_a_float(vali[41]),
                             "humidity_set_point": convertir_a_float(vali[42]),
