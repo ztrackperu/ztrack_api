@@ -303,14 +303,15 @@ async def ProcesarData():
     print("yamos jodidos")
     dispositivos=[]
     dispositivos_collection = collection(bd_gene("dispositivos"))
-    #async for notificacion in dispositivos_collection.find({"estado":1,"imei":"866782048942516"},{"_id":0}):
-    async for notificacion in dispositivos_collection.find({"estado":1},{"_id":0}):
+    async for notificacion in dispositivos_collection.find({"estado":1,"imei":"866782048942516"},{"_id":0}):
+    #async for notificacion in dispositivos_collection.find({"estado":1},{"_id":0}):
 
         #aqui procesamos 
         datos_dispositivo =bd_gene(notificacion['imei'])
         print(datos_dispositivo)
         unidad_collection = collection(datos_dispositivo)
         async for trama in unidad_collection.find({"estado":1},{"_id":0}):
+        
             #dato_id = await dispositivos_collection.find_one({"estado":1,"imei":"866782048942516"},{"_id":0})
             dato_id = await dispositivos_collection.find_one({"estado":1},{"_id":0})
 
@@ -413,6 +414,72 @@ async def ProcesarData():
                         valorP =  0
                         lat = -12.09858
                         lon = -77.01155
+
+                    #CONJUNTO DE TELEMETRIAS PARA CENCOSUD 
+                    #4608 ->865992037256015 -> ZGRU4776901
+                    elif (notificacion['imei']=="865992037256015"):
+                        tele_dispositivo =4608
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+
+                    #4606 ->862643033733233 -> ZGRU5118612
+                    elif (notificacion['imei']=="862643033733233"):
+                        tele_dispositivo =4606
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+
+                    #313 ->868428041482815 -> ZGRU4507690
+                    elif (notificacion['imei']=="868428041482815"):
+                        tele_dispositivo =313
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                    
+                    #126 ->865992030451860 -> ZGRU6576283
+                    elif (notificacion['imei']=="865992030451860"):
+                        tele_dispositivo =126
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+
+                    #122 ->866029030001798 -> ZGRU7258301
+                    elif (notificacion['imei']=="866029030001798"):
+                        tele_dispositivo =122
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+
+                    #125 ->864369031920501 -> ZGRU6578922
+                    elif (notificacion['imei']=="864369031920501"):
+                        tele_dispositivo =125
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+
+                    #251 ->866262037906285 -> ZGRU4701435
+                    elif (notificacion['imei']=="866262037906285"):
+                        tele_dispositivo =251
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                    
+                    #315 ->864369036245177 -> ZGRU6828507
+                    elif (notificacion['imei']=="864369036245177"):
+                        tele_dispositivo =315
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+
+                    #315 ->863576042247473 -> ZGRU0505228 
+                    elif (notificacion['imei']=="863576042247473"):
+                        tele_dispositivo =315
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+
+
                                   
                     else:
                         valorP = 5 if int(comparador1)==1 else 0
