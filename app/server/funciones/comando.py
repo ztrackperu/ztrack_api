@@ -303,8 +303,8 @@ async def ProcesarData():
     print("yamos jodidos")
     dispositivos=[]
     dispositivos_collection = collection(bd_gene("dispositivos"))
-    async for notificacion in dispositivos_collection.find({"estado":1,"imei":"866782048942516"},{"_id":0}):
-    #async for notificacion in dispositivos_collection.find({"estado":1},{"_id":0}):
+    #async for notificacion in dispositivos_collection.find({"estado":1,"imei":"866782048942516"},{"_id":0}):
+    async for notificacion in dispositivos_collection.find({"estado":1},{"_id":0}):
 
         #aqui procesamos 
         datos_dispositivo =bd_gene(notificacion['imei'])
@@ -333,7 +333,7 @@ async def ProcesarData():
             print("**********************")
             if longitud_trama==1:
                 #procesar datos 
-                if notificacion['imei']=="866782047033366" or notificacion['imei']=="868428048800696" or notificacion['imei']=="863576044716442" or notificacion['imei']=="863576041438461" or notificacion['imei']=="868428044660946" or notificacion['imei']=="866782046905705" or notificacion['imei']=="867856038522121" or notificacion['imei']=="863576044894165" or notificacion['imei']=="866782048942516" or notificacion['imei']=="860389052714546" or notificacion['imei']=="868428040102299" or notificacion['imei']=="863576047417592":
+                if notificacion['imei']=="866029030001798" or notificacion['imei']=="863576042247473" or notificacion['imei']=="864369036245177" or notificacion['imei']=="866262037906285" or notificacion['imei']=="864369031920501" or notificacion['imei']=="865992030451860" or notificacion['imei']=="865992037256015" or notificacion['imei']=="868428048800696" or notificacion['imei']=="866782047033366" or notificacion['imei']=="868428048800696" or notificacion['imei']=="863576044716442" or notificacion['imei']=="863576041438461" or notificacion['imei']=="868428044660946" or notificacion['imei']=="866782046905705" or notificacion['imei']=="867856038522121" or notificacion['imei']=="863576044894165" or notificacion['imei']=="866782048942516" or notificacion['imei']=="860389052714546" or notificacion['imei']=="868428040102299" or notificacion['imei']=="863576047417592":
                     vali =transformado
                     #idProgre=1
                     idProgre=id_con
@@ -444,12 +444,13 @@ async def ProcesarData():
                         lat = -12.09858
                         lon = -77.01155
 
+                    #REEMPLEAZDO A ZGRU6636340
                     #122 ->866029030001798 -> ZGRU7258301
-                    elif (notificacion['imei']=="866029030001798"):
-                        tele_dispositivo =122
-                        valorP =  0
-                        lat = -12.09858
-                        lon = -77.01155
+                    #elif (notificacion['imei']=="866029030001798"):
+                        #tele_dispositivo =122
+                        #valorP =  0
+                        #lat = -12.09858
+                        #lon = -77.01155
 
                     #125 ->864369031920501 -> ZGRU6578922
                     elif (notificacion['imei']=="864369031920501"):
@@ -472,9 +473,16 @@ async def ProcesarData():
                         lat = -12.09858
                         lon = -77.01155
 
-                    #315 ->863576042247473 -> ZGRU0505228 
+                    #129 ->863576042247473 -> ZGRU0505228 
                     elif (notificacion['imei']=="863576042247473"):
-                        tele_dispositivo =315
+                        tele_dispositivo =129
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                    
+                    #128 ->866029030001798 -> ZGRU6636340 
+                    elif (notificacion['imei']=="866029030001798"):
+                        tele_dispositivo =128
                         valorP =  0
                         lat = -12.09858
                         lon = -77.01155
