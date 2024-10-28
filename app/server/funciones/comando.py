@@ -333,7 +333,7 @@ async def ProcesarData():
             print("**********************")
             if longitud_trama==1:
                 #procesar datos 
-                if notificacion['imei']=="868428041482815" or notificacion['imei']=="862643033733233" or notificacion['imei']=="866029030001798" or notificacion['imei']=="863576042247473" or notificacion['imei']=="864369036245177" or notificacion['imei']=="866262037906285" or notificacion['imei']=="864369031920501" or notificacion['imei']=="865992030451860" or notificacion['imei']=="865992037256015" or notificacion['imei']=="868428048800696" or notificacion['imei']=="866782047033366" or notificacion['imei']=="868428048800696" or notificacion['imei']=="863576044716442" or notificacion['imei']=="863576041438461" or notificacion['imei']=="868428044660946" or notificacion['imei']=="866782046905705" or notificacion['imei']=="867856038522121" or notificacion['imei']=="863576044894165" or notificacion['imei']=="866782048942516" or notificacion['imei']=="860389052714546" or notificacion['imei']=="868428040102299" or notificacion['imei']=="863576047417592":
+                if notificacion['imei']=="863576043636583" or notificacion['imei']=="868428041482815" or notificacion['imei']=="862643033733233" or notificacion['imei']=="866029030001798" or notificacion['imei']=="863576042247473" or notificacion['imei']=="864369036245177" or notificacion['imei']=="866262037906285" or notificacion['imei']=="864369031920501" or notificacion['imei']=="865992030451860" or notificacion['imei']=="865992037256015" or notificacion['imei']=="868428048800696" or notificacion['imei']=="866782047033366" or notificacion['imei']=="868428048800696" or notificacion['imei']=="863576044716442" or notificacion['imei']=="863576041438461" or notificacion['imei']=="868428044660946" or notificacion['imei']=="866782046905705" or notificacion['imei']=="867856038522121" or notificacion['imei']=="863576044894165" or notificacion['imei']=="866782048942516" or notificacion['imei']=="860389052714546" or notificacion['imei']=="868428040102299" or notificacion['imei']=="863576047417592":
                     vali =transformado
                     #idProgre=1
                     idProgre=id_con
@@ -342,16 +342,19 @@ async def ProcesarData():
                     comparador1 = vali[65] if len(transformado)>65 else 0
                     comparador2 = vali[66] if len(transformado)>66 else 0
 
+                    #863576043636583
                     if(notificacion['imei']=="860389052714546"):
                         tele_dispositivo =14876
                         valorP =  0
                         lat = 0
                         lon =0
+                    
                     elif (notificacion['imei']=="868428040102299"):
                         tele_dispositivo =14873
                         valorP =  0
                         lat = 38.6458
                         lon = -121.3880
+
 
                     elif (notificacion['imei']=="863576047417592"):
                         tele_dispositivo =14921
@@ -402,7 +405,10 @@ async def ProcesarData():
                         lon = -77.01155
                     
                     #14954 ->866782047033366 -> ZGRU2005242
-                    elif (notificacion['imei']=="866782047033366"):
+                    #863576043636583
+                    #elif (notificacion['imei']=="866782047033366"):
+                    elif (notificacion['imei']=="863576043636583"):
+
                         tele_dispositivo =14954
                         valorP =  0
                         lat = -12.09858
@@ -410,6 +416,13 @@ async def ProcesarData():
 
                     #14955 ->868428048800696 -> ZGRU9017551
                     elif (notificacion['imei']=="868428048800696"):
+                        tele_dispositivo =14955
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                    
+                    #14955 ->867858039892602 -> ZGRU3725477
+                    elif (notificacion['imei']=="867858039892602"):
                         tele_dispositivo =14955
                         valorP =  0
                         lat = -12.09858
