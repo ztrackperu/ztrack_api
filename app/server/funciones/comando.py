@@ -332,7 +332,8 @@ async def ProcesarData():
             print("**********************")
             if longitud_trama==1:
                 #procesar datos 
-                if notificacion['imei']=="864764035741434" or notificacion['imei']=="863576043636583" or notificacion['imei']=="868428041482815" or notificacion['imei']=="862643033733233" or notificacion['imei']=="866029030001798" or notificacion['imei']=="863576042247473" or notificacion['imei']=="864369036245177" or notificacion['imei']=="866262037906285" or notificacion['imei']=="864369031920501" or notificacion['imei']=="865992030451860" or notificacion['imei']=="865992037256015" or notificacion['imei']=="868428048800696" or notificacion['imei']=="866782047033366" or notificacion['imei']=="868428048800696" or notificacion['imei']=="863576044716442" or notificacion['imei']=="863576041438461" or notificacion['imei']=="868428044660946" or notificacion['imei']=="866782046905705" or notificacion['imei']=="867856038522121" or notificacion['imei']=="863576044894165" or notificacion['imei']=="866782048942516" or notificacion['imei']=="860389052714546" or notificacion['imei']=="868428040102299" or notificacion['imei']=="863576047417592":
+                #if notificacion['imei']=="864764035741434" or notificacion['imei']=="863576043636583" or notificacion['imei']=="868428041482815" or notificacion['imei']=="862643033733233" or notificacion['imei']=="866029030001798" or notificacion['imei']=="863576042247473" or notificacion['imei']=="864369036245177" or notificacion['imei']=="866262037906285" or notificacion['imei']=="864369031920501" or notificacion['imei']=="865992030451860" or notificacion['imei']=="865992037256015" or notificacion['imei']=="868428048800696" or notificacion['imei']=="866782047033366" or notificacion['imei']=="868428048800696" or notificacion['imei']=="863576044716442" or notificacion['imei']=="863576041438461" or notificacion['imei']=="868428044660946" or notificacion['imei']=="866782046905705" or notificacion['imei']=="867856038522121" or notificacion['imei']=="863576044894165" or notificacion['imei']=="866782048942516" or notificacion['imei']=="860389052714546" or notificacion['imei']=="868428040102299" or notificacion['imei']=="863576047417592":
+                if  notificacion['imei']=="866782048942516":
                     vali =transformado
                     #idProgre=1
                     idProgre=id_con
@@ -341,182 +342,143 @@ async def ProcesarData():
                     comparador1 = vali[65] if len(transformado)>65 else 0
                     comparador2 = vali[66] if len(transformado)>66 else 0
 
-
-                    #863576043636583
-                    if(notificacion['imei']=="860389052714546"):
-                        tele_dispositivo =14876
-                        valorP =  0
-                        lat = 0
-                        lon =0
-
-
-
-                    #863576043636583
-                    if(notificacion['imei']=="860389052714546"):
-                        tele_dispositivo =14876
-                        valorP =  0
-                        lat = 0
-                        lon =0
-                    
-                    #14959 -> 864764035741434 ->ZGRU8722911 ->FRUTICOLA ANCASH
-                    elif (notificacion['imei']=="864764035741434"):
-                        tele_dispositivo =14959
-                        valorP =  0
-                        lat = -9.05801
-                        lon = -77.80632
-                    
-                    elif (notificacion['imei']=="868428040102299"):
-                        tele_dispositivo =14873
-                        valorP =  0
-                        lat = 38.6458
-                        lon = -121.3880
-
-
-                    elif (notificacion['imei']=="863576047417592"):
-                        tele_dispositivo =14921
-                        valorP =  0
-                        lat = -12.09858
-                        lon = -77.01155
-                    
-                    #14948 ->863576044894165 ->ZGRU8708092
-                    elif (notificacion['imei']=="863576044894165"):
-                        tele_dispositivo =14948
-                        valorP =  0
-                        lat = -12.09858
-                        lon = -77.01155
-
-                    #14949 ->867856038522121 ->ZGRU2018234
-                    elif (notificacion['imei']=="867856038522121"):
-                        tele_dispositivo =14949
-                        valorP =  0
-                        lat = -12.09858
-                        lon = -77.01155
-
-                    #14950 ->866782046905705 ->ZGRU3725477
-                    elif (notificacion['imei']=="866782046905705"):
-                        tele_dispositivo =14950
-                        valorP =  0
-                        lat = -12.09858
-                        lon = -77.01155
-                    
-                    #14951 ->868428044660946 -> ZGRU3303096
-                    elif (notificacion['imei']=="868428044660946"):
-                        tele_dispositivo =14951
-                        valorP =  0
-                        lat = -12.09858
-                        lon = -77.01155
-
                     #14952 ->863576041438461 -> ZGRU6709537
-                    elif (notificacion['imei']=="863576041438461"):
+                    if (notificacion['imei']=="863576041438461"):
                         tele_dispositivo =14952
                         valorP =  0
                         lat = -12.09858
                         lon = -77.01155
-
-                    #14953 ->863576044716442 -> ZGRU2010233
-                    elif (notificacion['imei']=="863576044716442"):
-                        tele_dispositivo =14953
-                        valorP =  0
-                        lat = -12.09858
-                        lon = -77.01155
-                    
-                    #14954 ->866782047033366 -> ZGRU2005242
-                    #863576043636583
-                    #elif (notificacion['imei']=="866782047033366"):
-                    elif (notificacion['imei']=="863576043636583"):
-
-                        tele_dispositivo =14954
-                        valorP =  0
-                        lat = -12.09858
-                        lon = -77.01155
-
-                    #14955 ->868428048800696 -> ZGRU9017551
-                    elif (notificacion['imei']=="868428048800696"):
-                        tele_dispositivo =14955
-                        valorP =  0
-                        lat = -12.09858
-                        lon = -77.01155
-                    
-                    #14955 ->867858039892602 -> ZGRU3725477
-                    elif (notificacion['imei']=="867858039892602"):
-                        tele_dispositivo =14955
-                        valorP =  0
-                        lat = -12.09858
-                        lon = -77.01155
-
-                    #CONJUNTO DE TELEMETRIAS PARA CENCOSUD 
-                    #4608 ->865992037256015 -> ZGRU4776901
-                    elif (notificacion['imei']=="865992037256015"):
-                        tele_dispositivo =4608
-                        valorP =  0
-                        lat = -12.09858
-                        lon = -77.01155
-
-                    #4606 ->862643033733233 -> ZGRU5118612
-                    elif (notificacion['imei']=="862643033733233"):
-                        tele_dispositivo =4606
-                        valorP =  0
-                        lat = -12.09858
-                        lon = -77.01155
-
-                    #313 ->868428041482815 -> ZGRU4507690
-                    elif (notificacion['imei']=="868428041482815"):
-                        tele_dispositivo =313
-                        valorP =  0
-                        lat = -12.09858
-                        lon = -77.01155
-                    
-                    #126 ->865992030451860 -> ZGRU6576283
-                    elif (notificacion['imei']=="865992030451860"):
-                        tele_dispositivo =126
-                        valorP =  0
-                        lat = -12.09858
-                        lon = -77.01155
-
-                    #REEMPLEAZDO A ZGRU6636340
-                    #122 ->866029030001798 -> ZGRU7258301
-                    #elif (notificacion['imei']=="866029030001798"):
-                        #tele_dispositivo =122
-                        #valorP =  0
-                        #lat = -12.09858
-                        #lon = -77.01155
-
-                    #125 ->864369031920501 -> ZGRU6578922
-                    elif (notificacion['imei']=="864369031920501"):
-                        tele_dispositivo =125
-                        valorP =  0
-                        lat = -12.09858
-                        lon = -77.01155
-
-                    #251 ->866262037906285 -> ZGRU4701435
-                    elif (notificacion['imei']=="866262037906285"):
-                        tele_dispositivo =251
-                        valorP =  0
-                        lat = -12.09858
-                        lon = -77.01155
-                    
+                    #secuencias de TRAMAS ACTIVAS                    
                     #315 ->864369036245177 -> ZGRU6828507
                     elif (notificacion['imei']=="864369036245177"):
                         tele_dispositivo =315
                         valorP =  0
                         lat = -12.09858
-                        lon = -77.01155
-
+                        lon = -77.01155                   
                     #129 ->863576042247473 -> ZGRU0505228 
                     elif (notificacion['imei']=="863576042247473"):
                         tele_dispositivo =129
                         valorP =  0
                         lat = -12.09858
                         lon = -77.01155
-                    
+                    #251 ->866262037906285 -> ZGRU4701435
+                    elif (notificacion['imei']=="866262037906285"):
+                        tele_dispositivo =251
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                    #125 ->864369031920501 -> ZGRU6578922
+                    elif (notificacion['imei']=="864369031920501"):
+                        tele_dispositivo =125
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
                     #128 ->866029030001798 -> ZGRU6636340 
                     elif (notificacion['imei']=="866029030001798"):
                         tele_dispositivo =128
                         valorP =  0
                         lat = -12.09858
                         lon = -77.01155
+                    #865992030451860
+                    #126 ->865992030451860 -> ZGRU6576283
+                    elif (notificacion['imei']=="865992030451860"):
+                        tele_dispositivo =126
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                    #313 ->868428041482815 -> ZGRU4507690
+                    elif (notificacion['imei']=="868428041482815"):
+                        tele_dispositivo =313
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                    #4606 ->862643033733233 -> ZGRU5118612
+                    elif (notificacion['imei']=="862643033733233"):
+                        tele_dispositivo =4606
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                    #14959 -> 864764035741434 ->ZGRU8722911 ->FRUTICOLA ANCASH
+                    elif (notificacion['imei']=="864764035741434"):
+                        tele_dispositivo =14959
+                        valorP =  0
+                        lat = -9.05801
+                        lon = -77.80632
+                    #4608 ->865992037256015 -> ZGRU4776901
+                    elif (notificacion['imei']=="865992037256015"):
+                        tele_dispositivo =4608
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                    #14962 ->867858039892602 -> ZGRU3725477
+                    elif (notificacion['imei']=="867858039892602"):
+                        tele_dispositivo =14962
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                    #14954 ->863576043636583 -> ZGRU2005242
+                    elif (notificacion['imei']=="863576043636583"):
+                        tele_dispositivo =14954
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
 
-
+                    #A PARTIR DE AQUI 10 ELEMENTOS
+                    #14961 -> 863576041348223->ZGRU8747550
+                    elif (notificacion['imei']=="863576041348223"):
+                        tele_dispositivo =14961
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                    #14960 -> 865691035501170->ZGRU6413985
+                    elif (notificacion['imei']=="865691035501170"):
+                        tele_dispositivo =14960
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                    #14953 ->863576044716442 -> ZGRU2010233
+                    elif (notificacion['imei']=="863576044716442"):
+                        tele_dispositivo =14953
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                    #14955 ->868428048800696 -> ZGRU9017551
+                    #cambiar estado a 0 y detener demonio y actualizar en mysql
+                    elif (notificacion['imei']=="868428048800696"):
+                        tele_dispositivo =14955
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                    #14951 ->868428044660946 -> ZGRU3303096
+                    elif (notificacion['imei']=="868428044660946"):
+                        tele_dispositivo =14951
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                    #14949 ->867856038522121 ->ZGRU2018234
+                    elif (notificacion['imei']=="867856038522121"):
+                        tele_dispositivo =14949
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                    #14948 ->863576044894165 ->ZGRU8708092
+                    elif (notificacion['imei']=="863576044894165"):
+                        tele_dispositivo =14948
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                    #14873 -> 868428040102299->ZGRU9802320
+                    elif (notificacion['imei']=="868428040102299"):
+                        tele_dispositivo =14873
+                        valorP =  0
+                        lat = 38.6458
+                        lon = -121.3880
+                    #14921 -> 863576047417592 ->ZGRU2008215
+                    elif (notificacion['imei']=="863576047417592"):
+                        tele_dispositivo =14921
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
                                   
                     else:
                         valorP = 5 if int(comparador1)==1 else 0
