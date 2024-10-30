@@ -269,7 +269,6 @@ async def comando_jhon_vena(imei: str):
         notificacions.append(notificacion)
     print(cont)
 
-
     res ={
         "contador":cont,
         "objeto_datos":obj_vali,
@@ -342,12 +341,21 @@ async def ProcesarData():
                     comparador1 = vali[65] if len(transformado)>65 else 0
                     comparador2 = vali[66] if len(transformado)>66 else 0
 
+
+
                     #863576043636583
                     if(notificacion['imei']=="860389052714546"):
                         tele_dispositivo =14876
                         valorP =  0
                         lat = 0
                         lon =0
+                    
+                    #14959 -> 864764035741434 ->ZGRU8722911 ->FRUTICOLA ANCASH
+                    elif (notificacion['imei']=="864764035741434"):
+                        tele_dispositivo =14959
+                        valorP =  0
+                        lat = -9.05801
+                        lon = -77.80632
                     
                     elif (notificacion['imei']=="868428040102299"):
                         tele_dispositivo =14873
