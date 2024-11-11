@@ -10,6 +10,8 @@ from server.routes.receta import router as RecetasRouter
 from server.routes.proceso import router as ProcesosRouter
 from server.routes.supervisado import router as SupervisadosRouter
 from server.routes.control import router as ControlRouter
+from server.routes.generadores import router as GeneradorRouter
+
 
 app = FastAPI(
     title="Integracion ZTRACK API TEST",
@@ -34,6 +36,7 @@ app.include_router(RecetasRouter, tags=["Recetas"], prefix="/Recetas")
 app.include_router(ProcesosRouter, tags=["Procesos"], prefix="/Procesos")
 app.include_router(SupervisadosRouter, tags=["Supervisador"], prefix="/Supervisador")
 app.include_router(ControlRouter, tags=["Control"], prefix="/Control")
+app.include_router(GeneradorRouter, tags=["Generador"], prefix="/Generador")
 
 
 @app.get("/", tags=["Root"])
