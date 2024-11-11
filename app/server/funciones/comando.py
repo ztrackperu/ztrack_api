@@ -535,6 +535,7 @@ async def ProcesarData():
                             "compress_coil_1": pasar_temp(convertir_a_float(vali[7])),
                             "compress_coil_2": pasar_temp(convertir_a_float(vali[8])), 
                             "ambient_air": pasar_temp(convertir_a_float(vali[9])), 
+                            "cargo_2_temp": pasar_temp(convertir_a_float(vali[10])), 
                             "cargo_2_temp": pasar_temp(convertir_a_float(vali[11])), 
                             "cargo_3_temp": pasar_temp(convertir_a_float(vali[12])), 
                             "cargo_4_temp": pasar_temp(convertir_a_float(vali[13])), 
@@ -621,7 +622,7 @@ async def ProcesarData():
                         passwd= "lpmp2018",
                         database="zgroupztrack"
                     )
-
+                    #ProcesarData
                     curB = cnx.cursor()
                     update_old_salary = (
                     "UPDATE contenedores SET ultima_fecha = %s ,set_point = %s ,temp_supply_1= %s ,return_air= %s"
