@@ -12,7 +12,6 @@ from server.routes.supervisado import router as SupervisadosRouter
 from server.routes.control import router as ControlRouter
 from server.routes.generadores import router as GeneradorRouter
 
-
 app = FastAPI(
     title="Integracion ZTRACK API TEST",
     summary="Modulos de datos bidireccional",
@@ -28,16 +27,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 #añadir el conjunto de rutas de notificaciones
 #app.include_router(UsuariosRouter, tags=["usuarios"], prefix="/usuarios")
-app.include_router(DatosRouter, tags=["Datos"], prefix="/Datos")
-app.include_router(ComandosRouter, tags=["Comandos"], prefix="/Comandos")
-app.include_router(RecetasRouter, tags=["Recetas"], prefix="/Recetas")
-app.include_router(ProcesosRouter, tags=["Procesos"], prefix="/Procesos")
-app.include_router(SupervisadosRouter, tags=["Supervisador"], prefix="/Supervisador")
-app.include_router(ControlRouter, tags=["Control"], prefix="/Control")
-app.include_router(GeneradorRouter, tags=["Generador"], prefix="/Generador")
-
+app.include_router(DatosRouter        , tags=["Datos"]        , prefix="/Datos")
+app.include_router(ComandosRouter     , tags=["Comandos"]     , prefix="/Comandos")
+app.include_router(RecetasRouter      , tags=["Recetas"]      , prefix="/Recetas")
+app.include_router(ProcesosRouter     , tags=["Procesos"]     , prefix="/Procesos")
+app.include_router(SupervisadosRouter , tags=["Supervisador"] , prefix="/Supervisador")
+app.include_router(ControlRouter      , tags=["Control"]      , prefix="/Control")
+app.include_router(GeneradorRouter    , tags=["Generador"]    , prefix="/Generador")
 
 @app.get("/", tags=["Root"])
 async def read_root():

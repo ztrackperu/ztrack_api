@@ -14,6 +14,7 @@ class GeneradorSchema(BaseModel):
     r02: Optional[str] | None =None
     gps: Optional[str] | None =None
     estado: Optional[int] | None =1
+    d09: Optional[str] | None =None
     #fecha: Optional[datetime] | None =datetime.now()
     #size: Optional[int] | None =3200
     class Config:
@@ -29,6 +30,7 @@ class GeneradorSchema(BaseModel):
                 "r01": "Aqui va los datos d6 de los sensores",
                 "r02": "Aqui va los datos d7 de los sensores",
                 "gps": "Aqui va el GPS",
+                "d09": "Aqui va los datos de las alarmas",
                 "estado": 1,
                 #"fecha": "2024-04-18T11:11:04",
             }
