@@ -333,7 +333,7 @@ async def ProcesarData():
             if longitud_trama==1:
                 #procesar datos 
                 #if notificacion['imei']=="864764035741434" or notificacion['imei']=="863576043636583" or notificacion['imei']=="868428041482815" or notificacion['imei']=="862643033733233" or notificacion['imei']=="866029030001798" or notificacion['imei']=="863576042247473" or notificacion['imei']=="864369036245177" or notificacion['imei']=="866262037906285" or notificacion['imei']=="864369031920501" or notificacion['imei']=="865992030451860" or notificacion['imei']=="865992037256015" or notificacion['imei']=="868428048800696" or notificacion['imei']=="866782047033366" or notificacion['imei']=="868428048800696" or notificacion['imei']=="863576044716442" or notificacion['imei']=="863576041438461" or notificacion['imei']=="868428044660946" or notificacion['imei']=="866782046905705" or notificacion['imei']=="867856038522121" or notificacion['imei']=="863576044894165" or notificacion['imei']=="866782048942516" or notificacion['imei']=="860389052714546" or notificacion['imei']=="868428040102299" or notificacion['imei']=="863576047417592":
-                if   notificacion['imei']=="863576049352433" or notificacion['imei']=="868428048593994" or notificacion['imei']=="863576040479524" or notificacion['imei']=="868428040146445" or notificacion['imei']=="863576049946101" or notificacion['imei']=="863576041628806" or notificacion['imei']=="863576041438461" or notificacion['imei']=="864369036245177" or notificacion['imei']=="863576042247473" or notificacion['imei']=="866262037906285" or notificacion['imei']=="864369031920501" or notificacion['imei']=="866029030001798" or notificacion['imei']=="865992030451860" or notificacion['imei']=="868428041482815" or notificacion['imei']=="862643033733233" or notificacion['imei']=="864764035741434" or notificacion['imei']=="865992037256015" or notificacion['imei']=="867858039892602" or notificacion['imei']=="863576043636583" or notificacion['imei']=="863576041348223" or notificacion['imei']=="865691035501170" or notificacion['imei']=="863576044716442" or notificacion['imei']=="868428048800696" or notificacion['imei']=="868428044660946" or notificacion['imei']=="867856038522121" or notificacion['imei']=="863576044894165" or notificacion['imei']=="868428040102299" or notificacion['imei']=="863576047417592" or notificacion['imei']=="866782048942516":
+                if   notificacion['imei']=="866782049859933" or notificacion['imei']=="860719022597698" or notificacion['imei']=="863576049352433" or notificacion['imei']=="868428048593994" or notificacion['imei']=="863576040479524" or notificacion['imei']=="868428040146445" or notificacion['imei']=="863576049946101" or notificacion['imei']=="863576041628806" or notificacion['imei']=="863576041438461" or notificacion['imei']=="864369036245177" or notificacion['imei']=="863576042247473" or notificacion['imei']=="866262037906285" or notificacion['imei']=="864369031920501" or notificacion['imei']=="866029030001798" or notificacion['imei']=="865992030451860" or notificacion['imei']=="868428041482815" or notificacion['imei']=="862643033733233" or notificacion['imei']=="864764035741434" or notificacion['imei']=="865992037256015" or notificacion['imei']=="867858039892602" or notificacion['imei']=="863576043636583" or notificacion['imei']=="863576041348223" or notificacion['imei']=="865691035501170" or notificacion['imei']=="863576044716442" or notificacion['imei']=="868428048800696" or notificacion['imei']=="868428044660946" or notificacion['imei']=="867856038522121" or notificacion['imei']=="863576044894165" or notificacion['imei']=="868428040102299" or notificacion['imei']=="863576047417592" or notificacion['imei']=="866782048942516":
                     vali =transformado
                     #idProgre=1
                     idProgre=id_con
@@ -515,6 +515,20 @@ async def ProcesarData():
                     #14986 -> 868428048593994 ->ZGRU2008215
                     elif (notificacion['imei']=="868428048593994"):
                         tele_dispositivo =14986
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+
+                    #14987 -> 860719022597698 ->ZGRU2011230
+                    elif (notificacion['imei']=="860719022597698"):
+                        tele_dispositivo =14987
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                    
+                    #4630 -> 866782049859933 ->ZGRU6093446
+                    elif (notificacion['imei']=="866782049859933"):
+                        tele_dispositivo =4630
                         valorP =  0
                         lat = -12.09858
                         lon = -77.01155
