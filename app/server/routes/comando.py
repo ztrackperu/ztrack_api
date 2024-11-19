@@ -13,6 +13,8 @@ from server.funciones.comando import (
     RetrieveComandos_test,
     RetrieveComandos_oficial,
     GuardarComandos_super_libre_supervisado,
+    procesar_on_pabecsa,
+    procesar_off_pabecsa
 )
 #Aqui importamos el modelo necesario para la clase 
 from server.models.comando import (
@@ -96,3 +98,26 @@ async def procesar_comandos_jhon_vena(imei:str):
     if notificacions:
         return ResponseModel(notificacions, "Datos  recuperados exitosamente.")
     return ResponseModel(notificacions, "Lista vacía devuelta xx")
+
+
+#secuencua para homologara datos a la plataforma ztrack
+@router.get("/Pabesca_on/", response_description="Datos procesados")
+async def procesar_on_comandos():
+    notificacions = await procesar_on_pabecsa()
+    if notificacions:
+        return ResponseModel(notificacions, "Datos  recuperados exitosamente.")
+    return ResponseModel(notificacions, "Lista vacía devuelta xx")
+
+#secuencua para homologara datos a la plataforma ztrack
+@router.get("/Pabesca_off/", response_description="Datos procesados")
+async def procesar_off_comandos():
+    notificacions = await procesar_off_pabecsa()
+    if notificacions:
+        return ResponseModel(notificacions, "Datos  recuperados exitosamente.")
+    return ResponseModel(notificacions, "Lista vacía devuelta xx")
+
+
+
+
+
+

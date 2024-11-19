@@ -148,6 +148,62 @@ async def RetrieveComandos(imei: str):
         notificacions.append(notificacion)
     return notificacions
 
+
+async def procesar_on_pabecsa():
+    fet =datetime.now()
+    valor_general = {
+        "imei": "863576043636583",
+        "estado": 0,
+        "comando": "Trama_Writeout(29,1,1)",
+        "dispositivo": "FAIL",
+        "evento": "turn on the reefer machine",
+        "user": "pabecsa",
+        "receta": "sin receta pabecsa",
+        "tipo": 1,
+        "status": 1,
+        "dato": 1,
+        "id": 1300
+    }
+    valor_general['fecha_creacion'] = fet
+    valor_general['fecha_ejecucion'] = fet
+
+    data_collection = collection(bd_gene("control"))
+    #primero consultar si ya existe un comando pendiente 
+    encontrado = await data_collection.find_one({"imei":valor_general['imei'],"estado":1},{"_id":0})
+    if encontrado :
+        return 0
+    notificacion = await data_collection.insert_one(valor_general)
+
+    return notificacion
+
+
+async def procesar_off_pabecsa():
+    fet =datetime.now()
+    valor_general = {
+        "imei": "863576043636583",
+        "estado": 0,
+        "comando": "Trama_Writeout(29,0,1)",
+        "dispositivo": "FAIL",
+        "evento": "turn off the reefer machine",
+        "user": "pabecsa",
+        "receta": "sin receta pabecsa",
+        "tipo": 1,
+        "status": 1,
+        "dato": 1,
+        "id": 1300
+    }
+    valor_general['fecha_creacion'] = fet
+    valor_general['fecha_ejecucion'] = fet
+
+    data_collection = collection(bd_gene("control"))
+    #primero consultar si ya existe un comando pendiente 
+    encontrado = await data_collection.find_one({"imei":valor_general['imei'],"estado":1},{"_id":0})
+    if encontrado :
+        return 0
+    notificacion = await data_collection.insert_one(valor_general)
+    return notificacion
+
+
 async def RetrieveComandos_test(imei: str):
     notificacions = []
     data_collection = collection(bd_gene("control"))
