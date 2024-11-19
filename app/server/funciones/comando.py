@@ -153,7 +153,7 @@ async def procesar_on_pabecsa():
     fet =datetime.now()
     valor_general = {
         "imei": "863576043636583",
-        "estado": 0,
+        "estado": 1,
         "comando": "Trama_Writeout(29,1,1)",
         "dispositivo": "FAIL",
         "evento": "turn on the reefer machine",
@@ -181,7 +181,7 @@ async def procesar_off_pabecsa():
     fet =datetime.now()
     valor_general = {
         "imei": "863576043636583",
-        "estado": 0,
+        "estado": 1,
         "comando": "Trama_Writeout(29,0,1)",
         "dispositivo": "FAIL",
         "evento": "turn off the reefer machine",
