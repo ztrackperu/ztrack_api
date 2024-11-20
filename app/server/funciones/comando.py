@@ -26,7 +26,7 @@ async def GuardarComandos_super_libre_supervisado():
         "imei": "866782048942516",
         "estado": 1,
         "fecha_ejecucion": None,
-        "comando": "MANUAL_RIPE(16.10,90,200,6.00)",
+        "comando": "MANUAL_RIPE(14.40,90,150,5.00)",
         #"comando": "MANUAL_RIPE(15.60,90,120,6.00)",
         "dispositivo": "FAIL",
         "evento": "demonio en accion cada hora  ",
@@ -153,7 +153,7 @@ async def procesar_on_pabecsa():
     fet =datetime.now()
     valor_general = {
         "imei": "863576043636583",
-        "estado": 0,
+        "estado": 1,
         "comando": "Trama_Writeout(29,1,1)",
         "dispositivo": "FAIL",
         "evento": "turn on the reefer machine",
@@ -181,7 +181,7 @@ async def procesar_off_pabecsa():
     fet =datetime.now()
     valor_general = {
         "imei": "863576043636583",
-        "estado": 0,
+        "estado": 1,
         "comando": "Trama_Writeout(29,0,1)",
         "dispositivo": "FAIL",
         "evento": "turn off the reefer machine",
