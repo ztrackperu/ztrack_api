@@ -31,7 +31,7 @@ async def procesar_maersk():
             cont_config+=1
         elif  notificacion['d00'] and  notificacion['d09'] and  notificacion['i'] :
             cont_on+=1
-        elif notificacion['gps'] and notificacion['d00']==False and  notificacion['d09']==False and notificacion['d01']==False and  notificacion['d02']==False and  notificacion['d03']==False and  notificacion['d04']==False and  notificacion['i'] : 
+        elif notificacion['gps'] and notificacion['d00']==None and  notificacion['d09']==None and notificacion['d01']==None and  notificacion['d02']==None and  notificacion['d03']==None and  notificacion['d04']==None and  notificacion['i'] : 
             cont_off+=1
         else :
             cont_fail=1
