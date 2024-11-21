@@ -12,6 +12,8 @@ from server.routes.supervisado import router as SupervisadosRouter
 from server.routes.control import router as ControlRouter
 from server.routes.generadores import router as GeneradorRouter
 from server.routes.starcool import router as StarcoolRouter
+from server.routes.maersk import router as MaerskRouter
+
 
 
 app = FastAPI(
@@ -29,7 +31,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 #añadir el conjunto de rutas de notificaciones
 #app.include_router(UsuariosRouter, tags=["usuarios"], prefix="/usuarios")
 app.include_router(DatosRouter        , tags=["Datos"]        , prefix="/Datos")
@@ -40,8 +41,12 @@ app.include_router(SupervisadosRouter , tags=["Supervisador"] , prefix="/Supervi
 app.include_router(ControlRouter      , tags=["Control"]      , prefix="/Control")
 app.include_router(GeneradorRouter    , tags=["Generador"]    , prefix="/Generador")
 app.include_router(StarcoolRouter    , tags=["Starcool"]    , prefix="/Starcool")
+app.include_router(MaerskRouter    , tags=["Maersk"]    , prefix="/Maersk")
+
 
 
 @app.get("/", tags=["Root"])
 async def read_root():
     return {"message": "Welcome to this fantastic app ztrack by test!"}
+
+
