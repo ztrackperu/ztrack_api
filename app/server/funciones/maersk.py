@@ -22,10 +22,23 @@ async def procesar_maersk():
     #pasamos todo a nueva base de datos D_MAERSK_11_2024
     proceso_collection =collection(bd_gene("MAERSK"))
     notificacions=[]
-    async for notificacion in data_collection.find({"estado":1},{"_id":0}).sort({"fecha":-1}):
+    cont_config = 0 
+    cont_on =0
+    cont_off =0
+    cont_fail =0
+    async for notificacion in data_collection.find({"estado":1},{"_id":0}).sort({"fecha":1}):
+        if notificacion['d01'] and  notificacion['d02'] and  notificacion['d03'] and  notificacion['d04'] and  notificacion['i'] :
+            cont_config+=1
+        elif  notificacion['d00'] and  notificacion['d09'] and  notificacion['i'] :
+            cont_on+=1
+        elif notificacion['gps'] and notificacion['d00']==False and  notificacion['d09']==False and notificacion['d01']==False and  notificacion['d02']==False and  notificacion['d03']==False and  notificacion['d04']==False and  notificacion['i'] : 
+            cont_off+=1
+        else :
+            cont_fail=1
+
         print(notificacion)
         notificacions.append(notificacion)
-    return  notificacions
+    return  [cont_config ,cont_on ,cont_off , cont_fail ,notificacions]
 
 
 
