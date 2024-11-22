@@ -82,7 +82,7 @@ def procesar_d00(text):
     
     return decimal_array
 
-def array_datos_genset(ar,op=1):
+def array_datos_genset(ar,op):
     if op==0 :
         #llenar array e puros ceros 
         ar=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
@@ -136,7 +136,7 @@ async def procesar_maersk():
             proceso_uno = procesar_d00(notificacion['d00'])
             if proceso_uno : 
                 #aqui va la conversion si todo esta bien 
-                proceso_dos = array_datos_genset(proceso_uno)
+                proceso_dos = array_datos_genset(proceso_uno,1)
                 #añadimos la hora a array 
                 proceso_dos['fecha_r']=notificacion['fecha']
                 proceso_dos['on_off']=1
