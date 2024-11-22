@@ -172,7 +172,7 @@ async def procesar_maersk():
 
 
         elif notificacion['gps'] and notificacion['d00']==None and  notificacion['d09']==None and notificacion['d01']==None and  notificacion['d02']==None and  notificacion['d03']==None and  notificacion['d04']==None and  notificacion['i'] : 
-            proceso_uno = array_datos_genset(notificacion['d00'])
+            proceso_dos = array_datos_genset(notificacion['d00'])
             proceso_dos['fecha_r']=notificacion['fecha']
             proceso_dos['on_off']=0
             proceso_gps = procesar_gps(notificacion['gps'])
