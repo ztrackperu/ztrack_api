@@ -57,7 +57,7 @@ def procesar_gps(tra):
             if elementos_gps[1] and elementos_gps[9]:
                 fecha_gps =str(elementos_gps[9])+"_"+str(elementos_gps[1])
             
-            r=[seg_lat,seg_lon,velocidad,direccion,fecha_gps]
+            r=[lat_final,lon_final,velocidad,direccion,fecha_gps]
         else :
             r=[None,None,None,None,None]
     else :
@@ -88,26 +88,26 @@ def array_datos_genset(ar,op=1):
         ar=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     #establecer un objeto para procesar : 
     genset = {
-        "Tr_Timer1":ar[0],
-        "Tr_Timer2":ar[1],
-        "Rt_Voltage":ar[2],
-        "Rt_Battery":ar[3],
-        "Rt_Water":ar[4],
-        "Rt_Frequency":ar[5],
-        "Rt_Fuel":ar[6],
-        "Rt_Voltaje2":ar[7],
-        "Rt_Rotor":ar[8],
-        "Rt_Field":ar[9],
-        "Dv_Setting":ar[10],
-        "Dv_Alarm":ar[11],
-        "Dv_Message":ar[12],
-        "Dv_Mode":ar[13],
-        "Dv_Fuel":ar[14],
-        "Dv_Voltage":ar[15],
-        "Dv_Frequency":ar[16],
-        "Dv_Battery":ar[17],
-        "Dv_Water":ar[18],
-        "Dv_rpm":ar[19]
+        "Tr_Timer1":ar[0]/1,
+        "Tr_Timer2":ar[1]/1,
+        "Rt_Voltage":ar[2]/10,
+        "Rt_Battery":ar[3]/100,
+        "Rt_Water":ar[4]/10,
+        "Rt_Frequency":ar[5]/10,
+        "Rt_Fuel":ar[6]/10,
+        "Rt_Voltaje2":ar[7]/10,
+        "Rt_Rotor":ar[8]/10,
+        "Rt_Field":ar[9]/10,
+        "Dv_Setting":ar[10]/1,
+        "Dv_Alarm":ar[11]/1,
+        "Dv_Message":ar[12]/1,
+        "Dv_Mode":ar[13]/1,
+        "Dv_Fuel":ar[14]/10,
+        "Dv_Voltage":ar[15]/10,
+        "Dv_Frequency":ar[16]/10,
+        "Dv_Battery":ar[17]/10,
+        "Dv_Water":ar[18]/10,
+        "Dv_rpm":ar[19]/1
     }
     return  genset
 
@@ -120,6 +120,7 @@ async def procesar_maersk():
     data_collection = collection(bd_gene(imei))
     #pasamos todo a nueva base de datos D_MAERSK_11_2024
     proceso_collection =collection(bd_gene("MAERSK"))
+    id_cole =collection(bd_gene("id_gene"))
     notificacions=[]
     cont_config = 0 
     cont_on =0
@@ -148,6 +149,26 @@ async def procesar_maersk():
                     proceso_dos['velocidad']=proceso_gps[2]
                     proceso_dos['direccion']=proceso_gps[3]
                     proceso_dos['fecha_gps']=proceso_gps[4]
+                if id_cole['maersk'] :
+                    proceso_dos['_id']=id_cole['maersk']
+                    #actualizamos
+                    notificacion_1 = await id_cole.update_one(
+                     {'seguimiento':'maersk'}, {"$set": {"maersk":proceso_dos['_id']}}
+                    )
+
+                else :
+                    proceso_dos['_id']=1
+                    #crear
+                    notificacion_1 = await id_cole.insert_one({'maersk':proceso_dos['_id'],'seguimiento':'maersk'})
+
+
+                    notificacion = await data_collection.insert_one(ztrack_data)
+    updated_ids = await ids_collection.update_one(
+            {"id": 1}, {"$set": {"receta_id":id_receta}}
+        )
+
+
+
                 cont_on+=1
                 #enviar data a repositorio final 
                 notificacion = await proceso_collection.insert_one(proceso_dos)
