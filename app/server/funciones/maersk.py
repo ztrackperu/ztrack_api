@@ -127,9 +127,9 @@ async def procesar_maersk():
     cont_on =0
     cont_off =0
     cont_fail =0
-    dato_id =await id_cole.find_one({'seguimiento':'maersk'},{"_id":0})
-    if dato_id :
-       busqueda = {"$and": [{"fecha_procesada": {"$lte": dato_id['fecha_procesada']}},{"estado":1}]}
+    dato_id_i =await id_cole.find_one({'seguimiento':'maersk'},{"_id":0})
+    if dato_id_i :
+       busqueda = {"$and": [{"fecha": {"$lte": dato_id_i['fecha_procesada']}},{"estado":1}]}
     else :
         busqueda ={"estado":1}
 
@@ -160,7 +160,7 @@ async def procesar_maersk():
 
                 
                 #realizar consulta de datos 
-                #dato_id =await id_cole.find_one({'seguimiento':'maersk'},{"_id":0})
+                dato_id =await id_cole.find_one({'seguimiento':'maersk'},{"_id":0})
                 if dato_id :
                     proceso_dos['_id']=dato_id['maersk']+1
                     #actualizamos
@@ -195,7 +195,7 @@ async def procesar_maersk():
 
             #enviar data a repositorio final 
             #realizar consulta de datos 
-            #dato_id =await id_cole.find_one({'seguimiento':'maersk'},{"_id":0})
+            dato_id =await id_cole.find_one({'seguimiento':'maersk'},{"_id":0})
             if dato_id :
                 proceso_dos['_id']=dato_id['maersk']+1
                 #actualizamos
