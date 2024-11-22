@@ -153,7 +153,7 @@ async def procesar_maersk():
                 #realizar consulta de datos 
                 dato_id =await id_cole.find_one({'seguimiento':'maersk'},{"_id":0})
                 if dato_id :
-                    proceso_dos['_id']=id_cole['maersk']+1
+                    proceso_dos['_id']=dato_id['maersk']+1
                     #actualizamos
                     notificacion_1 = await id_cole.update_one(
                      {'seguimiento':'maersk'}, {"$set": {"maersk":proceso_dos['_id']}}
@@ -187,7 +187,7 @@ async def procesar_maersk():
             #realizar consulta de datos 
             dato_id =await id_cole.find_one({'seguimiento':'maersk'},{"_id":0})
             if dato_id :
-                proceso_dos['_id']=id_cole['maersk']+1
+                proceso_dos['_id']=dato_id['maersk']+1
                 #actualizamos
                 notificacion_1 = await id_cole.update_one(
                     {'seguimiento':'maersk'}, {"$set": {"maersk":proceso_dos['_id']}}
