@@ -82,8 +82,8 @@ def procesar_d00(text):
     
     return decimal_array
 
-def array_datos_genset(ar,op):
-    if op==0 :
+def array_datos_genset(ar):
+    if ar==None :
         #llenar array e puros ceros 
         ar=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     #establecer un objeto para procesar : 
@@ -109,6 +109,7 @@ def array_datos_genset(ar,op):
         "Dv_Water":ar[18]/10,
         "Dv_rpm":ar[19]/1
     }
+    print(genset)
     return  genset
 
 
@@ -136,7 +137,7 @@ async def procesar_maersk():
             proceso_uno = procesar_d00(notificacion['d00'])
             if proceso_uno : 
                 #aqui va la conversion si todo esta bien 
-                proceso_dos = array_datos_genset(proceso_uno,1)
+                proceso_dos = array_datos_genset(proceso_uno)
                 #añadimos la hora a array 
                 proceso_dos['fecha_r']=notificacion['fecha']
                 proceso_dos['on_off']=1
@@ -171,7 +172,7 @@ async def procesar_maersk():
 
 
         elif notificacion['gps'] and notificacion['d00']==None and  notificacion['d09']==None and notificacion['d01']==None and  notificacion['d02']==None and  notificacion['d03']==None and  notificacion['d04']==None and  notificacion['i'] : 
-            proceso_uno = array_datos_genset(notificacion['d00'],0)
+            proceso_uno = array_datos_genset(notificacion['d00'])
             proceso_dos['fecha_r']=notificacion['fecha']
             proceso_dos['on_off']=0
             proceso_gps = procesar_gps(notificacion['gps'])
