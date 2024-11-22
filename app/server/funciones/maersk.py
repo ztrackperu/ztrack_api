@@ -127,7 +127,13 @@ async def procesar_maersk():
     cont_on =0
     cont_off =0
     cont_fail =0
-    async for notificacion in data_collection.find({"estado":1},{"_id":0}).sort({"fecha":1}):
+    dato_id =await id_cole.find_one({'seguimiento':'maersk'},{"_id":0})
+    if dato_id['fecha_procesada'] :
+       busqueda = {"$and": [{"fecha_procesada": {"$lte": dato_id['fecha_procesada']}},{"estado":1}]}
+    else :
+        busqueda ={"estado":1}
+
+    async for notificacion in data_collection.find(busqueda,{"_id":0}).sort({"fecha":1}):
         if notificacion['d01'] and  notificacion['d02'] and  notificacion['d03'] and  notificacion['d04'] and  notificacion['i'] :
             #config
             #de momento no procesar 
@@ -150,19 +156,21 @@ async def procesar_maersk():
                     proceso_dos['velocidad']=proceso_gps[2]
                     proceso_dos['direccion']=proceso_gps[3]
                     proceso_dos['fecha_gps']=proceso_gps[4]
+                    proceso_dos['link_mapa']="maps.google.com/?q=" + str(proceso_dos['latitud']) + "," + str(proceso_dos['longitud'])
+
                 
                 #realizar consulta de datos 
-                dato_id =await id_cole.find_one({'seguimiento':'maersk'},{"_id":0})
+                #dato_id =await id_cole.find_one({'seguimiento':'maersk'},{"_id":0})
                 if dato_id :
                     proceso_dos['_id']=dato_id['maersk']+1
                     #actualizamos
                     notificacion_1 = await id_cole.update_one(
-                     {'seguimiento':'maersk'}, {"$set": {"maersk":proceso_dos['_id']}}
+                     {'seguimiento':'maersk'}, {"$set": {"maersk":proceso_dos['_id'],"fecha_procesada":proceso_dos['fecha_r'] }}
                     )
                 else :
                     proceso_dos['_id']=1
                     #crear
-                    notificacion_1 = await id_cole.insert_one({'maersk':proceso_dos['_id'],'seguimiento':'maersk'})
+                    notificacion_1 = await id_cole.insert_one({'maersk':proceso_dos['_id'],'seguimiento':'maersk',"fecha_procesada":proceso_dos['fecha_r'] })
 
                 cont_on+=1
                 #enviar data a repositorio final 
@@ -183,21 +191,22 @@ async def procesar_maersk():
                 proceso_dos['velocidad']=proceso_gps[2]
                 proceso_dos['direccion']=proceso_gps[3]
                 proceso_dos['fecha_gps']=proceso_gps[4]
-            cont_off+=1
+                proceso_dos['link_mapa']="maps.google.com/?q=" + str(proceso_dos['latitud']) + "," + str(proceso_dos['longitud'])
+
             #enviar data a repositorio final 
             #realizar consulta de datos 
-            dato_id =await id_cole.find_one({'seguimiento':'maersk'},{"_id":0})
+            #dato_id =await id_cole.find_one({'seguimiento':'maersk'},{"_id":0})
             if dato_id :
                 proceso_dos['_id']=dato_id['maersk']+1
                 #actualizamos
                 notificacion_1 = await id_cole.update_one(
-                    {'seguimiento':'maersk'}, {"$set": {"maersk":proceso_dos['_id']}}
+                    {'seguimiento':'maersk'}, {"$set": {"maersk":proceso_dos['_id'],"fecha_procesada":proceso_dos['fecha_r'] }}
                 )
             else :
                 proceso_dos['_id']=1
                 #crear
-                notificacion_1 = await id_cole.insert_one({'maersk':proceso_dos['_id'],'seguimiento':'maersk'})
-            notificacion = await proceso_collection.insert_one(proceso_dos)
+                notificacion_1 = await id_cole.insert_one({'maersk':proceso_dos['_id'],'seguimiento':'maersk',"fecha_procesada":proceso_dos['fecha_r'] })
+            cont_off+=1
 
         else :
             cont_fail=+1
