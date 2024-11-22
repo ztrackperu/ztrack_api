@@ -6,6 +6,63 @@ from fastapi_pagination.ext.motor import paginate
 import mysql.connector
 
 
+#dir = "GPRMC,225556.00,A,1200.76343,S,07706.36069,W,0.037,,191124,,,A*7C"
+
+lat_neg = 0
+lon_neg = 0
+
+#  GPRMC,164308.00,A,1133.40415,S,07716.12044,W,28.161,134.48,221124,,,A*59
+
+def procesar_gps(tra):
+    elementos_gps = tra.split(',')
+    if len(elementos_gps)==13 :
+        #evaluamos si el dato es "A" continuamos , sino completamos con puro 0 el array
+        if elementos_gps[2]=="A":
+            #realizar el proceso de gps
+            velocidad =0
+            direccion=None
+            fecha_gps =None
+            #1133.40415
+            val_lat = float(elementos_gps[3])
+            #07716.12044
+            val_lon = float(elementos_gps[5])
+            #11
+            int_lat = int(val_lat / 100)
+            #77
+            int_lon = int(val_lon / 100)
+
+            #1133.40415-1100  = 33.40415
+            seg_lat = val_lat - (int_lat*100)
+            #7716.12044-7700  = 16.12044  
+            seg_lon = val_lon - (int_lon*100)
+
+            #33.40415/60  =0.55673583
+            seg_lat = seg_lat / 60
+            #16.12044/60 = 0.268674
+            seg_lon = seg_lon / 60
+
+            #11.5567358
+            #77.268674
+            lat_final = round(float(int_lat) + seg_lat , 8)
+            lon_final = round(float(int_lon) + seg_lon , 8)
+            if elementos_gps[4]=="S" or elementos_gps[4]=="s" :
+                lat_final=lat_final*(-1)
+            if elementos_gps[6]=="W" or elementos_gps[4]=="w" :
+                lon_final=lon_final*(-1)
+            if elementos_gps[7] :
+                velocidad = float(elementos_gps[7])
+                velocidad = round(velocidad * 1.852,2)
+            if elementos_gps[8] :
+                direccion=float(elementos_gps[8])
+            if elementos_gps[1] and elementos_gps[9]:
+                fecha_gps =str(elementos_gps[9])+"_"+str(elementos_gps[1])
+            
+            r=[seg_lat,seg_lon,velocidad,direccion,fecha_gps]
+        else :
+            r=[None,None,None,None,None]
+    else :
+        r=[None,None,None,None,None]
+
 def bd_gene(imei):
     fet =datetime.now()
     #part = fet.strftime('%d_%m_%Y')
@@ -13,6 +70,47 @@ def bd_gene(imei):
     colect ="G_"+imei+part
     return colect
  
+def procesar_d00(text):
+    # Dividir el texto en elementos separados por comas
+    hex_elements = text.split(',')
+    if len(hex_elements)==20 :
+        # Convertir cada elemento hexadecimal a decimal
+        decimal_array = [int(hex_elem, 16) for hex_elem in hex_elements]
+    else :
+        decimal_array=0
+    
+    return decimal_array
+
+def array_datos_genset(ar,op=1):
+    if op==0 :
+        #llenar array e puros ceros 
+        ar=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    #establecer un objeto para procesar : 
+    genset = {
+        "Tr_Timer1":ar[0],
+        "Tr_Timer2":ar[1],
+        "Rt_Voltage":ar[2],
+        "Rt_Battery":ar[3],
+        "Rt_Water":ar[4],
+        "Rt_Frequency":ar[5],
+        "Rt_Fuel":ar[6],
+        "Rt_Voltaje2":ar[7],
+        "Rt_Rotor":ar[8],
+        "Rt_Field":ar[9],
+        "Dv_Setting":ar[10],
+        "Dv_Alarm":ar[11],
+        "Dv_Message":ar[12],
+        "Dv_Mode":ar[13],
+        "Dv_Fuel":ar[14],
+        "Dv_Voltage":ar[15],
+        "Dv_Frequency":ar[16],
+        "Dv_Battery":ar[17],
+        "Dv_Water":ar[18],
+        "Dv_rpm":ar[19]
+    }
+    return  genset
+
+
 
 async def procesar_maersk():
     fet =datetime.now()
@@ -28,13 +126,52 @@ async def procesar_maersk():
     cont_fail =0
     async for notificacion in data_collection.find({"estado":1},{"_id":0}).sort({"fecha":1}):
         if notificacion['d01'] and  notificacion['d02'] and  notificacion['d03'] and  notificacion['d04'] and  notificacion['i'] :
+            #config
+            #de momento no procesar 
             cont_config+=1
         elif  notificacion['d00'] and  notificacion['d09'] and  notificacion['i'] :
-            cont_on+=1
+            #invocar la funcion de resuelve d00 donde estan todo los datos 
+            proceso_uno = procesar_d00(notificacion['d00'])
+            if proceso_uno : 
+                #aqui va la conversion si todo esta bien 
+                proceso_dos = array_datos_genset(proceso_uno)
+                #añadimos la hora a array 
+                proceso_dos['fecha_r']=notificacion['fecha']
+                proceso_dos['on_off']=1
+                #procesar gps 
+                proceso_gps = procesar_gps(notificacion['gps'])
+                if proceso_gps :
+                    #r=[seg_lat,seg_lon,velocidad,direccion,fecha_gps]
+                    proceso_dos['latitud']=proceso_gps[0]
+                    proceso_dos['longitud']=proceso_gps[1]
+                    proceso_dos['velocidad']=proceso_gps[2]
+                    proceso_dos['direccion']=proceso_gps[3]
+                    proceso_dos['fecha_gps']=proceso_gps[4]
+                cont_on+=1
+                #enviar data a repositorio final 
+                notificacion = await proceso_collection.insert_one(proceso_dos)
+            else :
+                cont_fail=+1
+
+
         elif notificacion['gps'] and notificacion['d00']==None and  notificacion['d09']==None and notificacion['d01']==None and  notificacion['d02']==None and  notificacion['d03']==None and  notificacion['d04']==None and  notificacion['i'] : 
+            proceso_uno = array_datos_genset(notificacion['d00'],0)
+            proceso_dos['fecha_r']=notificacion['fecha']
+            proceso_dos['on_off']=0
+            proceso_gps = procesar_gps(notificacion['gps'])
+            if proceso_gps :
+                #r=[seg_lat,seg_lon,velocidad,direccion,fecha_gps]
+                proceso_dos['latitud']=proceso_gps[0]
+                proceso_dos['longitud']=proceso_gps[1]
+                proceso_dos['velocidad']=proceso_gps[2]
+                proceso_dos['direccion']=proceso_gps[3]
+                proceso_dos['fecha_gps']=proceso_gps[4]
             cont_off+=1
+            #enviar data a repositorio final 
+            notificacion = await proceso_collection.insert_one(proceso_dos)
+
         else :
-            cont_fail=1
+            cont_fail=+1
 
         print(notificacion)
         notificacions.append(notificacion)
