@@ -62,6 +62,7 @@ def procesar_gps(tra):
             r=[None,None,None,None,None]
     else :
         r=[None,None,None,None,None]
+    return r
 
 def bd_gene(imei):
     fet =datetime.now()
