@@ -161,14 +161,6 @@ async def procesar_maersk():
                     #crear
                     notificacion_1 = await id_cole.insert_one({'maersk':proceso_dos['_id'],'seguimiento':'maersk'})
 
-
-                    notificacion = await data_collection.insert_one(ztrack_data)
-    updated_ids = await ids_collection.update_one(
-            {"id": 1}, {"$set": {"receta_id":id_receta}}
-        )
-
-
-
                 cont_on+=1
                 #enviar data a repositorio final 
                 notificacion = await proceso_collection.insert_one(proceso_dos)
@@ -190,6 +182,17 @@ async def procesar_maersk():
                 proceso_dos['fecha_gps']=proceso_gps[4]
             cont_off+=1
             #enviar data a repositorio final 
+            if id_cole['maersk'] :
+                proceso_dos['_id']=id_cole['maersk']
+                #actualizamos
+                notificacion_1 = await id_cole.update_one(
+                    {'seguimiento':'maersk'}, {"$set": {"maersk":proceso_dos['_id']}}
+                )
+
+            else :
+                proceso_dos['_id']=1
+                #crear
+                notificacion_1 = await id_cole.insert_one({'maersk':proceso_dos['_id'],'seguimiento':'maersk'})
             notificacion = await proceso_collection.insert_one(proceso_dos)
 
         else :
