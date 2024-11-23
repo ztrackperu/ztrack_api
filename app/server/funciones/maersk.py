@@ -129,7 +129,7 @@ async def procesar_maersk():
     cont_fail =0
     dato_id_i =await id_cole.find_one({'seguimiento':'maersk'},{"_id":0})
     if dato_id_i :
-       busqueda = {"$and": [{"fecha": {"$lte": dato_id_i['fecha_procesada']}},{"estado":1}]}
+       busqueda = {"$and": [{"fecha": {"$gt": dato_id_i['fecha_procesada']}},{"estado":1}]}
     else :
         busqueda ={"estado":1}
 
