@@ -252,17 +252,17 @@ async def procesar_genset(imei):
                     proceso_dos['link_mapa']="maps.google.com/?q=" + str(proceso_dos['latitud']) + "," + str(proceso_dos['longitud'])
              
                 #realizar consulta de datos 
-                dato_id =await id_cole.find_one({'seguimiento':'maersk'},{"_id":0})
+                dato_id =await id_cole.find_one({'seguimiento':imei},{"_id":0})
                 if dato_id :
                     proceso_dos['_id']=dato_id['maersk']+1
                     #actualizamos
                     notificacion_1 = await id_cole.update_one(
-                     {'seguimiento':'maersk'}, {"$set": {"maersk":proceso_dos['_id'],"fecha_procesada":proceso_dos['fecha_r'] }}
+                     {'seguimiento':imei}, {"$set": {"maersk":proceso_dos['_id'],"fecha_procesada":proceso_dos['fecha_r'] }}
                     )
                 else :
                     proceso_dos['_id']=1
                     #crear
-                    notificacion_1 = await id_cole.insert_one({'maersk':proceso_dos['_id'],'seguimiento':'maersk',"fecha_procesada":proceso_dos['fecha_r'] })
+                    notificacion_1 = await id_cole.insert_one({'maersk':proceso_dos['_id'],'seguimiento':imei,"fecha_procesada":proceso_dos['fecha_r'] })
 
                 cont_on+=1
                 #enviar data a repositorio final 
@@ -306,14 +306,14 @@ async def procesar_genset(imei):
                 proceso_dos['_id']=dato_id['maersk']+1
                 #actualizamos
                 notificacion_1 = await id_cole.update_one(
-                    {'seguimiento':'maersk'}, {"$set": {"maersk":proceso_dos['_id'],"fecha_procesada":proceso_dos['fecha_r'] }}
+                    {'seguimiento':imei}, {"$set": {"maersk":proceso_dos['_id'],"fecha_procesada":proceso_dos['fecha_r'] }}
                 )
             else :
                 proceso_dos['_id']=1
                 #crear
-                notificacion_1 = await id_cole.insert_one({'maersk':proceso_dos['_id'],'seguimiento':'maersk',"fecha_procesada":proceso_dos['fecha_r'] })      
+                notificacion_1 = await id_cole.insert_one({'maersk':proceso_dos['_id'],'seguimiento':imei,"fecha_procesada":proceso_dos['fecha_r'] })      
                 #enviar data a repositorio final 
-                notificacion = await proceso_collection.insert_one(proceso_dos)
+                notificacion_ok = await proceso_collection.insert_one(proceso_dos)
                 #despues de guardar la data , validar si existe registro Live , sino crearlo , y si existe actualizarlo 
                 genset_id =await generador_collection.find_one({'imei':imei},{"_id":0})
                 
