@@ -224,6 +224,9 @@ async def procesar_genset(imei):
         busqueda ={"estado":1}
 
     async for notificacion in data_collection.find(busqueda,{"_id":0}).sort({"fecha":1}):
+        print("-----------------")
+        print(bd_gene(imei))
+        print("-----------------")
         if notificacion['d01'] and  notificacion['d02'] and  notificacion['d03'] and  notificacion['d04'] and  notificacion['i'] :
             #config
             #de momento no procesar 
