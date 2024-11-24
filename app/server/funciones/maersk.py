@@ -156,7 +156,8 @@ def oMeses(dispositivo,fecha_inicio=0, fecha_fin=0):
 async def procesar_tabla_datos(notificacion_data: dict) -> dict:
     fet_actual =datetime.now()
     if(notificacion_data['fechaF']=="0" and notificacion_data['fechaI']=="0"):
-        fech = procesar_fecha_fila(notificacion_data['utc'],fet_actual)
+        fecha_formateada = fet_actual.strftime("%Y-%m-%dT%H:%M:%S")
+        fech = procesar_fecha_fila(notificacion_data['utc'],fecha_formateada)
         periodos =oMeses(notificacion_data['imei'])
         #bconsultas =oMeses(notificacion_data['device'],notificacion_data['ultima'],notificacion_data['ultima'])
     else : 
