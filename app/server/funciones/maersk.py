@@ -266,7 +266,7 @@ async def procesar_genset(imei):
 
                 cont_on+=1
                 #enviar data a repositorio final 
-                notificacion = await proceso_collection.insert_one(proceso_dos)
+                notificacion_ok = await proceso_collection.insert_one(proceso_dos)
                 #despues de guardar la data , validar si existe registro Live , sino crearlo , y si existe actualizarlo 
                 genset_id =await generador_collection.find_one({'imei':imei},{"_id":0})
                 
