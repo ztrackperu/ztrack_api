@@ -146,7 +146,7 @@ def oMeses(dispositivo,fecha_inicio=0, fecha_fin=0):
         # Iterar sobre los meses en el rango
         while inicio <= fin:
             # Agregar el mes actual a la lista
-            meses.append("G_"+dispositivo+"_"+str(int(inicio.strftime('%m')))+inicio.strftime('_%Y'))
+            meses.append("G_"+dispositivo+"_"+str(inicio.strftime('%m'))+inicio.strftime('_%Y'))
             # Avanzar al siguiente mes
             inicio += timedelta(days=32)
             inicio = inicio.replace(day=1)
