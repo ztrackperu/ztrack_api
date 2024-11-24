@@ -70,6 +70,14 @@ def bd_gene(imei):
     part = fet.strftime('_%m_%Y')
     colect ="G_"+imei+part
     return colect
+
+
+def bd_gene_1(imei):
+    fet =datetime.now()
+    #part = fet.strftime('%d_%m_%Y')
+    part = fet.strftime('_%m_%Y')
+    colect ="pre_"+imei+part
+    return colect
  
 def procesar_d00(text):
     # Dividir el texto en elementos separados por comas
@@ -185,12 +193,157 @@ async def procesar_tabla_datos(notificacion_data: dict) -> dict:
 async def live_generador():
     notificacions=[]
     dispositivos_collection = collection(bd_gene('dispositivos'))
+    generador_collection =collection(bd_gene('genset'))
     async for mad in dispositivos_collection.find({"estado":1},{"_id":0}):
         notificacions.append(mad)
+        print(mad)
+        procesar_genset(mad['imei'])
     return notificacions
 
 
-        
+
+async def procesar_genset(imei):
+    generador_collection =collection(bd_gene('genset'))
+
+    fet =datetime.now()
+    #imei = "863576046753492"
+    #aqui capturamos al coleccion y procesamos los datos 
+    data_collection = collection(bd_gene(imei))
+    #pasamos todo a nueva base de datos D_MAERSK_11_2024
+    proceso_collection =collection(bd_gene_1(imei))
+    id_cole =collection(bd_gene("id_gene"))
+    notificacions=[]
+    cont_config = 0 
+    cont_on =0
+    cont_off =0
+    cont_fail =0
+    dato_id_i =await id_cole.find_one({'seguimiento':'maersk'},{"_id":0})
+    if dato_id_i :
+       busqueda = {"$and": [{"fecha": {"$gt": dato_id_i['fecha_procesada']}},{"estado":1}]}
+    else :
+        busqueda ={"estado":1}
+
+    async for notificacion in data_collection.find(busqueda,{"_id":0}).sort({"fecha":1}):
+        if notificacion['d01'] and  notificacion['d02'] and  notificacion['d03'] and  notificacion['d04'] and  notificacion['i'] :
+            #config
+            #de momento no procesar 
+            cont_config+=1
+        elif  notificacion['d00'] and  notificacion['d09'] and  notificacion['i'] :
+            #invocar la funcion de resuelve d00 donde estan todo los datos 
+            proceso_uno = procesar_d00(notificacion['d00'])
+            if proceso_uno : 
+                #aqui va la conversion si todo esta bien 
+                proceso_dos = array_datos_genset(proceso_uno)
+                #añadimos la hora a array 
+                proceso_dos['fecha_r']=notificacion['fecha']
+                proceso_dos['on_off']=1
+                #procesar gps 
+                proceso_gps = procesar_gps(notificacion['gps'])
+                if proceso_gps :
+                    #r=[seg_lat,seg_lon,velocidad,direccion,fecha_gps]
+                    proceso_dos['latitud']=proceso_gps[0]
+                    proceso_dos['longitud']=proceso_gps[1]
+                    proceso_dos['velocidad']=proceso_gps[2]
+                    proceso_dos['direccion']=proceso_gps[3]
+                    proceso_dos['fecha_gps']=proceso_gps[4]
+                    proceso_dos['link_mapa']="maps.google.com/?q=" + str(proceso_dos['latitud']) + "," + str(proceso_dos['longitud'])
+             
+                #realizar consulta de datos 
+                dato_id =await id_cole.find_one({'seguimiento':'maersk'},{"_id":0})
+                if dato_id :
+                    proceso_dos['_id']=dato_id['maersk']+1
+                    #actualizamos
+                    notificacion_1 = await id_cole.update_one(
+                     {'seguimiento':'maersk'}, {"$set": {"maersk":proceso_dos['_id'],"fecha_procesada":proceso_dos['fecha_r'] }}
+                    )
+                else :
+                    proceso_dos['_id']=1
+                    #crear
+                    notificacion_1 = await id_cole.insert_one({'maersk':proceso_dos['_id'],'seguimiento':'maersk',"fecha_procesada":proceso_dos['fecha_r'] })
+
+                cont_on+=1
+                #enviar data a repositorio final 
+                notificacion = await proceso_collection.insert_one(proceso_dos)
+                #despues de guardar la data , validar si existe registro Live , sino crearlo , y si existe actualizarlo 
+                genset_id =await generador_collection.find_one({'imei':imei},{"_id":0})
+                
+                if genset_id :
+                    notificacion_2 = await genset_id.update_one(
+                     {'seguimiento':'maersk'}, {"$set": proceso_dos}
+                    )
+                else :
+                    proceso_dos['primera_conexion']=notificacion['fecha']
+                    proceso_dos['generador']=None
+                    proceso_dos['imei']=imei
+                    proceso_dos['estado']=1
+                    proceso_dos['descripcion']=None
+                    proceso_dos['config']=None
+                    notificacion_2 = await genset_id.insert_one(proceso_dos)
+            else :
+                cont_fail=+1
+
+        elif notificacion['gps'] and notificacion['d00']==None and  notificacion['d09']==None and notificacion['d01']==None and  notificacion['d02']==None and  notificacion['d03']==None and  notificacion['d04']==None and  notificacion['i'] : 
+            proceso_dos = array_datos_genset(notificacion['d00'])
+            proceso_dos['fecha_r']=notificacion['fecha']
+            proceso_dos['on_off']=0
+            proceso_gps = procesar_gps(notificacion['gps'])
+            if proceso_gps :
+                #r=[seg_lat,seg_lon,velocidad,direccion,fecha_gps]
+                proceso_dos['latitud']=proceso_gps[0]
+                proceso_dos['longitud']=proceso_gps[1]
+                proceso_dos['velocidad']=proceso_gps[2]
+                proceso_dos['direccion']=proceso_gps[3]
+                proceso_dos['fecha_gps']=proceso_gps[4]
+                proceso_dos['link_mapa']="maps.google.com/?q=" + str(proceso_dos['latitud']) + "," + str(proceso_dos['longitud'])
+
+            #enviar data a repositorio final 
+            #realizar consulta de datos 
+            dato_id =await id_cole.find_one({'seguimiento':'maersk'},{"_id":0})
+            if dato_id :
+                proceso_dos['_id']=dato_id['maersk']+1
+                #actualizamos
+                notificacion_1 = await id_cole.update_one(
+                    {'seguimiento':'maersk'}, {"$set": {"maersk":proceso_dos['_id'],"fecha_procesada":proceso_dos['fecha_r'] }}
+                )
+            else :
+                proceso_dos['_id']=1
+                #crear
+                notificacion_1 = await id_cole.insert_one({'maersk':proceso_dos['_id'],'seguimiento':'maersk',"fecha_procesada":proceso_dos['fecha_r'] })      
+                #enviar data a repositorio final 
+                notificacion = await proceso_collection.insert_one(proceso_dos)
+                #despues de guardar la data , validar si existe registro Live , sino crearlo , y si existe actualizarlo 
+                genset_id =await generador_collection.find_one({'imei':imei},{"_id":0})
+                
+                if genset_id :
+                    notificacion_2 = await genset_id.update_one(
+                     {'seguimiento':'maersk'}, {"$set": proceso_dos}
+                    )
+                else :
+                    proceso_dos['primera_conexion']=notificacion['fecha']
+                    proceso_dos['generador']=None
+                    proceso_dos['imei']=imei
+                    proceso_dos['estado']=1
+                    proceso_dos['descripcion']=None
+                    proceso_dos['config']=None
+                    notificacion_2 = await genset_id.insert_one(proceso_dos)
+
+            
+            cont_off+=1
+
+        else :
+            cont_fail=+1
+
+        print(notificacion)
+        notificacions.append(notificacion)
+    return  [cont_config ,cont_on ,cont_off , cont_fail ,notificacions]
+
+
+
+
+
+
+
+
 async def procesar_maersk():
     fet =datetime.now()
     imei = "863576046753492"
@@ -253,7 +406,6 @@ async def procesar_maersk():
                 notificacion = await proceso_collection.insert_one(proceso_dos)
             else :
                 cont_fail=+1
-
 
         elif notificacion['gps'] and notificacion['d00']==None and  notificacion['d09']==None and notificacion['d01']==None and  notificacion['d02']==None and  notificacion['d03']==None and  notificacion['d04']==None and  notificacion['i'] : 
             proceso_dos = array_datos_genset(notificacion['d00'])
