@@ -8,6 +8,7 @@ from server.funciones.maersk import (
     retrieve_datos,
     procesar_maersk,
     grafica_generador,
+    procesar_tabla_datos,
     
 )
 
@@ -35,7 +36,7 @@ async def pedir_grafica_generador(notificacion: SolicitudGeneradorSchema = Body(
     #print(notificacion)
     #enviar a la funcion añadir  
     #print ("desde r")
-    new_notificacion = await grafica_generador(notificacion)
+    new_notificacion = await procesar_tabla_datos(notificacion)
     return ResponseModel(new_notificacion, "ok")
    #return paginate(new_notificacion)
 
