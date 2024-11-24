@@ -170,7 +170,7 @@ async def procesar_tabla_datos(notificacion_data: dict) -> dict:
         #declaramos la busqueda en el rango establecido 
         tabla=[]
         data_collection = collection(periodos[0])
-        diferencial =[{"created_at": {"$gte": fech[0]}},{"created_at": {"$lte": fech[1]}}]
+        diferencial =[{"fecha_r": {"$gte": fech[0]}},{"fecha_r": {"$lte": fech[1]}}]
         pip = [{"$match": {"$and":diferencial}}]
         async for concepto_ot in data_collection.aggregate(pip):
             tabla.append(concepto_ot)
