@@ -9,6 +9,7 @@ from server.funciones.maersk import (
     procesar_maersk,
     grafica_generador,
     procesar_tabla_datos,
+    live_generador,
     
 )
 
@@ -24,6 +25,13 @@ router = APIRouter()
 @router.get("/pre", response_description="Datos recuperados")
 async def get_notificacions():
     notificacions = await procesar_maersk()
+    if notificacions:
+        return ResponseModel(notificacions, "Datos  recuperados exitosamente.")
+    return ResponseModel(notificacions, "Lista vacía devuelta")
+
+@router.get("/livegenerador", response_description="Datos recuperados")
+async def get_notificacions():
+    notificacions = await live_generador()
     if notificacions:
         return ResponseModel(notificacions, "Datos  recuperados exitosamente.")
     return ResponseModel(notificacions, "Lista vacía devuelta")
