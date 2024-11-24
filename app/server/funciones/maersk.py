@@ -173,6 +173,7 @@ async def procesar_tabla_datos(notificacion_data: dict) -> dict:
         diferencial =[{"fecha_r": {"$gte": fech[0]}},{"fecha_r": {"$lte": fech[1]}}]
         pip = [{"$match": {"$and":diferencial}}]
         async for concepto_ot in data_collection.aggregate(pip):
+            print(concepto_ot)
             tabla.append(concepto_ot)
         return tabla
     else :
