@@ -197,7 +197,7 @@ async def live_generador():
     async for mad in dispositivos_collection.find({"estado":1},{"_id":0}):
         notificacions.append(mad)
         print(mad)
-        procesar_genset(mad['imei'])
+        dat = await procesar_genset(mad['imei'])
     return notificacions
 
 
