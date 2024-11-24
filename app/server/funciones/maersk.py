@@ -187,6 +187,7 @@ async def live_generador():
     dispositivos_collection = collection(bd_gene('dispositivos'))
     async for mad in dispositivos_collection.find({"estado":1},{"_id":0}):
         notificacions.append(mad)
+    return notificacions
 
 
         
