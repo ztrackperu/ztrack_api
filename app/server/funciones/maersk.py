@@ -113,7 +113,62 @@ def array_datos_genset(ar):
     return  genset
 
 
+def procesar_fecha_fila(utc,fechaI,fechaF="0"):
+    terrible = 0 ; 
+    #print(fechaI)
+    #print(fechaF)
+    if(utc!=300):
+        #terrible =300-utc
+        terrible =utc-300
+    #print(terrible)
+    #print(utc)
+    if(fechaF=="0"):
+        fechaIx=  datetime.fromisoformat(fechaI)-timedelta(hours=12)+timedelta(minutes=terrible)
+        fechaFx = datetime.fromisoformat(fechaI)+timedelta(minutes=terrible)
+        #aqui pedir 
+    else:
+        fechaIx=  datetime.fromisoformat(fechaI)+timedelta(minutes=terrible)
+        fechaFx = datetime.fromisoformat(fechaF)+timedelta(minutes=terrible)
+    data = [fechaIx,fechaFx]
+    #print(data)
+    return data
 
+#funcion meses optimizada para generadores 
+def oMeses(dispositivo,fecha_inicio=0, fecha_fin=0):
+    meses = []
+    if fecha_inicio==0 or  fecha_fin==0 :
+        #se entinede que solo hay que pedir el periodo actual 
+        meses.append(bd_gene(dispositivo))
+        return  meses 
+    else :
+        inicio = datetime.strptime(fecha_inicio, '%Y-%m-%dT%H:%M:%S')
+        fin = datetime.strptime(fecha_fin, '%Y-%m-%dT%H:%M:%S')
+        # Iterar sobre los meses en el rango
+        while inicio <= fin:
+            # Agregar el mes actual a la lista
+            meses.append("G_"+dispositivo+"_"+str(int(inicio.strftime('%m')))+inicio.strftime('_%Y'))
+            # Avanzar al siguiente mes
+            inicio += timedelta(days=32)
+            inicio = inicio.replace(day=1)
+        return meses
+
+
+async def procesar_tabla_datos(notificacion_data: dict) -> dict:
+    fet_actual =datetime.now()
+    if(notificacion_data['fechaF']=="0" and notificacion_data['fechaI']=="0"):
+        fech = procesar_fecha_fila(notificacion_data['utc'],fet_actual)
+        periodos =oMeses("MAERSK")
+        #bconsultas =oMeses(notificacion_data['device'],notificacion_data['ultima'],notificacion_data['ultima'])
+    else : 
+        fech = procesar_fecha_fila(notificacion_data['utc'],notificacion_data['fechaI'],notificacion_data['fechaF'])
+        #bconsultas =oMeses(notificacion_data['device'],notificacion_data['fechaI'],notificacion_data['fechaF'])
+        periodos =oMeses("MAERSK",notificacion_data['fechaI'],notificacion_data['fechaF'])
+    diferencial =[ periodos , {"created_at": {"$gte": fech[0]}},{"created_at": {"$lte": fech[1]}}]
+    return diferencial
+
+
+
+        
 async def procesar_maersk():
     fet =datetime.now()
     imei = "863576046753492"
@@ -157,8 +212,7 @@ async def procesar_maersk():
                     proceso_dos['direccion']=proceso_gps[3]
                     proceso_dos['fecha_gps']=proceso_gps[4]
                     proceso_dos['link_mapa']="maps.google.com/?q=" + str(proceso_dos['latitud']) + "," + str(proceso_dos['longitud'])
-
-                
+             
                 #realizar consulta de datos 
                 dato_id =await id_cole.find_one({'seguimiento':'maersk'},{"_id":0})
                 if dato_id :
@@ -217,11 +271,106 @@ async def procesar_maersk():
 
 
 
+async def grafica_generador(notificacion_data: dict) -> dict:
+        #pedir la ultima conexion 
+    #ultima conexion pedir mes y año 
+                                                                                                                                                                         
+    #construir base de datos 
+    #database = client.intranet
+    per = notificacion_data['ultima'].split('T')
+    #ARRAY 0 represnta la fecha y 1 la hora
+    periodo = per[0].split('-')
+    #periodo 0 , es el año , 1 es el mes , 2 es el dia 
+    #armamos la base de datos 
+    bd = notificacion_data['device']+"_"+str(int(periodo[1]))+"_"+periodo[0]
+    database = client[bd]
+    #print(bd)
+    #print("olitas")
+    #print(notificacion_data['empresa'])
+    #print(notificacion_data['page'])
+    #print(notificacion_data['size'])
+    madurador = database.get_collection("madurador")
+    #notificacion_collection = collection("notificaciones")
+    page=notificacion_data['page']
+    limit=notificacion_data['size']
+    empresa =notificacion_data['empresa']
+    #esquema para consultar data 
+    dataConfig =await config(empresa)
+    #print(dataConfig)
+    #print(dataConfig['config_data'])
+    #print(dataConfig['config_graph'])
+    #result = madurador.find({ "$and": [{"created_at": {"$gte": datetime.fromisoformat("2024-05-07T00:00:00.000Z")}},{"created_at": {"$lte": datetime.fromisoformat("2024-05-09T23:59:59.999Z")}}]},{"_id":0})                                
+    #esquema con agregation para mayor versatilidad
+    if(notificacion_data['fechaF']=="0" and notificacion_data['fechaI']=="0"):
+        fechaF = datetime.fromisoformat(notificacion_data['ultima'])
+        one_day = timedelta(hours=12)
+        fechaI = fechaF-one_day
+        #print(certeza)
+        #print(certeza1)
+    else : 
+        fechaI=datetime.fromisoformat(notificacion_data['fechaI'])
+        fechaF=datetime.fromisoformat(notificacion_data['fechaF'])
+    print(fechaI)
+    print(fechaF)
+
+    pip = [
+        {"$match": {
+                "$and":[
+                    {"created_at": {"$gte": fechaI}},
+                    {"created_at": {"$lte": fechaF}}
+                ]
+            }
+        },  
+        {"$project":dataConfig['config_data']},
+        {"$skip" : (page-1)*limit},
+        {"$limit" : limit},  
+    ]
+
+    #recorrer array y crear varaibles para insertar
+    graph = dataConfig['config_graph']
+    #print("baja")
+    #print(graph)
+    #print("alta")
+    listas = {}
+    cadena =[]
+    for i in range(len(graph)):
+        #print(graph[i]['label'])
+        nombre_lista = f"{graph[i]['label']}"
+        cadena.append(graph[i]['label'])
+        lab = procesar_texto(graph[i]['label'])
+
+        listas[nombre_lista] = {
+            "data":[],
+            "config":[lab,graph[i]['hidden'],graph[i]['color'],graph[i]['tipo']]
+        }
+
+    concepto_ots = []
+    async for concepto_ot in madurador.aggregate(pip):
+        #print(concepto_ot)
+        concepto_ots.append(concepto_ot)
+        for i in range(len(graph)):
+           #dataConfig['config_graph'][i].append(concepto_ot[dataConfig['config_graph'][i]])
+           #primerfiltro =depurar_coincidencia(concepto_ot[dato[i]])
+           #if(primerfiltro!=None):
+               #aqui evaluamos si sera filtro de temperatura , porcentaje , ety-avl, area
+                #pu ="oli"
+           
+           dato =graph
+           #print(dato)
+           #listas[dato[i]].append(concepto_ot[dato[i]])
+           listas[dato[i]['label']]["data"].append(depurar_coincidencia(concepto_ot[dato[i]['label']]))
+
+           #print(concepto_ot[dato[i]])s
+           #dato[i].append(concepto_ot[dato[i]])
+        #print(concepto_ot['return_air'])
+    #print(listas)
+    listasT = {"graph":listas,"table":concepto_ots,"cadena":cadena}
+    #print(listasT)
+
+    return listasT
 
 
-
-
-
+    
 
 
 async def Guardar_Datos(ztrack_data: dict) -> dict:

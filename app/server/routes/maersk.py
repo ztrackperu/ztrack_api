@@ -7,6 +7,7 @@ from server.funciones.maersk import (
     Guardar_Datos,
     retrieve_datos,
     procesar_maersk,
+    grafica_generador,
     
 )
 
@@ -14,6 +15,7 @@ from server.funciones.maersk import (
 from server.models.maersk import (
     ErrorResponseModel,
     ResponseModel,
+    SolicitudGeneradorSchema,
 )
 
 router = APIRouter()
@@ -25,5 +27,15 @@ async def get_notificacions():
         return ResponseModel(notificacions, "Datos  recuperados exitosamente.")
     return ResponseModel(notificacions, "Lista vacía devuelta")
 
-
+@router.post("/DatosGrafica/", response_description="Datos de los notificacion agregados a la base de datos.")
+#La funcion espera "ConceptoOTSchema"
+async def pedir_grafica_generador(notificacion: SolicitudGeneradorSchema = Body(...)):
+    #convertir en json
+    notificacion = jsonable_encoder(notificacion)   
+    #print(notificacion)
+    #enviar a la funcion añadir  
+    #print ("desde r")
+    new_notificacion = await grafica_generador(notificacion)
+    return ResponseModel(new_notificacion, "ok")
+   #return paginate(new_notificacion)
 
