@@ -196,7 +196,7 @@ async def live_generador():
     generador_collection =collection(bd_gene('genset'))
     async for mad in dispositivos_collection.find({"estado":1},{"_id":0}):
         notificacions.append(mad)
-        print(mad)
+        print(mad['imei'])
         dat = await procesar_genset(mad['imei'])
     return notificacions
 
@@ -217,7 +217,7 @@ async def procesar_genset(imei):
     cont_on =0
     cont_off =0
     cont_fail =0
-    dato_id_i =await id_cole.find_one({'seguimiento':'maersk'},{"_id":0})
+    dato_id_i =await id_cole.find_one({'seguimiento':imei},{"_id":0})
     if dato_id_i :
        busqueda = {"$and": [{"fecha": {"$gt": dato_id_i['fecha_procesada']}},{"estado":1}]}
     else :
