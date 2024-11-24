@@ -271,7 +271,7 @@ async def procesar_genset(imei):
                 genset_id =await generador_collection.find_one({'imei':imei},{"_id":0})
                 
                 if genset_id :
-                    notificacion_2 = await genset_id.update_one(
+                    notificacion_2 = await generador_collection.update_one(
                      {'seguimiento':'maersk'}, {"$set": proceso_dos}
                     )
                 else :
@@ -281,7 +281,7 @@ async def procesar_genset(imei):
                     proceso_dos['estado']=1
                     proceso_dos['descripcion']=None
                     proceso_dos['config']=None
-                    notificacion_2 = await genset_id.insert_one(proceso_dos)
+                    notificacion_2 = await generador_collection.insert_one(proceso_dos)
             else :
                 cont_fail=+1
 
@@ -318,7 +318,7 @@ async def procesar_genset(imei):
                 genset_id =await generador_collection.find_one({'imei':imei},{"_id":0})
                 
                 if genset_id :
-                    notificacion_2 = await genset_id.update_one(
+                    notificacion_2 = await generador_collection.update_one(
                      {'seguimiento':'maersk'}, {"$set": proceso_dos}
                     )
                 else :
@@ -328,7 +328,7 @@ async def procesar_genset(imei):
                     proceso_dos['estado']=1
                     proceso_dos['descripcion']=None
                     proceso_dos['config']=None
-                    notificacion_2 = await genset_id.insert_one(proceso_dos)
+                    notificacion_2 = await generador_collection.insert_one(proceso_dos)
 
             
             cont_off+=1
