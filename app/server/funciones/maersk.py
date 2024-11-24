@@ -164,8 +164,22 @@ async def procesar_tabla_datos(notificacion_data: dict) -> dict:
         fech = procesar_fecha_fila(notificacion_data['utc'],notificacion_data['fechaI'],notificacion_data['fechaF'])
         #bconsultas =oMeses(notificacion_data['device'],notificacion_data['fechaI'],notificacion_data['fechaF'])
         periodos =oMeses(notificacion_data['imei'],notificacion_data['fechaI'],notificacion_data['fechaF'])
-    diferencial =[ periodos , {"created_at": {"$gte": fech[0]}},{"created_at": {"$lte": fech[1]}}]
-    return diferencial
+    #diferencial =[ periodos , {"created_at": {"$gte": fech[0]}},{"created_at": {"$lte": fech[1]}}]
+    #return diferencial
+    if len(periodos)==1 :
+        #declaramos la busqueda en el rango establecido 
+        tabla=[]
+        data_collection = collection(periodos[0])
+        diferencial =[{"created_at": {"$gte": fech[0]}},{"created_at": {"$lte": fech[1]}}]
+        pip = [{"$match": {"$and":diferencial}}]
+        async for concepto_ot in data_collection.aggregate(pip):
+            tabla.append(concepto_ot)
+        return tabla
+    else :
+        return 0
+
+
+    #
 
 
 
