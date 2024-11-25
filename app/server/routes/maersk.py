@@ -12,6 +12,7 @@ from server.funciones.maersk import (
     live_generador,
     empresa,
     config,
+    procesar_grafico_datos,
     
 )
 
@@ -41,6 +42,18 @@ async def get_notificacions():
 @router.post("/DatosGrafica/", response_description="Datos de los notificacion agregados a la base de datos.")
 #La funcion espera "ConceptoOTSchema"
 async def pedir_grafica_generador(notificacion: SolicitudGeneradorSchema = Body(...)):
+    #convertir en json
+    notificacion = jsonable_encoder(notificacion)   
+    #print(notificacion)
+    #enviar a la funcion añadir  
+    #print ("desde r")
+    new_notificacion = await procesar_grafico_datos(notificacion)
+    return ResponseModel(new_notificacion, "ok")
+   #return paginate(new_notificacion)
+
+@router.post("/DatosTabla/", response_description="Datos de los notificacion agregados a la base de datos.")
+#La funcion espera "ConceptoOTSchema"
+async def pedir_tabla_generador(notificacion: SolicitudGeneradorSchema = Body(...)):
     #convertir en json
     notificacion = jsonable_encoder(notificacion)   
     #print(notificacion)
