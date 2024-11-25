@@ -10,6 +10,8 @@ from server.funciones.maersk import (
     grafica_generador,
     procesar_tabla_datos,
     live_generador,
+    empresa,
+    config,
     
 )
 
@@ -48,3 +50,17 @@ async def pedir_grafica_generador(notificacion: SolicitudGeneradorSchema = Body(
     return ResponseModel(new_notificacion, "ok")
    #return paginate(new_notificacion)
 
+
+@router.get("/datos/empresa/{id}", response_description="Datos de la notificacion recuperados")
+async def get_empresa_data(id: int):
+    notificacion = await empresa(id)
+    if notificacion:
+        return ResponseModel(notificacion, "Datos de los generadores recuperado exitosamente")
+    return ErrorResponseModel("Ocurrió un error.", 404, "notificacion doesn't exist.")
+
+@router.get("/datos/config/{id}", response_description="Datos de la notificacion recuperados")
+async def get_config_data(id: int):
+    notificacion = await config(id)
+    if notificacion:
+        return ResponseModel(notificacion, "Datos del generador recuperado exitosamente")
+    return ErrorResponseModel("Ocurrió un error.", 404, "notificacion doesn't exist.")

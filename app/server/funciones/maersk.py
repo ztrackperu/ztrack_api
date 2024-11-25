@@ -609,8 +609,28 @@ async def retrieve_datos_e():
         notificacions.append(notificacion)
     return notificacions
 
+#busqueda de info por empresa_id
+async def empresa(id: int) -> dict:
+    generador_collection =collection(bd_gene('genset'))
 
+    notificacions = []
+    async for notificacion in generador_collection.find({"empresa_id": int(id)}):
+        #print(notificacion)
+        notificacions.append(notificacion)
+    return notificacions
 
+#busqueda de info por config
+
+#busqueda de info por empresa_id
+async def config(id: int) -> dict:
+    generador_collection =collection(bd_gene('genset'))
+
+    #print(id)
+    #importante convertir a int cunado se busca a un dato por numero
+    notificacion = await generador_collection.find_one({"config": int(id)})
+    #print(notificacion)
+    if notificacion:
+        return generador_collection(notificacion) 
 
 
 
