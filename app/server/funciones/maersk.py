@@ -235,6 +235,52 @@ async def procesar_grafico_datos(notificacion_data: dict) -> dict:
         return {"fecha":fecha,"bateria":bateria,"voltaje":voltaje,"combustible":combustible,"rpm":rpm,"motor":motor,"frecuencia":frecuencia}
     else :
         return 0
+    
+
+
+
+async def procesar_gps_datos(notificacion_data: dict) -> dict:
+    fet_actual =datetime.now()
+    if(notificacion_data['fechaF']=="0" and notificacion_data['fechaI']=="0"):
+        fecha_formateada = fet_actual.strftime("%Y-%m-%dT%H:%M:%S")
+        fech = procesar_fecha_fila(notificacion_data['utc'],fecha_formateada)
+        periodos =oMeses(notificacion_data['imei'])
+        #bconsultas =oMeses(notificacion_data['device'],notificacion_data['ultima'],notificacion_data['ultima'])
+    else : 
+        fech = procesar_fecha_fila(notificacion_data['utc'],notificacion_data['fechaI'],notificacion_data['fechaF'])
+        #bconsultas =oMeses(notificacion_data['device'],notificacion_data['fechaI'],notificacion_data['fechaF'])
+        periodos =oMeses(notificacion_data['imei'],notificacion_data['fechaI'],notificacion_data['fechaF'])
+    #diferencial =[ periodos , {"created_at": {"$gte": fech[0]}},{"created_at": {"$lte": fech[1]}}]
+    #return diferencial
+    
+    if len(periodos)==1 :
+        #print(periodos)
+        #declaramos la busqueda en el rango establecido 
+        tabla=[]
+        data_collection = collection(periodos[0])
+        diferencial =[{"fecha_r": {"$gte": fech[0]}},{"fecha_r": {"$lte": fech[1]}}]
+        pip = [{"$match": {"$and":diferencial}}]
+        #array para juntar datos 
+        fecha =[]
+        latitud =[]
+        longitud =[]
+        direccion = []
+        velocidad=[]
+
+
+
+        async for concepto_ot in data_collection.aggregate(pip):
+            #print(concepto_ot)
+            fecha.append(concepto_ot['fecha_r'])
+            latitud.append(concepto_ot['latitud'])
+            longitud.append(concepto_ot['longitud'])
+            direccion.append(concepto_ot['direccion'])
+            velocidad.append(concepto_ot['velocidad'])
+
+
+        return {"fecha":fecha,"latitud":latitud,"longitud":longitud,"direccion":direccion,"velocidad":velocidad}
+    else :
+        return 0
 
 #procesar datos en tiempo real ,y de froma constante de generador 
 #live_generador

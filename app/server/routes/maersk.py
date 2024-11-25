@@ -13,6 +13,8 @@ from server.funciones.maersk import (
     empresa,
     config,
     procesar_grafico_datos,
+    procesar_gps_datos,
+    
     
 )
 
@@ -60,6 +62,19 @@ async def pedir_tabla_generador(notificacion: SolicitudGeneradorSchema = Body(..
     #enviar a la funcion añadir  
     #print ("desde r")
     new_notificacion = await procesar_tabla_datos(notificacion)
+    return ResponseModel(new_notificacion, "ok")
+   #return paginate(new_notificacion)
+
+
+@router.post("/DatosGps/", response_description="Datos de los notificacion agregados a la base de datos.")
+#La funcion espera "ConceptoOTSchema"
+async def pedir_gps_generador(notificacion: SolicitudGeneradorSchema = Body(...)):
+    #convertir en json
+    notificacion = jsonable_encoder(notificacion)   
+    #print(notificacion)
+    #enviar a la funcion añadir  
+    #print ("desde r")
+    new_notificacion = await procesar_gps_datos(notificacion)
     return ResponseModel(new_notificacion, "ok")
    #return paginate(new_notificacion)
 
