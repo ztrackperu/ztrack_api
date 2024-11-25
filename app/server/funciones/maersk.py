@@ -614,7 +614,7 @@ async def empresa(id: int) -> dict:
     generador_collection =collection(bd_gene('genset'))
 
     notificacions = []
-    async for notificacion in generador_collection.find({"empresa_id": int(id)}):
+    async for notificacion in generador_collection.find({"empresa_id": int(id)},{"_id":0}):
         #print(notificacion)
         notificacions.append(notificacion)
     return notificacions
@@ -627,7 +627,7 @@ async def config(id: int) -> dict:
 
     #print(id)
     #importante convertir a int cunado se busca a un dato por numero
-    notificacion = await generador_collection.find_one({"config": int(id)})
+    notificacion = await generador_collection.find_one({"config": int(id)},{"_id":0})
     #print(notificacion)
     if notificacion:
         return generador_collection(notificacion) 
