@@ -732,7 +732,7 @@ async def empresa(id: int) -> dict:
         else : 
             cont_on+=1
 
-    datazo = ultimos_tres_dias
+    datazo = ultimos_tres_dias()
     conjunto = {
         "genset" :notificacions,
         "condicion" : {
@@ -740,7 +740,7 @@ async def empresa(id: int) -> dict:
             "off":cont_off
         },
         "consumo":{
-            "fechas" :datazo,
+            "fechas":datazo,
             "datos":[0,0,0]
         },
         "general" :{
