@@ -76,7 +76,7 @@ def bd_gene_1(imei):
     fet =datetime.now()
     #part = fet.strftime('%d_%m_%Y')
     part = fet.strftime('_%m_%Y')
-    colect ="pre_"+imei+part
+    colect ="pre_1_"+imei+part
     return colect
  
 def procesar_d00(text):
@@ -272,7 +272,7 @@ async def procesar_genset(imei):
                 
                 if genset_id :
                     notificacion_2 = await generador_collection.update_one(
-                     {'seguimiento':'maersk'}, {"$set": proceso_dos}
+                     {'imei':imei}, {"$set": proceso_dos}
                     )
                 else :
                     proceso_dos['primera_conexion']=notificacion['fecha']
@@ -301,7 +301,7 @@ async def procesar_genset(imei):
 
             #enviar data a repositorio final 
             #realizar consulta de datos 
-            dato_id =await id_cole.find_one({'seguimiento':'maersk'},{"_id":0})
+            dato_id =await id_cole.find_one({'seguimiento':imei},{"_id":0})
             if dato_id :
                 proceso_dos['_id']=dato_id['maersk']+1
                 #actualizamos
@@ -313,22 +313,22 @@ async def procesar_genset(imei):
                 #crear
                 notificacion_1 = await id_cole.insert_one({'maersk':proceso_dos['_id'],'seguimiento':imei,"fecha_procesada":proceso_dos['fecha_r'] })      
                 #enviar data a repositorio final 
-                notificacion_ok = await proceso_collection.insert_one(proceso_dos)
-                #despues de guardar la data , validar si existe registro Live , sino crearlo , y si existe actualizarlo 
-                genset_id =await generador_collection.find_one({'imei':imei},{"_id":0})
-                
-                if genset_id :
-                    notificacion_2 = await generador_collection.update_one(
-                     {'seguimiento':'maersk'}, {"$set": proceso_dos}
-                    )
-                else :
-                    proceso_dos['primera_conexion']=notificacion['fecha']
-                    proceso_dos['generador']=None
-                    proceso_dos['imei']=imei
-                    proceso_dos['estado']=1
-                    proceso_dos['descripcion']=None
-                    proceso_dos['config']=None
-                    notificacion_2 = await generador_collection.insert_one(proceso_dos)
+            notificacion_ok = await proceso_collection.insert_one(proceso_dos)
+            #despues de guardar la data , validar si existe registro Live , sino crearlo , y si existe actualizarlo 
+            genset_id =await generador_collection.find_one({'imei':imei},{"_id":0})
+            
+            if genset_id :
+                notificacion_2 = await generador_collection.update_one(
+                    {'seguimiento':'maersk'}, {"$set": proceso_dos}
+                )
+            else :
+                proceso_dos['primera_conexion']=notificacion['fecha']
+                proceso_dos['generador']=None
+                proceso_dos['imei']=imei
+                proceso_dos['estado']=1
+                proceso_dos['descripcion']=None
+                proceso_dos['config']=None
+                notificacion_2 = await generador_collection.insert_one(proceso_dos)
 
             
             cont_off+=1
