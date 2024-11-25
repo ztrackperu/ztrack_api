@@ -146,7 +146,7 @@ def oMeses(dispositivo,fecha_inicio=0, fecha_fin=0):
     meses = []
     if fecha_inicio==0 or  fecha_fin==0 :
         #se entinede que solo hay que pedir el periodo actual 
-        meses.append(bd_gene(dispositivo))
+        meses.append(bd_gene_1(dispositivo))
         return  meses 
     else :
         inicio = datetime.strptime(fecha_inicio, '%Y-%m-%dT%H:%M:%S')
