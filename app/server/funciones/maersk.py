@@ -271,10 +271,12 @@ async def procesar_genset(imei):
                 genset_id =await generador_collection.find_one({'imei':imei},{"_id":0})
                 
                 if genset_id :
+                    del proceso_dos['_id']
                     notificacion_2 = await generador_collection.update_one(
                      {'imei':imei}, {"$set": proceso_dos}
                     )
                 else :
+                    del proceso_dos['_id']
                     proceso_dos['primera_conexion']=notificacion['fecha']
                     proceso_dos['generador']=None
                     proceso_dos['imei']=imei
@@ -318,10 +320,12 @@ async def procesar_genset(imei):
             genset_id =await generador_collection.find_one({'imei':imei},{"_id":0})
             
             if genset_id :
+                del proceso_dos['_id']
                 notificacion_2 = await generador_collection.update_one(
                     {'imei':imei}, {"$set": proceso_dos}
                 )
             else :
+                del proceso_dos['_id']
                 proceso_dos['primera_conexion']=notificacion['fecha']
                 proceso_dos['generador']=None
                 proceso_dos['imei']=imei
