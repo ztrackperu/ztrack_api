@@ -627,10 +627,11 @@ async def config(id: int) -> dict:
 
     #print(id)
     #importante convertir a int cunado se busca a un dato por numero
+    
     notificacion = await generador_collection.find_one({"config": int(id)},{"_id":0})
     #print(notificacion)
     if notificacion:
-        return generador_collection(notificacion) 
+        return notificacion 
 
 
 
