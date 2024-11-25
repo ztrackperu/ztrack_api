@@ -319,7 +319,7 @@ async def procesar_genset(imei):
             
             if genset_id :
                 notificacion_2 = await generador_collection.update_one(
-                    {'seguimiento':'maersk'}, {"$set": proceso_dos}
+                    {'imei':imei}, {"$set": proceso_dos}
                 )
             else :
                 proceso_dos['primera_conexion']=notificacion['fecha']
@@ -329,7 +329,6 @@ async def procesar_genset(imei):
                 proceso_dos['descripcion']=None
                 proceso_dos['config']=None
                 notificacion_2 = await generador_collection.insert_one(proceso_dos)
-
             
             cont_off+=1
 
