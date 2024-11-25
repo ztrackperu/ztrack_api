@@ -13,6 +13,21 @@ lon_neg = 0
 
 #  GPRMC,164308.00,A,1133.40415,S,07716.12044,W,28.161,134.48,221124,,,A*59
 
+
+def ultimos_tres_dias():
+    # Crear una lista para almacenar los últimos tres días
+    dias = []
+    
+    # Obtener la fecha actual
+    hoy = datetime.now()
+    
+    # Obtener los últimos tres días
+    for i in range(1, 4):
+        dia = hoy - timedelta(days=i)
+        # Formatear cada fecha en el formato "dd-mm-yyyy"
+        dias.append(dia.strftime('%d-%m-%Y'))
+    
+    return dias
 def procesar_gps(tra):
     elementos_gps = tra.split(',')
     if len(elementos_gps)==13 :
@@ -706,12 +721,35 @@ async def retrieve_datos_e():
 #busqueda de info por empresa_id
 async def empresa(id: int) -> dict:
     generador_collection =collection(bd_gene('genset'))
-
+    cont_on = 0
+    cont_off =0
     notificacions = []
     async for notificacion in generador_collection.find({"empresa_id": int(id)},{"_id":0}):
         #print(notificacion)
         notificacions.append(notificacion)
-    return notificacions
+        if notificacion['on_off']==0 :
+            cont_off+=1
+        else : 
+            cont_on+=1
+
+    datazo = ultimos_tres_dias
+    conjunto = {
+        "genset" :notificacions,
+        "condicion" : {
+            "on":cont_on,
+            "off":cont_off
+        },
+        "consumo":{
+            "fechas" :datazo,
+            "datos":[0,0,0]
+        },
+        "general" :{
+            "alarmas":0,
+            "mensajes":0,
+            "horas":0
+        }
+    }
+    return conjunto
 
 #busqueda de info por config
 
