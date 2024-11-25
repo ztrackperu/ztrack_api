@@ -174,7 +174,9 @@ async def procesar_tabla_datos(notificacion_data: dict) -> dict:
         periodos =oMeses(notificacion_data['imei'],notificacion_data['fechaI'],notificacion_data['fechaF'])
     #diferencial =[ periodos , {"created_at": {"$gte": fech[0]}},{"created_at": {"$lte": fech[1]}}]
     #return diferencial
+    
     if len(periodos)==1 :
+        print(periodos)
         #declaramos la busqueda en el rango establecido 
         tabla=[]
         data_collection = collection(periodos[0])
