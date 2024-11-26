@@ -286,14 +286,18 @@ async def procesar_gps_datos(notificacion_data: dict) -> dict:
 
         async for concepto_ot in data_collection.aggregate(pip):
             #print(concepto_ot)
-            fecha.append(concepto_ot['fecha_r'])
-            latitud.append(concepto_ot['latitud'])
-            longitud.append(concepto_ot['longitud'])
-            direccion.append(concepto_ot['direccion'])
-            velocidad.append(concepto_ot['velocidad'])
+            if(concepto_ot['latitud'] and concepto_ot['longitud']):
+                if len(latitud)==0 :
+                    valorI = concepto_ot
+                else :
+                    valorF = concepto_ot
+                fecha.append(concepto_ot['fecha_r'])
+                latitud.append(concepto_ot['latitud'])
+                longitud.append(concepto_ot['longitud'])
+                direccion.append(concepto_ot['direccion'])
+                velocidad.append(concepto_ot['velocidad'])
 
-
-        return {"fecha":fecha,"latitud":latitud,"longitud":longitud,"direccion":direccion,"velocidad":velocidad}
+        return {"i_f":[valorI,valorF],"fecha":fecha,"latitud":latitud,"longitud":longitud,"direccion":direccion,"velocidad":velocidad}
     else :
         return 0
 
