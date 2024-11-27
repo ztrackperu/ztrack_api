@@ -281,6 +281,8 @@ async def procesar_gps_datos(notificacion_data: dict) -> dict:
         longitud =[]
         direccion = []
         velocidad=[]
+        valorI=None
+        valorF=None
 
 
 
