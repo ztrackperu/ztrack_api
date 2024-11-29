@@ -652,6 +652,14 @@ async def ProcesarData():
                         valorP =  0
                         lat = -12.09858
                         lon = -77.01155
+                    
+                    #868428043531411
+                    #15009 -> 868428043531411 ->ZGRU5143711
+                    elif (notificacion['imei']=="868428043531411"):
+                        tele_dispositivo =15009
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
 
 
                     else:
