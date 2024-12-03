@@ -389,7 +389,7 @@ async def ProcesarData():
             if longitud_trama==1:
                 #procesar datos 
                 #if notificacion['imei']=="864764035741434" or notificacion['imei']=="863576043636583" or notificacion['imei']=="868428041482815" or notificacion['imei']=="862643033733233" or notificacion['imei']=="866029030001798" or notificacion['imei']=="863576042247473" or notificacion['imei']=="864369036245177" or notificacion['imei']=="866262037906285" or notificacion['imei']=="864369031920501" or notificacion['imei']=="865992030451860" or notificacion['imei']=="865992037256015" or notificacion['imei']=="868428048800696" or notificacion['imei']=="866782047033366" or notificacion['imei']=="868428048800696" or notificacion['imei']=="863576044716442" or notificacion['imei']=="863576041438461" or notificacion['imei']=="868428044660946" or notificacion['imei']=="866782046905705" or notificacion['imei']=="867856038522121" or notificacion['imei']=="863576044894165" or notificacion['imei']=="866782048942516" or notificacion['imei']=="860389052714546" or notificacion['imei']=="868428040102299" or notificacion['imei']=="863576047417592":
-                if  notificacion['imei']=="863576045261372" or notificacion['imei']=="868428047060623" or notificacion['imei']=="860389054980111" or notificacion['imei']=="868428043531411" or notificacion['imei']=="863576042288733" or notificacion['imei']=="860389054880469" or notificacion['imei']=="860389053266884" or  notificacion['imei']=="868428040551750" or notificacion['imei']=="862643035283377" or notificacion['imei']=="860389051869879" or notificacion['imei']=="860389050308762" or notificacion['imei']=="860389050976121" or notificacion['imei']=="868428047061175" or notificacion['imei']=="866782049859933" or notificacion['imei']=="860719022597698" or notificacion['imei']=="863576049352433" or notificacion['imei']=="868428048593994" or notificacion['imei']=="863576040479524" or notificacion['imei']=="868428040146445" or notificacion['imei']=="863576049946101" or notificacion['imei']=="863576041628806" or notificacion['imei']=="863576041438461" or notificacion['imei']=="864369036245177" or notificacion['imei']=="863576042247473" or notificacion['imei']=="866262037906285" or notificacion['imei']=="864369031920501" or notificacion['imei']=="866029030001798" or notificacion['imei']=="865992030451860" or notificacion['imei']=="868428041482815" or notificacion['imei']=="862643033733233" or notificacion['imei']=="864764035741434" or notificacion['imei']=="865992037256015" or notificacion['imei']=="867858039892602" or notificacion['imei']=="863576043636583" or notificacion['imei']=="863576041348223" or notificacion['imei']=="865691035501170" or notificacion['imei']=="863576044716442" or notificacion['imei']=="868428048800696" or notificacion['imei']=="868428044660946" or notificacion['imei']=="867856038522121" or notificacion['imei']=="863576044894165" or notificacion['imei']=="868428040102299" or notificacion['imei']=="863576047417592" or notificacion['imei']=="866782048942516":
+                if  notificacion['imei']=="867372050062939" or notificacion['imei']=="868428041343744" or notificacion['imei']=="863576045261372" or notificacion['imei']=="868428047060623" or notificacion['imei']=="860389054980111" or notificacion['imei']=="868428043531411" or notificacion['imei']=="863576042288733" or notificacion['imei']=="860389054880469" or notificacion['imei']=="860389053266884" or  notificacion['imei']=="868428040551750" or notificacion['imei']=="862643035283377" or notificacion['imei']=="860389051869879" or notificacion['imei']=="860389050308762" or notificacion['imei']=="860389050976121" or notificacion['imei']=="868428047061175" or notificacion['imei']=="866782049859933" or notificacion['imei']=="860719022597698" or notificacion['imei']=="863576049352433" or notificacion['imei']=="868428048593994" or notificacion['imei']=="863576040479524" or notificacion['imei']=="868428040146445" or notificacion['imei']=="863576049946101" or notificacion['imei']=="863576041628806" or notificacion['imei']=="863576041438461" or notificacion['imei']=="864369036245177" or notificacion['imei']=="863576042247473" or notificacion['imei']=="866262037906285" or notificacion['imei']=="864369031920501" or notificacion['imei']=="866029030001798" or notificacion['imei']=="865992030451860" or notificacion['imei']=="868428041482815" or notificacion['imei']=="862643033733233" or notificacion['imei']=="864764035741434" or notificacion['imei']=="865992037256015" or notificacion['imei']=="867858039892602" or notificacion['imei']=="863576043636583" or notificacion['imei']=="863576041348223" or notificacion['imei']=="865691035501170" or notificacion['imei']=="863576044716442" or notificacion['imei']=="868428048800696" or notificacion['imei']=="868428044660946" or notificacion['imei']=="867856038522121" or notificacion['imei']=="863576044894165" or notificacion['imei']=="868428040102299" or notificacion['imei']=="863576047417592" or notificacion['imei']=="866782048942516":
                     vali =transformado
                     #idProgre=1
                     idProgre=id_con
@@ -684,8 +684,20 @@ async def ProcesarData():
                         valorP =  0
                         lat = -12.09858
                         lon = -77.01155
-                    #868428049759081
-
+                    #868428041343744
+                    #15019 -> 868428041343744 ->ZGRU6872665
+                    elif (notificacion['imei']=="868428041343744"):
+                        tele_dispositivo =15019
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
+                    #867372050062939
+                    #15020 -> 867372050062939 ->ZGRU6419920
+                    elif (notificacion['imei']=="867372050062939"):
+                        tele_dispositivo =15020
+                        valorP =  0
+                        lat = -12.09858
+                        lon = -77.01155
 
                     else:
                         valorP = 5 if int(comparador1)==1 else 0
