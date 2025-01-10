@@ -819,9 +819,9 @@ async def ProcesarData():
                         lon = -77.01155
 
                     #867372055007558  OVOSUR CHINCHA
-                    #15175 -> 867372055007558 ->ZGRU2017238
+                    #15176 -> 867372055007558 ->ZGRU2017238
                     elif (notificacion['imei']=="867372055007558"):
-                        tele_dispositivo =15175
+                        tele_dispositivo =15176
                         valorP =  0
                         lat = -12.09858
                         lon = -77.01155
