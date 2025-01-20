@@ -199,8 +199,8 @@ async def procesar_tabla_datos(notificacion_data: dict) -> dict:
         pip = [{"$match": {"$and":diferencial}}]
         async for concepto_ot in data_collection.aggregate(pip):
             #print(concepto_ot
-            concepto_ot['Tr_Timer2']= (concepto_ot['Tr_Timer2']-1+256)/256
-            concepto_ot['Tr_Timer1']= (concepto_ot['Tr_Timer1']+256)/256
+            concepto_ot['Tr_Timer2']= 0 if concepto_ot['Tr_Timer2']==0 else (concepto_ot['Tr_Timer2']-1+256)/256
+            concepto_ot['Tr_Timer1']= 0 if concepto_ot['Tr_Timer1']==0 else  (concepto_ot['Tr_Timer1']+256)/256
             tabla.append(concepto_ot)
         return tabla
     else :
