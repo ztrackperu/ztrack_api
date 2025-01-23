@@ -384,6 +384,9 @@ async def ProcesarData():
 
             print("**********************")
             print(transformado)
+            print("**********************")
+
+            print(notificacion['imei'])
             print(longitud_trama)
             print("**********************")
             if longitud_trama==1:
