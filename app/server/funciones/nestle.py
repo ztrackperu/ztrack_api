@@ -53,16 +53,16 @@ async def procesar_nestle() :
                         {
                             "$set": {
                                 "Descripcion":dispositivo['descripcionC'],
-                                "Ultima Conexion":dispositivo['ultima_fecha'],
+                                "UltimaConexion":dispositivo['ultima_fecha'],
                                 "PowerState":dispositivo['power_state'],
                             },
                             "$push":{
                                 "Retorno":homologar_temperatura(dispositivo['return_air']),
-                                "Suministro":[homologar_temperatura(dispositivo['temp_supply_1'])],
-                                "Evaporador":[homologar_temperatura(dispositivo['evaporation_coil'])],
-                                "SetPoint":[homologar_temperatura(dispositivo['set_point'])],
-                                "Compresor":[homologar_temperatura(dispositivo['compress_coil_1'])],
-                                "fechas":[dispositivo['ultima_fecha']]      
+                                "Suministro":homologar_temperatura(dispositivo['temp_supply_1']),
+                                "Evaporador":homologar_temperatura(dispositivo['evaporation_coil']),
+                                "SetPoint":homologar_temperatura(dispositivo['set_point']),
+                                "Compresor":homologar_temperatura(dispositivo['compress_coil_1']),
+                                "fechas":dispositivo['ultima_fecha']      
                             }
                         }
                     )
