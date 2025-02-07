@@ -36,39 +36,44 @@ async def procesar_nestle() :
             dispositivo_encontrado = await nestle_collection.find_one({"Dispositivo": dispositivo['nombre_contenedor'],"estado":1},{"_id":0})
             if dispositivo_encontrado :
                 #actualizar estructura 
-                print("*********************")
-                print(dispositivo_encontrado)
-                print("*********************")
-                if len(dispositivo_encontrado['Retorno']) >= 60:
-                    dispositivo_encontrado['Retorno'].pop(0)
-                    dispositivo_encontrado['Suministro'].pop(0)
-                    dispositivo_encontrado['Evaporador'].pop(0)
-                    dispositivo_encontrado['SetPoint'].pop(0)
-                    dispositivo_encontrado['Compresor'].pop(0)
-                    dispositivo_encontrado['fechas'].pop(0)
+                #print("*********************")
+                #print(dispositivo_encontrado)
+                #print("*********************")
+                if dispositivo_encontrado['Ultima Conexion']!=dispositivo['ultima_fecha'] : 
+                    if len(dispositivo_encontrado['Retorno']) >= 60:
+                        dispositivo_encontrado['Retorno'].pop(0)
+                        dispositivo_encontrado['Suministro'].pop(0)
+                        dispositivo_encontrado['Evaporador'].pop(0)
+                        dispositivo_encontrado['SetPoint'].pop(0)
+                        dispositivo_encontrado['Compresor'].pop(0)
+                        dispositivo_encontrado['fechas'].pop(0)
 
-                AgregarDispositivo = await nestle_collection.update_one(
-                    {"Dispositivo" : dispositivo['nombre_contenedor']},
-                    {
-                        "Descripcion":dispositivo['descripcionC'],
-                        "Ultima Conexion":dispositivo['ultima_fecha'],
-                        "$push":{
-                            "Retorno":homologar_temperatura(dispositivo['return_air']),
-                            "Suministro":[homologar_temperatura(dispositivo['temp_supply_1'])],
-                            "Evaporador":[homologar_temperatura(dispositivo['evaporation_coil'])],
-                            "SetPoint":[homologar_temperatura(dispositivo['set_point'])],
-                            "Compresor":[homologar_temperatura(dispositivo['compress_coil_1'])],
-                            "fechas":[dispositivo['ultima_fecha']]      
+                    AgregarDispositivo = await nestle_collection.update_one(
+                        {"Dispositivo" : dispositivo['nombre_contenedor']},
+                        {
+                            "$set": {
+                                "Descripcion":dispositivo['descripcionC'],
+                                "Ultima Conexion":dispositivo['ultima_fecha'],
+                                "PowerState":dispositivo['power_state'],
+                            },
+                            "$push":{
+                                "Retorno":homologar_temperatura(dispositivo['return_air']),
+                                "Suministro":[homologar_temperatura(dispositivo['temp_supply_1'])],
+                                "Evaporador":[homologar_temperatura(dispositivo['evaporation_coil'])],
+                                "SetPoint":[homologar_temperatura(dispositivo['set_point'])],
+                                "Compresor":[homologar_temperatura(dispositivo['compress_coil_1'])],
+                                "fechas":[dispositivo['ultima_fecha']]      
+                            }
                         }
-                    }
-                )
+                    )
 
             else : 
                 body = {
                     "Dispositivo" : dispositivo['nombre_contenedor'] ,
                     "estado" :1,
                     "Descripcion":dispositivo['descripcionC'],
-                    "Ultima Conexion":dispositivo['ultima_fecha'],
+                    "UltimaConexion":dispositivo['ultima_fecha'],
+                    "PowerState":dispositivo['power_state'],
                     "Retorno":[homologar_temperatura(dispositivo['return_air'])],
                     "Suministro":[homologar_temperatura(dispositivo['temp_supply_1'])],
                     "Evaporador":[homologar_temperatura(dispositivo['evaporation_coil'])],
