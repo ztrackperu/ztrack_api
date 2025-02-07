@@ -50,6 +50,9 @@ async def procesar_nestle() :
                 AgregarDispositivo = await nestle_collection.insert_one(body)
             else : 
                 #actualizar estructura 
+                print("*********************")
+                print(dispositivo_encontrado)
+                print("*********************")
                 if len(dispositivo_encontrado['Retorno']) >= 60:
                     dispositivo_encontrado['Retorno'].pop(0)
                     dispositivo_encontrado['Suministro'].pop(0)
