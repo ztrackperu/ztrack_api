@@ -39,7 +39,7 @@ async def procesar_nestle() :
                 #print("*********************")
                 #print(dispositivo_encontrado)
                 #print("*********************")
-                if dispositivo_encontrado['Ultima Conexion']!=dispositivo['ultima_fecha'] : 
+                if dispositivo_encontrado['UltimaConexion']!=dispositivo['ultima_fecha'] : 
                     if len(dispositivo_encontrado['Retorno']) >= 60:
                         dispositivo_encontrado['Retorno'].pop(0)
                         dispositivo_encontrado['Suministro'].pop(0)
