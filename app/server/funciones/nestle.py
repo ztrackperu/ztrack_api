@@ -21,16 +21,20 @@ async def procesar_nestle() :
 
         # Imprimir los datos obtenidos
         for dispositivo in data:
+            print("******************")
             print(dispositivo)
-            print(f"Dispositivo: {dispositivo['nombre_contenedor']}")
-            print(f"Descripcion: {dispositivo['descripcionC']}")
-            print(f"Ultima Conexion: {dispositivo['ultima_fecha']}")
-            print(f"Suministro: {dispositivo['temp_supply_1']}")
+            print("******************")
+
+            #print(f"Dispositivo: {dispositivo['nombre_contenedor']}")
+            #print(f"Descripcion: {dispositivo['descripcionC']}")
+            #print(f"Ultima Conexion: {dispositivo['ultima_fecha']}")
+            #print(f"Suministro: {dispositivo['temp_supply_1']}")
             base = {
-                "Dispositivo":dispositivo['nombre_contenedor'],
-                "Descripcion":dispositivo['descripcionC'],
-                "Ultima Conexion":dispositivo['ultima_fecha'],
-                "Suministro":dispositivo['temp_supply_1']   
+                #"Dispositivo":dispositivo['nombre_contenedor'],
+                #"Descripcion":dispositivo['descripcionC'],
+                #"Ultima Conexion":dispositivo['ultima_fecha'],
+                #"Suministro":dispositivo['temp_supply_1']
+                "base" :   dispositivo 
             }
             notificacions.append(base)
 
