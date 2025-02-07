@@ -21,7 +21,7 @@ async def procesar_nestle() :
 
         # Imprimir los datos obtenidos
         for dispositivo in data:
-
+            print(dispositivo)
             print(f"Dispositivo: {dispositivo['nombre_contenedor']}")
             print(f"Descripcion: {dispositivo['descripcionC']}")
             print(f"Ultima Conexion: {dispositivo['ultima_fecha']}")
