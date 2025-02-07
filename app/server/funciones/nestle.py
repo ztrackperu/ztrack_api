@@ -18,23 +18,24 @@ async def procesar_nestle() :
     if response.status_code == 200:
         # Convertir la respuesta en formato JSON
         data = response.json()
-        print(data['data'])
+        data =data['data']
+        #print(data['data'])
         # Imprimir los datos obtenidos
         for dispositivo in data:
-            print("******************")
-            print(dispositivo)
-            print("******************")
+            #print("******************")
+            #print(dispositivo)
+            #print("******************")
 
-            #print(f"Dispositivo: {dispositivo['nombre_contenedor']}")
-            #print(f"Descripcion: {dispositivo['descripcionC']}")
-            #print(f"Ultima Conexion: {dispositivo['ultima_fecha']}")
-            #print(f"Suministro: {dispositivo['temp_supply_1']}")
+            print(f"Dispositivo: {dispositivo['nombre_contenedor']}")
+            print(f"Descripcion: {dispositivo['descripcionC']}")
+            print(f"Ultima Conexion: {dispositivo['ultima_fecha']}")
+            print(f"Suministro: {dispositivo['temp_supply_1']}")
             base = {
-                #"Dispositivo":dispositivo['nombre_contenedor'],
-                #"Descripcion":dispositivo['descripcionC'],
-                #"Ultima Conexion":dispositivo['ultima_fecha'],
-                #"Suministro":dispositivo['temp_supply_1']
-                "base" :   dispositivo 
+                "Dispositivo":dispositivo['nombre_contenedor'],
+                "Descripcion":dispositivo['descripcionC'],
+                "Ultima Conexion":dispositivo['ultima_fecha'],
+                "Suministro":dispositivo['temp_supply_1']
+                #"base" :   dispositivo 
             }
             notificacions.append(base)
 
