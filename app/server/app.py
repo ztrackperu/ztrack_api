@@ -13,6 +13,8 @@ from server.routes.control import router as ControlRouter
 from server.routes.generadores import router as GeneradorRouter
 from server.routes.starcool import router as StarcoolRouter
 from server.routes.maersk import router as MaerskRouter
+from server.routes.nestle import router as NestleRouter
+
 
 
 
@@ -42,6 +44,8 @@ app.include_router(ControlRouter      , tags=["Control"]      , prefix="/Control
 app.include_router(GeneradorRouter    , tags=["Generador"]    , prefix="/Generador")
 app.include_router(StarcoolRouter    , tags=["Starcool"]    , prefix="/Starcool")
 app.include_router(MaerskRouter    , tags=["Maersk"]    , prefix="/Maersk")
+app.include_router(NestleRouter    , tags=["Nestle"]    , prefix="/Nestle")
+
 
 
 

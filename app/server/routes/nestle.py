@@ -3,7 +3,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 #aqui pedimos las funciones que incluyen nuestro CRUD
-from server.funciones.starcool import (
+from server.funciones.nestle import (
     procesar_nestle,
       
 )
