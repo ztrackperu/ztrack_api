@@ -2,8 +2,16 @@ import json
 from server.database import collection ,collectionTotal
 from bson import regex
 from datetime import datetime,timedelta
+
 import requests
 
+
+def homologar_temperatura(dato):
+    if dato :
+        retorno1 = dato if -50 < dato <140 else None
+    else : 
+        return None
+    return retorno1
 
 async def procesar_nestle() :
     notificacions = []
@@ -22,26 +30,53 @@ async def procesar_nestle() :
         #print(data['data'])
         # Imprimir los datos obtenidos
         for dispositivo in data:
-            #print("******************")
-            #print(dispositivo)
-            #print("******************")
+            
+            #buscar dato en la collecion nestle_general 
+            nestle_collection = collection('nestle_general')
+            dispositivo_encontrado = await nestle_collection.find_one({"Dispositivo": dispositivo['nombre_contenedor'],"estado":1},{"_id":0})
+            if dispositivo_encontrado :
+                body = {
+                    "Dispositivo" : dispositivo['nombre_contenedor'] ,
+                    "estado" :1,
+                    "Descripcion":dispositivo['descripcionC'],
+                    "Ultima Conexion":dispositivo['ultima_fecha'],
+                    "Retorno":[homologar_temperatura(dispositivo['return_air'])],
+                    "Suministro":[homologar_temperatura(dispositivo['temp_supply_1'])],
+                    "Evaporador":[homologar_temperatura(dispositivo['evaporation_coil'])],
+                    "SetPoint":[homologar_temperatura(dispositivo['set_point'])],
+                    "Compresor":[homologar_temperatura(dispositivo['compress_coil_1'])],
+                    "fechas":[dispositivo['ultima_fecha']]
+                }
+                AgregarDispositivo = await nestle_collection.insert_one(body)
+            else : 
+                #actualizar estructura 
+                if len(dispositivo_encontrado['Retorno']) >= 60:
+                    dispositivo_encontrado['Retorno'].pop(0)
+                    dispositivo_encontrado['Suministro'].pop(0)
+                    dispositivo_encontrado['Evaporador'].pop(0)
+                    dispositivo_encontrado['SetPoint'].pop(0)
+                    dispositivo_encontrado['Compresor'].pop(0)
+                    dispositivo_encontrado['fechas'].pop(0)
 
-            print(f"Dispositivo: {dispositivo['nombre_contenedor']}")
-            print(f"Descripcion: {dispositivo['descripcionC']}")
-            print(f"Ultima Conexion: {dispositivo['ultima_fecha']}")
-            print(f"Suministro: {dispositivo['temp_supply_1']}")
-            base = {
-                "Dispositivo":dispositivo['nombre_contenedor'],
-                "Descripcion":dispositivo['descripcionC'],
-                "Ultima Conexion":dispositivo['ultima_fecha'],
-                "Suministro":dispositivo['temp_supply_1']
-                #"base" :   dispositivo 
-            }
-            notificacions.append(base)
-
+                AgregarDispositivo = await nestle_collection.update_one(
+                    {"Dispositivo" : dispositivo['nombre_contenedor']},
+                    {
+                        "Descripcion":dispositivo['descripcionC'],
+                        "Ultima Conexion":dispositivo['ultima_fecha'],
+                        "$push":{
+                            "Retorno":homologar_temperatura(dispositivo['return_air']),
+                            "Suministro":[homologar_temperatura(dispositivo['temp_supply_1'])],
+                            "Evaporador":[homologar_temperatura(dispositivo['evaporation_coil'])],
+                            "SetPoint":[homologar_temperatura(dispositivo['set_point'])],
+                            "Compresor":[homologar_temperatura(dispositivo['compress_coil_1'])],
+                            "fechas":[dispositivo['ultima_fecha']]      
+                        }
+                    }
+                )
+       
     else:
         print(f"Error al consumir la API. Código de estado: {response.status_code}")
-    return notificacions
+    return "PROCESADO OKEY "
 
 
 
