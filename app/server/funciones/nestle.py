@@ -35,20 +35,6 @@ async def procesar_nestle() :
             nestle_collection = collection('nestle_general')
             dispositivo_encontrado = await nestle_collection.find_one({"Dispositivo": dispositivo['nombre_contenedor'],"estado":1},{"_id":0})
             if dispositivo_encontrado :
-                body = {
-                    "Dispositivo" : dispositivo['nombre_contenedor'] ,
-                    "estado" :1,
-                    "Descripcion":dispositivo['descripcionC'],
-                    "Ultima Conexion":dispositivo['ultima_fecha'],
-                    "Retorno":[homologar_temperatura(dispositivo['return_air'])],
-                    "Suministro":[homologar_temperatura(dispositivo['temp_supply_1'])],
-                    "Evaporador":[homologar_temperatura(dispositivo['evaporation_coil'])],
-                    "SetPoint":[homologar_temperatura(dispositivo['set_point'])],
-                    "Compresor":[homologar_temperatura(dispositivo['compress_coil_1'])],
-                    "fechas":[dispositivo['ultima_fecha']]
-                }
-                AgregarDispositivo = await nestle_collection.insert_one(body)
-            else : 
                 #actualizar estructura 
                 print("*********************")
                 print(dispositivo_encontrado)
@@ -76,6 +62,21 @@ async def procesar_nestle() :
                         }
                     }
                 )
+
+            else : 
+                body = {
+                    "Dispositivo" : dispositivo['nombre_contenedor'] ,
+                    "estado" :1,
+                    "Descripcion":dispositivo['descripcionC'],
+                    "Ultima Conexion":dispositivo['ultima_fecha'],
+                    "Retorno":[homologar_temperatura(dispositivo['return_air'])],
+                    "Suministro":[homologar_temperatura(dispositivo['temp_supply_1'])],
+                    "Evaporador":[homologar_temperatura(dispositivo['evaporation_coil'])],
+                    "SetPoint":[homologar_temperatura(dispositivo['set_point'])],
+                    "Compresor":[homologar_temperatura(dispositivo['compress_coil_1'])],
+                    "fechas":[dispositivo['ultima_fecha']]
+                }
+                AgregarDispositivo = await nestle_collection.insert_one(body)
        
     else:
         print(f"Error al consumir la API. Código de estado: {response.status_code}")
