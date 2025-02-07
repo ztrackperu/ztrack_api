@@ -18,7 +18,7 @@ async def procesar_nestle() :
     if response.status_code == 200:
         # Convertir la respuesta en formato JSON
         data = response.json()
-        print(data)
+        print(data['data'])
         # Imprimir los datos obtenidos
         for dispositivo in data:
             print("******************")
