@@ -1,7 +1,7 @@
 import json
 from server.database import collection ,collectionTotal
 from bson import regex
-from datetime import datetime,timedelta
+from datetime import datetime,timedelta,timezone
 
 import requests
 
@@ -12,6 +12,10 @@ def homologar_temperatura(dato):
     else : 
         return None
     return retorno1
+
+def procesar_fecha(fecha):
+    fecha_python = datetime.fromisoformat(fecha)
+    return fecha_python
 
 async def procesar_nestle() :
     notificacions = []
@@ -39,7 +43,7 @@ async def procesar_nestle() :
                 #print("*********************")
                 #print(dispositivo_encontrado)
                 #print("*********************")
-                if dispositivo_encontrado['UltimaConexion']!=dispositivo['ultima_fecha'] : 
+                if procesar_fecha(dispositivo_encontrado['UltimaConexion'])!=procesar_fecha(dispositivo['ultima_fecha']) : 
                     #if len(dispositivo_encontrado['Retorno']) >= 60:
                         #dispositivo_encontrado['Retorno'].pop(0)
                         #dispositivo_encontrado['Suministro'].pop(0)
@@ -53,7 +57,7 @@ async def procesar_nestle() :
                         {
                             "$set": {
                                 "Descripcion":dispositivo['descripcionC'],
-                                "UltimaConexion":dispositivo['ultima_fecha'],
+                                "UltimaConexion":procesar_fecha(dispositivo['ultima_fecha']), 
                                 "PowerState":dispositivo['power_state'],
                             },
                             "$push":{
@@ -78,7 +82,7 @@ async def procesar_nestle() :
                                     "$slice": -60
                                 },
                                 "fechas":{
-                                    "$each" :[dispositivo['ultima_fecha']],
+                                    "$each" :[procesar_fecha(dispositivo['ultima_fecha'])],
                                     "$slice": -60
                                 }      
                             }
@@ -90,14 +94,14 @@ async def procesar_nestle() :
                     "Dispositivo" : dispositivo['nombre_contenedor'] ,
                     "estado" :1,
                     "Descripcion":dispositivo['descripcionC'],
-                    "UltimaConexion":dispositivo['ultima_fecha'],
+                    "UltimaConexion":procesar_fecha(dispositivo['ultima_fecha']),
                     "PowerState":dispositivo['power_state'],
                     "Retorno":[homologar_temperatura(dispositivo['return_air'])],
                     "Suministro":[homologar_temperatura(dispositivo['temp_supply_1'])],
                     "Evaporador":[homologar_temperatura(dispositivo['evaporation_coil'])],
                     "SetPoint":[homologar_temperatura(dispositivo['set_point'])],
                     "Compresor":[homologar_temperatura(dispositivo['compress_coil_1'])],
-                    "fechas":[dispositivo['ultima_fecha']]
+                    "fechas":[procesar_fecha(dispositivo['ultima_fecha'])]
                 }
                 AgregarDispositivo = await nestle_collection.insert_one(body)
        
