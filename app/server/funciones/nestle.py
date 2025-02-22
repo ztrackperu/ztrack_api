@@ -14,7 +14,9 @@ def homologar_temperatura(dato):
     return retorno1
 
 def procesar_fecha(fecha):
-    fecha_python = datetime.fromisoformat(fecha)
+    #fecha_python = datetime.fromisoformat(fecha)
+    fecha_python = fecha
+
     return fecha_python
 
 async def procesar_nestle() :
