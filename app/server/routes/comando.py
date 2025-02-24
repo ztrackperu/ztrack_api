@@ -14,7 +14,9 @@ from server.funciones.comando import (
     RetrieveComandos_oficial,
     GuardarComandos_super_libre_supervisado,
     procesar_on_pabecsa,
-    procesar_off_pabecsa
+    procesar_off_pabecsa,
+    procesar_off_guardia_civil,
+    procesar_on_guardia_civil
 )
 #Aqui importamos el modelo necesario para la clase 
 from server.models.comando import (
@@ -116,6 +118,22 @@ async def procesar_off_comandos():
         return ResponseModel(notificacions, "Datos  recuperados exitosamente.")
     return ResponseModel(notificacions, "Lista vacía devuelta xx")
 
+
+#secuencua para homologara datos a la plataforma ztrack
+@router.get("/Guardia_on/", response_description="Datos procesados")
+async def procesar_on_comandos_1():
+    notificacions = await procesar_on_guardia_civil()
+    if notificacions:
+        return ResponseModel(notificacions, "Datos  recuperados exitosamente.")
+    return ResponseModel(notificacions, "Lista vacía devuelta xx")
+
+#secuencua para homologara datos a la plataforma ztrack
+@router.get("/Guardia_off/", response_description="Datos procesados")
+async def procesar_off_comandos_2():
+    notificacions = await procesar_off_guardia_civil()
+    if notificacions:
+        return ResponseModel(notificacions, "Datos  recuperados exitosamente.")
+    return ResponseModel(notificacions, "Lista vacía devuelta xx")
 
 
 
