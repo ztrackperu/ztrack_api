@@ -82,7 +82,8 @@ def procesar_gps(tra):
 def bd_gene(imei):
     fet =datetime.now()
     #part = fet.strftime('%d_%m_%Y')
-    part = fet.strftime('_%m_%Y')
+    #part = fet.strftime('_%m_%Y')
+    part ="_01_2025"
     colect ="G_"+imei+part
     return colect
 
@@ -90,7 +91,8 @@ def bd_gene(imei):
 def bd_gene_1(imei):
     fet =datetime.now()
     #part = fet.strftime('%d_%m_%Y')
-    part = fet.strftime('_%m_%Y')
+    #part = fet.strftime('_%m_%Y')
+    part ="_01_2025"
     colect ="pre_1_"+imei+part
     return colect
  
@@ -728,6 +730,7 @@ async def retrieve_datos_e():
 
 #busqueda de info por empresa_id
 async def empresa(id: int) -> dict:
+    
     generador_collection =collection(bd_gene('genset'))
     cont_on = 0
     cont_off =0
