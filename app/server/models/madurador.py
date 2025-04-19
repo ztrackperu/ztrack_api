@@ -73,7 +73,7 @@ class IntegracionZtrackSchema(BaseModel):
     alarma_08: Optional[float] | None =None
     alarma_09: Optional[float] | None =None
     alarma_10: Optional[float] | None =None
-    lecturas_erradas: Optional[str] | None =None
+    lecturas_erradas: Optional[dict] | None =None
     imei: Optional[str] | None =None
     ip: Optional[str] | None =None
     device: Optional[str] | None =None
