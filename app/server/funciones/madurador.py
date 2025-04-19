@@ -36,6 +36,14 @@ async def config(empresa :int):
     #se debe extraer el primir resultado
     return notificacions[0]
 
+async def test_integrador(notificacion_data: dict) -> dict:
+    db_ok ="ztrack_ja"
+    database = client[db_ok]
+    madurador = database.get_collection("madurador")
+    ok_ok = await madurador.insert_one(notificacion_data)
+    return "okii"
+
+
 async def data_madurador(notificacion_data: dict) -> dict:
     #pedir la ultima conexion 
     #ultima conexion pedir mes y año 
