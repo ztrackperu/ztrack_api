@@ -73,10 +73,10 @@ class IntegracionZtrackSchema(BaseModel):
     alarma_08: Optional[float] | None =None
     alarma_09: Optional[float] | None =None
     alarma_10: Optional[float] | None =None
-    lecturas_erradas: Optional[float] | None =None
-    imei: Optional[float] | None =None
-    ip: Optional[float] | None =None
-    device: Optional[float] | None =None
+    lecturas_erradas: Optional[str] | None =None
+    imei: Optional[str] | None =None
+    ip: Optional[str] | None =None
+    device: Optional[str] | None =None
     fecha: Optional[datetime] | None =None
     created_at: Optional[datetime] | None =None
     telemetria_id: Optional[float] | None =None
