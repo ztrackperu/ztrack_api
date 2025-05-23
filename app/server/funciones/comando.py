@@ -1063,11 +1063,11 @@ async def ProcesarData():
                         lat = -12.09858
                         lon = -77.01155
                     #863576045261372 -> LIP COLD 
-                    elif (notificacion['imei']=="863576045261372"):
-                        tele_dispositivo =15605
-                        valorP =  0
-                        lat = -12.09858
-                        lon = -77.01155
+                    #elif (notificacion['imei']=="863576045261372"):
+                        #tele_dispositivo =15605
+                        #valorP =  0
+                        #lat = -12.09858
+                        #lon = -77.01155
                     
                     #867858037900639 -> LIP COLD ZGRU6859489
                     elif (notificacion['imei']=="867858037900639"):
