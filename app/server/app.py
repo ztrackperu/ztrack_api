@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 #from fastapi_pagination import Page, add_pagination
 #from server.routes.usuarios import router as UsuariosRouter
-#from server.routes.madurador import router as MaduradorRouter
+from server.routes.madurador import router as MaduradorRouter
 from server.routes.datos import router as DatosRouter
 from server.routes.comando import router as ComandosRouter
 from server.routes.receta import router as RecetasRouter
@@ -35,6 +35,8 @@ app.add_middleware(
 
 #añadir el conjunto de rutas de notificaciones
 #app.include_router(UsuariosRouter, tags=["usuarios"], prefix="/usuarios")
+app.include_router(MaduradorRouter        , tags=["Madurador"]        , prefix="/Madurador")
+
 app.include_router(DatosRouter        , tags=["Datos"]        , prefix="/Datos")
 app.include_router(ComandosRouter     , tags=["Comandos"]     , prefix="/Comandos")
 app.include_router(RecetasRouter      , tags=["Recetas"]      , prefix="/Recetas")

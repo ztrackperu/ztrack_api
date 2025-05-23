@@ -9,6 +9,7 @@ from fastapi_pagination import Page, add_pagination, paginate
 from server.funciones.madurador import (
     data_madurador,
     obtener_madurador,
+    test_integrador,
 
 
 )
@@ -18,11 +19,19 @@ from server.models.madurador import (
     ResponseModel,
     SolicitudMaduradorSchema,
     DatosMadurador,
+    IntegracionZtrackSchema,
 
 )
 #aqui se definen las rutas de la API REST
 router = APIRouter()
 
+@router.post("/TestIntegracion/", response_description="Datos de los notificacion agregados a la base de datos.")
+#La funcion espera "ConceptoOTSchema"
+async def add_test(notificacion: IntegracionZtrackSchema = Body(...)):
+    notificacion = jsonable_encoder(notificacion)   
+    new_notificacion = await test_integrador(notificacion)
+    return ResponseModel(new_notificacion, "ok")
+   #return paginate(new_notificacion)
 
 @router.post("/DatosGraficaTabla/", response_description="Datos de los notificacion agregados a la base de datos.")
 #La funcion espera "ConceptoOTSchema"
