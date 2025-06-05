@@ -955,11 +955,11 @@ async def ProcesarData():
 
                     #867372055007558  OVOSUR CHINCHA
                     #15176 -> 867372055007558 ->ZGRU2017238
-                    elif (notificacion['imei']=="867372055007558"):
-                        tele_dispositivo =15176
-                        valorP =  0
-                        lat = -12.09858
-                        lon = -77.01155
+                    #elif (notificacion['imei']=="867372055007558"):
+                        #tele_dispositivo =15176
+                        #valorP =  0
+                        #lat = -12.09858
+                        #lon = -77.01155
                     
                     #CONTENEDORES ACTUALIZADOS SAASA
 
@@ -1056,9 +1056,11 @@ async def ProcesarData():
                         lon = -77.01155
 
                     # notificacion['imei']=="868428044808727" or notificacion['imei']=="863584032967571"
-                    #15250 -> 868428044808727' ->revisar
+                    #15250 -> 868428044808727' ->revisar -> nuevo ovosur chincha 05/06/2025
                     elif (notificacion['imei']=="868428044808727"):
-                        tele_dispositivo =15545
+                        #tele_dispositivo =15545
+                        tele_dispositivo =15176
+
                         valorP =  0
                         lat = -12.09858
                         lon = -77.01155
