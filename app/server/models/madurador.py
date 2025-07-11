@@ -81,7 +81,7 @@ class IntegracionZtrackSchema(BaseModel):
     created_at: Optional[datetime] | None =None
     telemetria_id: Optional[float] | None =None
     sp_ethyleno: Optional[float] | None =None
-    stateProcess: Optional[float] | None =None
+    stateProcess: Optional[str] | None =None
     inyeccion_pwm: Optional[float] | None =None
     longitud: Optional[float] | None =None
     latitud: Optional[float] | None =None
