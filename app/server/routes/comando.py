@@ -16,7 +16,8 @@ from server.funciones.comando import (
     procesar_on_pabecsa,
     procesar_off_pabecsa,
     procesar_off_guardia_civil,
-    procesar_on_guardia_civil
+    procesar_on_guardia_civil,
+    procesar_jhon_vena
 )
 #Aqui importamos el modelo necesario para la clase 
 from server.models.comando import (
@@ -26,6 +27,15 @@ from server.models.comando import (
     
 )
 router = APIRouter()
+
+#secuencua para homologara datos a la plataforma ztrack
+@router.get("/sintonizar_jhon_vena/", response_description="Datos procesados")
+async def supervisar():
+    notificacions = await procesar_jhon_vena()
+    if notificacions:
+        return ResponseModel(notificacions, "Datos  recuperados exitosamente.")
+    return ResponseModel(notificacions, "Lista vacía devuelta xx")
+
 
 @router.post("/", response_description="Datos agregados a la base de datos.")
 async def add_comando(datos: ComandoSchema = Body(...)):

@@ -19,6 +19,42 @@ def con_h(x,y):
    return x   
 
 
+async def procesar_jhon_vena():
+    ztrack_data ={
+        "imei": "866782048942516",
+        "estado": 1,
+        "fecha_ejecucion": None,
+        "comando": "MP4000_REQUEST",
+        "dispositivo": "FAIL",
+        "evento": "demonio en accion cada 5 minutos  ",
+        "user": "recurrente_jhon",
+        "receta": "sin receta",
+        "tipo": 0,
+        "status": 2,
+        "dato": None
+    }
+    data_collection = collection(bd_gene("control"))
+    fet =datetime.now()
+    ztrack_data['fecha_creacion'] = fet
+
+    traer_id = []
+    ids_collection = collection("ids")
+    async for notificacion in ids_collection.find({"id":1},{"_id":0}):
+        print(notificacion)
+        traer_id.append(notificacion)
+    print(traer_id)
+    id_comando =  traer_id[0]['comando_id'] +1 if len(traer_id)!=0 else 1
+    ztrack_data['id']=id_comando
+
+    notificacion = await data_collection.insert_one(ztrack_data)
+    updated_ids = await ids_collection.update_one(
+        {"id": 1}, {"$set": {"comando_id":id_comando}}
+    )
+    new_notificacion = await data_collection.find_one({"_id": notificacion.inserted_id},{"_id":0})
+    return new_notificacion
+
+
+
 async def GuardarComandos_super_libre_supervisado():
     #dat = ztrack_data['fecha']
     #print(ztrack_data)
