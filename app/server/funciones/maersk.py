@@ -83,7 +83,7 @@ def bd_gene(imei):
     fet =datetime.now()
     #part = fet.strftime('%d_%m_%Y')
     #part = fet.strftime('_%m_%Y')
-    part ="_01_2025"
+    part ="_11_2025"
     colect ="G_"+imei+part
     return colect
 
@@ -92,7 +92,7 @@ def bd_gene_1(imei):
     fet =datetime.now()
     #part = fet.strftime('%d_%m_%Y')
     #part = fet.strftime('_%m_%Y')
-    part ="_01_2025"
+    part ="_11_2025"
     colect ="pre_1_"+imei+part
     return colect
  
