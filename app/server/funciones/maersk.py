@@ -9,7 +9,7 @@ import mysql.connector
 #dir = "GPRMC,225556.00,A,1200.76343,S,07706.36069,W,0.037,,191124,,,A*7C"
 
 lat_neg = 0
-lon_neg = 0
+lon_neg = 0 
 
 #  GPRMC,164308.00,A,1133.40415,S,07716.12044,W,28.161,134.48,221124,,,A*59
 
@@ -244,17 +244,26 @@ async def procesar_grafico_datos(notificacion_data: dict) -> dict:
         async for concepto_ot in data_collection.aggregate(pip):
             #print(concepto_ot)
             fecha.append(concepto_ot['fecha_r'])
-            bateria.append(concepto_ot['Dv_Battery'])
-            voltaje.append(concepto_ot['Dv_Voltage'])
-            combustible.append(concepto_ot['Dv_Fuel'])
-            rpm.append(concepto_ot['Dv_rpm'])
-            motor.append(concepto_ot['Dv_Water'])
-            frecuencia.append(concepto_ot['Dv_Frequency'])
+            bateria.append(validar_rango(concepto_ot['Dv_Battery'],0,18))
+            voltaje.append(validar_rango(concepto_ot['Dv_Voltage'],0,500))
+            combustible.append(validar_rango(concepto_ot['Dv_Fuel'],0,300))
+            rpm.append(validar_rango(concepto_ot['Dv_rpm'],0,2000))
+            motor.append(validar_rango(concepto_ot['Dv_Water'],0,120))
+            frecuencia.append(validar_rango(concepto_ot['Dv_Frequency'],0,90))
 
         return {"fecha":fecha,"bateria":bateria,"voltaje":voltaje,"combustible":combustible,"rpm":rpm,"motor":motor,"frecuencia":frecuencia}
     else :
         return 0
-    
+
+
+def validar_rango(valor, minimo, maximo):
+    """
+    Retorna el valor si está dentro del rango [minimo, maximo],
+    de lo contrario retorna None.
+    """
+    if minimo <= valor <= maximo:
+        return valor
+    return None
 
 
 
