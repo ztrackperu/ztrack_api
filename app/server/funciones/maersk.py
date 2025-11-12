@@ -761,7 +761,7 @@ async def empresa(id: int) -> dict:
         },
         "consumo":{
             "fechas":datazo,
-            "datos":[4,4,3]
+            "datos":[3,4,4]
         },
         "general" :{
             "alarmas":0,
