@@ -3,6 +3,7 @@ from server.database import client, database
 from bson import regex
 from datetime import datetime,timedelta
 from fastapi_pagination.ext.motor import paginate
+import re
 
 datosDepurar = [
     32752,-32752, 3275.2, -3275.2, 327.52,-327.52, 32767, -32767, 3276.7, -3276.7, 327.67, -327.67,32766, -32766 , 3276.6, -3276.6, 327.66, -327.66,
@@ -36,7 +37,25 @@ async def config(empresa :int):
     #se debe extraer el primir resultado
     return notificacions[0]
 
-async def test_integrador(notificacion_data: dict) -> dict:
+
+def parse_iso_flexible(fecha_str: str):
+    if fecha_str is None:
+        return None
+
+    # Hacer match del timestamp
+    match = re.match(r"^(.*?)(?:\.(\d+))?$", fecha_str)
+    base, micro = match.groups()
+
+    if micro:
+        # Normalizar microsegundos: máximo 6 dígitos, completar con ceros
+        micro = micro[:6].ljust(6, "0")
+        fecha_str = f"{base}.{micro}"
+
+    return datetime.fromisoformat(fecha_str)
+
+
+
+async def test_integrador_ok(notificacion_data: dict) -> dict:
     db_ok ="ztrack_ja"
     database = client[db_ok]
     madurador = database.get_collection("madurador")
@@ -46,6 +65,21 @@ async def test_integrador(notificacion_data: dict) -> dict:
     ok_ok = await madurador.insert_one(notificacion_data)
     return "okii"
 
+async def test_integrador(notificacion_data: dict) -> dict:
+    db_ok = "ztrack_ja"
+    database = client[db_ok]
+    madurador = database.get_collection("madurador")
+
+    # Normalizar fechas sin que lance errores
+    if 'fecha' in notificacion_data and notificacion_data['fecha']:
+        notificacion_data['fecha'] = parse_iso_flexible(notificacion_data['fecha'])
+
+    if 'created_at' in notificacion_data and notificacion_data['created_at']:
+        notificacion_data['created_at'] = parse_iso_flexible(notificacion_data['created_at'])
+
+    await madurador.insert_one(notificacion_data)
+
+    return "okii"
 
 async def data_madurador(notificacion_data: dict) -> dict:
     #pedir la ultima conexion 
