@@ -706,17 +706,17 @@ IMEI_CONFIG = {
         #curB = cnx.cursor()
         
         #update_query = """
-            UPDATE contenedores 
-            SET ultima_fecha = %s, set_point = %s, temp_supply_1 = %s, 
-                return_air = %s, ambient_air = %s, relative_humidity = %s, 
-                avl = %s, defrost_prueba = %s, ripener_prueba = %s, 
-                ethylene = %s, set_point_co2 = %s, co2_reading = %s, 
-                humidity_set_point = %s, sp_ethyleno = %s, compress_coil_1 = %s, 
-                power_state = %s, evaporation_coil = %s, controlling_mode = %s, 
-                stateProcess = %s, cargo_1_temp = %s, cargo_2_temp = %s, 
-                cargo_3_temp = %s, cargo_4_temp = %s, fresh_air_ex_mode = %s, 
-                imei = %s 
-            WHERE estado = 1 AND telemetria_id = %s
+            #UPDATE contenedores 
+            #SET ultima_fecha = %s, set_point = %s, temp_supply_1 = %s, 
+                #return_air = %s, ambient_air = %s, relative_humidity = %s, 
+                #avl = %s, defrost_prueba = %s, ripener_prueba = %s, 
+                #ethylene = %s, set_point_co2 = %s, co2_reading = %s, 
+                #humidity_set_point = %s, sp_ethyleno = %s, compress_coil_1 = %s, 
+                #power_state = %s, evaporation_coil = %s, controlling_mode = %s, 
+                #stateProcess = %s, cargo_1_temp = %s, cargo_2_temp = %s, 
+                #cargo_3_temp = %s, cargo_4_temp = %s, fresh_air_ex_mode = %s, 
+                #imei = %s 
+            #WHERE estado = 1 AND telemetria_id = %s
         #"""
         
         # Preparar datos para executemany
