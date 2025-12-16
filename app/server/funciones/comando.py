@@ -6,6 +6,7 @@ from datetime import datetime,timedelta
 from contextlib import asynccontextmanager
 import mysql.connector
 from mysql.connector import pooling
+from typing import List, Dict, Optional
 
 def bd_gene(imei):
     fet =datetime.now()
@@ -450,26 +451,118 @@ def pasar_temp(numero):
         return None
 
 # Pool de conexiones MySQL (agregar al inicio del archivo)
-mysql_pool = mysql.connector.pooling.MySQLConnectionPool(
-    pool_name="ztrack_pool",
-    pool_size=10,
-    pool_reset_session=True,
-    host="localhost",
-    user="ztrack2023",
-    passwd="lpmp2018",
-    database="zgroupztrack"
-)
+#mysql_pool = mysql.connector.pooling.MySQLConnectionPool(
+    #pool_name="ztrack_pool",
+    #pool_size=10,
+    #pool_reset_session=True,
+    #host="localhost",
+    #user="ztrack2023",
+    #passwd="lpmp2018",
+    #database="zgroupztrack"
+#)
+
+mysql_config = {
+    "pool_name": "ztrack_pool",
+    "pool_size": 15,  # Aumentado para más concurrencia
+    "pool_reset_session": True,
+    "host": "localhost",
+    "user": "ztrack2023",
+    "passwd": "lpmp2018",
+    "database": "zgroupztrack",
+    "autocommit": False,
+    "connect_timeout": 10,
+    "use_pure": False  # Usar C extension para mejor performance
+}
+
+try:
+    mysql_pool = mysql.connector.pooling.MySQLConnectionPool(**mysql_config)
+except mysql.connector.Error as err:
+    print(f"Error creando pool MySQL: {err}")
+    mysql_pool = None
+
+# Semáforo para limitar conexiones concurrentes a MySQL
+mysql_semaphore = asyncio.Semaphore(10)
+
+#@asynccontextmanager
+#async def get_mysql_connection():
+    #"""Context manager para manejo seguro de conexiones MySQL"""
+    #cnx = None
+    #try:
+        #cnx = mysql_pool.get_connection()
+        #yield cnx
+    #finally:
+        #if cnx:
+            #cnx.close()
+
 
 @asynccontextmanager
-async def get_mysql_connection():
-    """Context manager para manejo seguro de conexiones MySQL"""
+async def get_mysql_connection(timeout: int = 30):
+    """
+    Context manager seguro para conexiones MySQL con retry logic
+    """
     cnx = None
-    try:
-        cnx = mysql_pool.get_connection()
-        yield cnx
-    finally:
-        if cnx:
-            cnx.close()
+    cursor = None
+    retry_count = 0
+    max_retries = 3
+    
+    async with mysql_semaphore:  # Limitar concurrencia
+        while retry_count < max_retries:
+            try:
+                # Obtener conexión del pool
+                cnx = mysql_pool.get_connection()
+                
+                # Configurar timeout de la sesión
+                cursor = cnx.cursor()
+                cursor.execute("SET SESSION innodb_lock_wait_timeout = 10")
+                cursor.execute("SET SESSION lock_wait_timeout = 10")
+                cursor.close()
+                
+                yield cnx
+                
+                # Si todo salió bien, commit y salir
+                if cnx.in_transaction:
+                    cnx.commit()
+                break
+                
+            except mysql.connector.errors.DatabaseError as e:
+                retry_count += 1
+                print(f"Error MySQL (intento {retry_count}/{max_retries}): {e}")
+                
+                if cnx:
+                    try:
+                        cnx.rollback()
+                    except:
+                        pass
+                
+                # Si es error de lock, esperar antes de reintentar
+                if "Lock wait timeout" in str(e) or "Deadlock" in str(e):
+                    if retry_count < max_retries:
+                        await asyncio.sleep(0.5 * retry_count)  # Backoff exponencial
+                        continue
+                
+                # Para otros errores, salir inmediatamente
+                raise
+                
+            except Exception as e:
+                print(f"Error inesperado en MySQL: {e}")
+                if cnx:
+                    try:
+                        cnx.rollback()
+                    except:
+                        pass
+                raise
+                
+            finally:
+                if cnx and retry_count >= max_retries:
+                    try:
+                        cnx.close()
+                    except:
+                        pass
+        
+        # Si llegamos aquí sin conexión, lanzar error
+        if not cnx:
+            raise Exception("No se pudo obtener conexión MySQL después de reintentos")
+
 
 # Mapeo IMEI -> configuración (evita el gigantesco if/elif)
 IMEI_CONFIG = {
@@ -599,20 +692,20 @@ IMEI_CONFIG = {
     # ... agregar todos los demás IMEIs aquí
 }
 
-async def procesar_trama_batch(tramas_batch):
-    """Procesa un lote de tramas de forma eficiente"""
-    if not tramas_batch:
-        return
+#async def procesar_trama_batch(tramas_batch):
+    #"""Procesa un lote de tramas de forma eficiente"""
+    #if not tramas_batch:
+        #return
     
     # Insertar en MongoDB (batch)
-    unidad_collection3 = conexion_externa("madurador")
-    await unidad_collection3.insert_many(tramas_batch)
+    #unidad_collection3 = conexion_externa("madurador")
+    #await unidad_collection3.insert_many(tramas_batch)
     
     # Actualizar MySQL (batch)
-    async with get_mysql_connection() as cnx:
-        curB = cnx.cursor()
+    #async with get_mysql_connection() as cnx:
+        #curB = cnx.cursor()
         
-        update_query = """
+        #update_query = """
             UPDATE contenedores 
             SET ultima_fecha = %s, set_point = %s, temp_supply_1 = %s, 
                 return_air = %s, ambient_air = %s, relative_humidity = %s, 
@@ -624,29 +717,319 @@ async def procesar_trama_batch(tramas_batch):
                 cargo_3_temp = %s, cargo_4_temp = %s, fresh_air_ex_mode = %s, 
                 imei = %s 
             WHERE estado = 1 AND telemetria_id = %s
-        """
+        #"""
         
         # Preparar datos para executemany
-        mysql_data = [
-            (
-                obj['created_at'], obj['set_point'], obj['temp_supply_1'],
-                obj['return_air'], obj['ambient_air'], obj['relative_humidity'],
-                obj['avl'], obj['inyeccion_pwm'], obj['inyeccion_hora'],
-                obj['ethylene'], obj['set_point_co2'], obj['co2_reading'],
-                obj['humidity_set_point'], obj['sp_ethyleno'], obj['compress_coil_1'],
-                obj['power_state'], obj['evaporation_coil'], obj['controlling_mode'],
-                obj['stateProcess'], obj['cargo_1_temp'], obj['cargo_2_temp'],
-                obj['cargo_3_temp'], obj['cargo_4_temp'], obj['fresh_air_ex_mode'],
-                obj['imei'], obj['telemetria_id']
-            )
-            for obj in tramas_batch
-        ]
+        #mysql_data = [
+            #(
+                #obj['created_at'], obj['set_point'], obj['temp_supply_1'],
+                #obj['return_air'], obj['ambient_air'], obj['relative_humidity'],
+                #obj['avl'], obj['inyeccion_pwm'], obj['inyeccion_hora'],
+                #obj['ethylene'], obj['set_point_co2'], obj['co2_reading'],
+                #obj['humidity_set_point'], obj['sp_ethyleno'], obj['compress_coil_1'],
+                #obj['power_state'], obj['evaporation_coil'], obj['controlling_mode'],
+                #obj['stateProcess'], obj['cargo_1_temp'], obj['cargo_2_temp'],
+                #obj['cargo_3_temp'], obj['cargo_4_temp'], obj['fresh_air_ex_mode'],
+                #obj['imei'], obj['telemetria_id']
+            #)
+            #for obj in tramas_batch
+        #]
         
-        curB.executemany(update_query, mysql_data)
-        cnx.commit()
-        curB.close()
+        #curB.executemany(update_query, mysql_data)
+        #cnx.commit()
+        #curB.close()
+
+
+async def procesar_trama_batch(tramas_batch: List[Dict], trama_ids_mongo: List):
+    """
+    Procesa un lote de tramas con manejo robusto de errores MySQL
+    """
+    if not tramas_batch:
+        return
+    
+    # 1. PRIMERO: Insertar en MongoDB (más rápido y confiable)
+    try:
+        unidad_collection3 = conexion_externa("madurador")
+        await unidad_collection3.insert_many(tramas_batch, ordered=False)
+    except Exception as e:
+        print(f"Error insertando en MongoDB: {e}")
+        # Intentar insertar uno por uno
+        for obj in tramas_batch:
+            try:
+                await unidad_collection3.insert_one(obj)
+            except Exception as e2:
+                print(f"Error insertando objeto individual en MongoDB: {e2}")
+    
+    # 2. SEGUNDO: Actualizar MySQL en lotes más pequeños
+    batch_size = 10  # Lotes pequeños para evitar locks largos
+    
+    for i in range(0, len(tramas_batch), batch_size):
+        mini_batch = tramas_batch[i:i + batch_size]
+        
+        try:
+            async with get_mysql_connection() as cnx:
+                cursor = cnx.cursor()
+                
+                # Query optimizado sin subconsultas
+                update_query = """
+                    UPDATE contenedores 
+                    SET ultima_fecha = %s, set_point = %s, temp_supply_1 = %s, 
+                        return_air = %s, ambient_air = %s, relative_humidity = %s, 
+                        avl = %s, defrost_prueba = %s, ripener_prueba = %s, 
+                        ethylene = %s, set_point_co2 = %s, co2_reading = %s, 
+                        humidity_set_point = %s, sp_ethyleno = %s, compress_coil_1 = %s, 
+                        power_state = %s, evaporation_coil = %s, controlling_mode = %s, 
+                        stateProcess = %s, cargo_1_temp = %s, cargo_2_temp = %s, 
+                        cargo_3_temp = %s, cargo_4_temp = %s, fresh_air_ex_mode = %s, 
+                        imei = %s 
+                    WHERE estado = 1 AND telemetria_id = %s
+                """
+                
+                # Preparar datos
+                mysql_data = [
+                    (
+                        obj['created_at'], obj['set_point'], obj['temp_supply_1'],
+                        obj['return_air'], obj['ambient_air'], obj['relative_humidity'],
+                        obj['avl'], obj['inyeccion_pwm'], obj['inyeccion_hora'],
+                        obj['ethylene'], obj['set_point_co2'], obj['co2_reading'],
+                        obj['humidity_set_point'], obj['sp_ethyleno'], obj['compress_coil_1'],
+                        obj['power_state'], obj['evaporation_coil'], obj['controlling_mode'],
+                        obj['stateProcess'], obj['cargo_1_temp'], obj['cargo_2_temp'],
+                        obj['cargo_3_temp'], obj['cargo_4_temp'], obj['fresh_air_ex_mode'],
+                        obj['imei'], obj['telemetria_id']
+                    )
+                    for obj in mini_batch
+                ]
+                
+                # Ejecutar updates
+                cursor.executemany(update_query, mysql_data)
+                cnx.commit()
+                cursor.close()
+                
+        except mysql.connector.errors.DatabaseError as e:
+            print(f"Error MySQL en batch {i}-{i+batch_size}: {e}")
+            
+            # Si falla el batch, intentar uno por uno
+            if "Lock wait timeout" in str(e) or "Deadlock" in str(e):
+                print(f"Reintentando registros uno por uno...")
+                await procesar_mysql_individual(mini_batch)
+            else:
+                raise
+                
+        except Exception as e:
+            print(f"Error inesperado procesando batch MySQL: {e}")
+            # Continuar con el siguiente batch
+            continue
+        
+        # Pequeña pausa entre batches para evitar saturación
+        await asyncio.sleep(0.01)
+
+
+# ============================================================================
+# FUNCIÓN PRINCIPAL OPTIMIZADA
+# ============================================================================
 
 async def ProcesarData():
+    """Versión optimizada con mejor manejo de errores"""
+    print("Iniciando procesamiento...")
+    
+    dispositivos_collection = collection(bd_gene("dispositivos"))
+    dispositivos = []
+    
+    async for notificacion in dispositivos_collection.find({"estado": 1}, {"_id": 0}):
+        imei = notificacion['imei']
+        print(f"Procesando dispositivo: {imei}")
+        
+        datos_dispositivo = bd_gene(imei)
+        unidad_collection = collection(datos_dispositivo)
+        
+        # Obtener ID de contador
+        dato_id = await dispositivos_collection.find_one(
+            {"estado": 1, "imei": imei}, 
+            {"_id": 0}
+        )
+        id_con = int(dato_id['id_cont']) + 1 if dato_id and dato_id.get('id_cont') else 300000000
+        
+        # Batches
+        tramas_batch = []
+        trama_ids_mongo = []
+        nuevo_id_cont = id_con
+        
+        # Límite de tramas por dispositivo para evitar procesamiento infinito
+        max_tramas = 500
+        contador_tramas = 0
+        
+        async for trama in unidad_collection.find({"estado": 1}, {"_id": 0}).limit(max_tramas):
+            contador_tramas += 1
+            
+            trama_ok = str(trama.get('c', ''))
+            transformado = trama_ok.split(',')
+            
+            if len(transformado) < 65:
+                continue
+            
+            # Obtener configuración
+            config = IMEI_CONFIG.get(imei, {
+                "tele_dispositivo": 0,
+                "valorP": 0,
+                "lat": 35.7396,
+                "lon": -119.238
+            })
+            
+            comparador1 = transformado[65] if len(transformado) > 65 else 0
+            comparador2 = transformado[66] if len(transformado) > 66 else 0
+            
+            # Construir objeto (código existente...)
+            objetoV = construir_objeto_trama(
+                transformado, 
+                config, 
+                trama, 
+                nuevo_id_cont,
+                comparador1,
+                comparador2
+            )
+            
+            tramas_batch.append(objetoV)
+            trama_ids_mongo.append(trama['fecha'])
+            nuevo_id_cont += 1
+            
+            # Procesar en lotes de 50
+            if len(tramas_batch) >= 50:
+                await procesar_trama_batch(tramas_batch, trama_ids_mongo)
+                
+                # Actualizar estado en MongoDB
+                try:
+                    await unidad_collection.update_many(
+                        {"fecha": {"$in": trama_ids_mongo}},
+                        {"$set": {"estado": 0}}
+                    )
+                except Exception as e:
+                    print(f"Error actualizando MongoDB: {e}")
+                
+                # Actualizar contador
+                try:
+                    await dispositivos_collection.update_one(
+                        {"imei": imei},
+                        {"$set": {"id_cont": nuevo_id_cont - 1}}
+                    )
+                except Exception as e:
+                    print(f"Error actualizando contador: {e}")
+                
+                tramas_batch = []
+                trama_ids_mongo = []
+        
+        # Procesar restantes
+        if tramas_batch:
+            await procesar_trama_batch(tramas_batch, trama_ids_mongo)
+            
+            try:
+                await unidad_collection.update_many(
+                    {"fecha": {"$in": trama_ids_mongo}},
+                    {"$set": {"estado": 0}}
+                )
+                
+                await dispositivos_collection.update_one(
+                    {"imei": imei},
+                    {"$set": {"id_cont": nuevo_id_cont - 1}}
+                )
+            except Exception as e:
+                print(f"Error en actualización final: {e}")
+        
+        dispositivos.append(notificacion)
+        print(f"Dispositivo {imei} procesado: {contador_tramas} tramas")
+    
+    return dispositivos
+
+def construir_objeto_trama(transformado, config, trama, id_progre, comparador1, comparador2):
+    """
+    Construye el objeto de trama de forma limpia
+    """
+    return {
+        "id": id_progre,
+        "set_point": pasar_temp(convertir_a_float(transformado[1])),
+        "temp_supply_1": pasar_temp(convertir_a_float(transformado[2])),
+        "temp_supply_2": pasar_temp(convertir_a_float(transformado[3])),
+        "return_air": pasar_temp(convertir_a_float(transformado[4])),
+        "evaporation_coil": pasar_temp(convertir_a_float(transformado[5])),
+        "condensation_coil": pasar_temp(convertir_a_float(transformado[6])),
+        "compress_coil_1": pasar_temp(convertir_a_float(transformado[7])),
+        "compress_coil_2": pasar_temp(convertir_a_float(transformado[8])),
+        "ambient_air": pasar_temp(convertir_a_float(transformado[9])),
+        "cargo_1_temp": pasar_temp(convertir_a_float(transformado[10])),
+        "cargo_2_temp": pasar_temp(convertir_a_float(transformado[11])),
+        "cargo_3_temp": pasar_temp(convertir_a_float(transformado[12])),
+        "cargo_4_temp": pasar_temp(convertir_a_float(transformado[13])),
+        "relative_humidity": convertir_a_float(transformado[14]),
+        "avl": convertir_a_float(transformado[15]),
+        "suction_pressure": convertir_a_float(transformado[16]),
+        "discharge_pressure": convertir_a_float(transformado[17]),
+        "line_voltage": convertir_a_float(transformado[18]),
+        "line_frequency": convertir_a_float(transformado[19]),
+        "consumption_ph_1": convertir_a_float(transformado[20]),
+        "consumption_ph_2": convertir_a_float(transformado[21]),
+        "consumption_ph_3": convertir_a_float(transformado[22]),
+        "co2_reading": convertir_a_float(transformado[23]),
+        "o2_reading": convertir_a_float(transformado[24]),
+        "evaporator_speed": convertir_a_float(transformado[25]),
+        "condenser_speed": convertir_a_float(transformado[26]),
+        "power_kwh": convertir_a_float(transformado[27]),
+        "power_trip_reading": convertir_a_float(transformado[28]),
+        "suction_temp": convertir_a_float(transformado[29]),
+        "discharge_temp": convertir_a_float(transformado[30]),
+        "supply_air_temp": convertir_a_float(transformado[31]),
+        "return_air_temp": convertir_a_float(transformado[32]),
+        "dl_battery_temp": convertir_a_float(transformado[33]),
+        "dl_battery_charge": convertir_a_float(transformado[34]),
+        "power_consumption": convertir_a_float(transformado[35]),
+        "power_consumption_avg": convertir_a_float(transformado[36]),
+        "alarm_present": convertir_a_float(transformado[37]),
+        "capacity_load": convertir_a_float(transformado[38]),
+        "power_state": convertir_a_float(con_h(transformado[39], transformado[14])),
+        "controlling_mode": transformado[40],
+        "humidity_control": convertir_a_float(transformado[41]),
+        "humidity_set_point": convertir_a_float(transformado[42]),
+        "fresh_air_ex_mode": convertir_a_float(transformado[43]),
+        "fresh_air_ex_rate": convertir_a_float(transformado[44]),
+        "fresh_air_ex_delay": convertir_a_float(transformado[45]),
+        "set_point_o2": convertir_a_float(transformado[46]),
+        "set_point_co2": convertir_a_float(transformado[47]),
+        "defrost_term_temp": convertir_a_float(transformado[48]),
+        "defrost_interval": convertir_a_float(transformado[49]),
+        "water_cooled_conde": convertir_a_float(transformado[50]),
+        "usda_trip": convertir_a_float(transformado[51]),
+        "evaporator_exp_valve": convertir_a_float(transformado[52]),
+        "suction_mod_valve": convertir_a_float(transformado[53]),
+        "hot_gas_valve": convertir_a_float(transformado[54]),
+        "economizer_valve": convertir_a_float(transformado[55]),
+        "ethylene": convertir_a_float(transformado[56]),
+        "stateProcess": config["valorP"],
+        "stateInyection": transformado[64],
+        "timerOfProcess": 0,
+        "battery_voltage": 0,
+        "power_trip_duration": 0,
+        "modelo": "THERMOKING",
+        "latitud": config["lat"],
+        "longitud": config["lon"],
+        "created_at": trama['fecha'],
+        "telemetria_id": config["tele_dispositivo"],
+        "inyeccion_etileno": 0,
+        "defrost_prueba": 0,
+        "ripener_prueba": 0,
+        "sp_ethyleno": convertir_a_float(transformado[61]),
+        "inyeccion_hora": convertir_a_float(transformado[58]),
+        "inyeccion_pwm": convertir_a_float(transformado[63]),
+        "extra_1": 0,
+        "extra_2": 0,
+        "extra_3": 0,
+        "extra_4": 0,
+        "extra_5": 0,
+        "imei": trama['i'],
+        "tiempo_paso": comparador2,
+        "device": transformado[0]
+    }
+
+
+async def ProcesarData2():
     """Versión optimizada con procesamiento por lotes"""
     print("Iniciando procesamiento...")
     
