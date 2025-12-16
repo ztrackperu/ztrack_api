@@ -1,9 +1,11 @@
 import json
+import asyncio
 from server.database import collection ,collectionTotal ,conexion_externa
 from bson import regex
 from datetime import datetime,timedelta
+from contextlib import asynccontextmanager
 import mysql.connector
-
+from mysql.connector import pooling
 
 def bd_gene(imei):
     fet =datetime.now()
@@ -29,7 +31,8 @@ async def procesar_jhon_vena():
         "evento": "demonio en accion cada 5 minutos  ",
         "user": "recurrente_jhon",
         "receta": "sin receta",
-        "tipo": 0,
+        "tipo": 0,q
+
         "status": 2,
         "dato": None
     }
@@ -446,7 +449,380 @@ def pasar_temp(numero):
     else:
         return None
 
+# Pool de conexiones MySQL (agregar al inicio del archivo)
+mysql_pool = mysql.connector.pooling.MySQLConnectionPool(
+    pool_name="ztrack_pool",
+    pool_size=10,
+    pool_reset_session=True,
+    host="localhost",
+    user="ztrack2023",
+    passwd="lpmp2018",
+    database="zgroupztrack"
+)
+
+@asynccontextmanager
+async def get_mysql_connection():
+    """Context manager para manejo seguro de conexiones MySQL"""
+    cnx = None
+    try:
+        cnx = mysql_pool.get_connection()
+        yield cnx
+    finally:
+        if cnx:
+            cnx.close()
+
+# Mapeo IMEI -> configuración (evita el gigantesco if/elif)
+IMEI_CONFIG = {
+    "863576045638595": {"tele_dispositivo": 14872, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "864369031920501": {"tele_dispositivo": 15797, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "868428043345663": {"tele_dispositivo": 15798, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "635760448941655": {"tele_dispositivo": 15579, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "866782042018727": {"tele_dispositivo": 15176, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "863576042843883": {"tele_dispositivo": 15640, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "867858039922508": {"tele_dispositivo": 15592, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+
+    "560362517801780": {"tele_dispositivo": 15308, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "860389053989154": {"tele_dispositivo": 15309, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "867372052672941": {"tele_dispositivo": 15310, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "860389054014960": {"tele_dispositivo": 15311, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "860389054376393": {"tele_dispositivo": 15312, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+
+    "860389059276648": {"tele_dispositivo": 15313, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "038522121522121": {"tele_dispositivo": 15314, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "863576041438461": {"tele_dispositivo": 14952, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "864369036245177": {"tele_dispositivo": 315, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "863576042247473": {"tele_dispositivo": 129, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+
+    "866262037906285": {"tele_dispositivo": 251, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "864369031920501": {"tele_dispositivo": 125, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "866029030001798": {"tele_dispositivo": 128, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "865992030451860": {"tele_dispositivo": 126, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "868428041482815": {"tele_dispositivo": 313, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    
+    "862643033733233": {"tele_dispositivo": 4606, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "864764035741434": {"tele_dispositivo": 14959, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "865992037256015": {"tele_dispositivo": 4608, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "867858039892602": {"tele_dispositivo": 14962, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "863576043636583": {"tele_dispositivo": 14954, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+
+    "863576041348223": {"tele_dispositivo": 14961, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "865691035501170": {"tele_dispositivo": 14960, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "863576044716442": {"tele_dispositivo": 14953, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "868428048800696": {"tele_dispositivo": 14955, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "868428044660946": {"tele_dispositivo": 14951, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+
+    "867856038522121": {"tele_dispositivo": 14949, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "863576044894165": {"tele_dispositivo": 14948, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "868428040102299": {"tele_dispositivo": 14873, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "863576047417592": {"tele_dispositivo": 14985, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "863576041628806": {"tele_dispositivo": 14970, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+
+    "863576049946101": {"tele_dispositivo": 14980, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "868428040146445": {"tele_dispositivo": 14981, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "863576040479524": {"tele_dispositivo": 14982, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "863576049352433": {"tele_dispositivo": 14983, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "868428048593994": {"tele_dispositivo": 14986, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+
+    "860719022597698": {"tele_dispositivo": 14987, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "866782049859933": {"tele_dispositivo": 4630, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "860389054880469": {"tele_dispositivo": 14853, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "860389053266884": {"tele_dispositivo": 14866, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "868428040551750": {"tele_dispositivo": 4464, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+
+    "862643035283377": {"tele_dispositivo": 14868, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "860389051869879": {"tele_dispositivo": 4650, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "860389050308762": {"tele_dispositivo": 15008, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "860389050976121": {"tele_dispositivo": 15006, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "868428047061175": {"tele_dispositivo": 4651, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+
+    "860719022597698": {"tele_dispositivo": 14987, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "866782049859933": {"tele_dispositivo": 4630, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "860389054880469": {"tele_dispositivo": 14853, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "860389053266884": {"tele_dispositivo": 14866, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "868428040551750": {"tele_dispositivo": 4464, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+
+    "862643035283377": {"tele_dispositivo": 14868, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "860389051869879": {"tele_dispositivo": 4650, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "860389050308762": {"tele_dispositivo": 15008, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "860389050976121": {"tele_dispositivo": 15006, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "868428047061175": {"tele_dispositivo": 4651, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+
+    "863576042288733": {"tele_dispositivo": 15007, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "868428043531411": {"tele_dispositivo": 15009, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "868428047060623": {"tele_dispositivo": 15015, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "860389054980111": {"tele_dispositivo": 14867, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "863576045261372": {"tele_dispositivo": 15017, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+
+    "868428041343744": {"tele_dispositivo": 15019, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "867372050062939": {"tele_dispositivo": 15020, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "868428043230766": {"tele_dispositivo": 15029, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "867858039011138": {"tele_dispositivo": 15056, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "860389052579022": {"tele_dispositivo": 15059, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+
+    "867856036251780": {"tele_dispositivo": 15083, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "868428040780441": {"tele_dispositivo": 15096, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "866782043762695": {"tele_dispositivo": 15100, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "860389050914379": {"tele_dispositivo": 15107, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "860389051312615": {"tele_dispositivo": 15108, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+
+    "866782048576405": {"tele_dispositivo": 15109, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "863576040087178": {"tele_dispositivo": 15111, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "863576047493072": {"tele_dispositivo": 15112, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "866782048555920": {"tele_dispositivo": 15113, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "866782043479886": {"tele_dispositivo": 15114, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+
+    "868428042700835": {"tele_dispositivo": 15115, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "867372057558079": {"tele_dispositivo": 15175, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "867372055007558": {"tele_dispositivo": 15176, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "868428045956228": {"tele_dispositivo": 15185, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "860389051345177": {"tele_dispositivo": 15184, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+
+    "866262033835314": {"tele_dispositivo": 15230, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "868428049881851": {"tele_dispositivo": 15231, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "860389053574808": {"tele_dispositivo": 15232, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "866782049849769": {"tele_dispositivo": 15233, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "860389053784506": {"tele_dispositivo": 15244, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+
+    "863576048269166": {"tele_dispositivo": 15245, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "867856038218068": {"tele_dispositivo": 15247, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "868428049460037": {"tele_dispositivo": 15248, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "867856033995967": {"tele_dispositivo": 15250, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "860389051682249": {"tele_dispositivo": 15251, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+
+    "868428044808727": {"tele_dispositivo": 15545, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "863584032967571": {"tele_dispositivo": 15546, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "868428047321157": {"tele_dispositivo": 15570, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "863576045261372": {"tele_dispositivo": 15605, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+    "867858037900639": {"tele_dispositivo": 15303, "valorP": 0, "lat": -12.09858, "lon": -77.01155},
+
+
+    # ... agregar todos los demás IMEIs aquí
+}
+
+async def procesar_trama_batch(tramas_batch):
+    """Procesa un lote de tramas de forma eficiente"""
+    if not tramas_batch:
+        return
+    
+    # Insertar en MongoDB (batch)
+    unidad_collection3 = conexion_externa("madurador")
+    await unidad_collection3.insert_many(tramas_batch)
+    
+    # Actualizar MySQL (batch)
+    async with get_mysql_connection() as cnx:
+        curB = cnx.cursor()
+        
+        update_query = """
+            UPDATE contenedores 
+            SET ultima_fecha = %s, set_point = %s, temp_supply_1 = %s, 
+                return_air = %s, ambient_air = %s, relative_humidity = %s, 
+                avl = %s, defrost_prueba = %s, ripener_prueba = %s, 
+                ethylene = %s, set_point_co2 = %s, co2_reading = %s, 
+                humidity_set_point = %s, sp_ethyleno = %s, compress_coil_1 = %s, 
+                power_state = %s, evaporation_coil = %s, controlling_mode = %s, 
+                stateProcess = %s, cargo_1_temp = %s, cargo_2_temp = %s, 
+                cargo_3_temp = %s, cargo_4_temp = %s, fresh_air_ex_mode = %s, 
+                imei = %s 
+            WHERE estado = 1 AND telemetria_id = %s
+        """
+        
+        # Preparar datos para executemany
+        mysql_data = [
+            (
+                obj['created_at'], obj['set_point'], obj['temp_supply_1'],
+                obj['return_air'], obj['ambient_air'], obj['relative_humidity'],
+                obj['avl'], obj['inyeccion_pwm'], obj['inyeccion_hora'],
+                obj['ethylene'], obj['set_point_co2'], obj['co2_reading'],
+                obj['humidity_set_point'], obj['sp_ethyleno'], obj['compress_coil_1'],
+                obj['power_state'], obj['evaporation_coil'], obj['controlling_mode'],
+                obj['stateProcess'], obj['cargo_1_temp'], obj['cargo_2_temp'],
+                obj['cargo_3_temp'], obj['cargo_4_temp'], obj['fresh_air_ex_mode'],
+                obj['imei'], obj['telemetria_id']
+            )
+            for obj in tramas_batch
+        ]
+        
+        curB.executemany(update_query, mysql_data)
+        cnx.commit()
+        curB.close()
+
 async def ProcesarData():
+    """Versión optimizada con procesamiento por lotes"""
+    print("Iniciando procesamiento...")
+    
+    dispositivos_collection = collection(bd_gene("dispositivos"))
+    dispositivos = []
+    
+    # Procesar por dispositivo
+    async for notificacion in dispositivos_collection.find({"estado": 1}, {"_id": 0}):
+        imei = notificacion['imei']
+        datos_dispositivo = bd_gene(imei)
+        unidad_collection = collection(datos_dispositivo)
+        
+        # Obtener ID de contador una sola vez por dispositivo
+        dato_id = await dispositivos_collection.find_one(
+            {"estado": 1, "imei": imei}, 
+            {"_id": 0}
+        )
+        id_con = int(dato_id['id_cont']) + 1 if dato_id and dato_id.get('id_cont') else 300000000
+        
+        # Batch para procesar tramas del dispositivo
+        tramas_batch = []
+        trama_ids_mongo = []
+        nuevo_id_cont = id_con
+        
+        # Recopilar tramas pendientes
+        async for trama in unidad_collection.find({"estado": 1}, {"_id": 0}):
+            trama_ok = str(trama['c'])
+            transformado = trama_ok.split(',')
+            
+            # Validar longitud mínima
+            if len(transformado) < 65:
+                continue
+            
+            # Obtener configuración del IMEI
+            config = IMEI_CONFIG.get(imei)
+            if not config:
+                # Configuración por defecto
+                comparador1 = transformado[65] if len(transformado) > 65 else 0
+                config = {
+                    "tele_dispositivo": 0,
+                    "valorP": 5 if int(comparador1) == 1 else 0,
+                    "lat": 35.7396,
+                    "lon": -119.238
+                }
+            
+            # Construir objeto optimizado
+            comparador1 = transformado[65] if len(transformado) > 65 else 0
+            comparador2 = transformado[66] if len(transformado) > 66 else 0
+            
+            objetoV = {
+                "id": nuevo_id_cont,
+                "set_point": pasar_temp(convertir_a_float(transformado[1])),
+                "temp_supply_1": pasar_temp(convertir_a_float(transformado[2])),
+                "temp_supply_2": pasar_temp(convertir_a_float(transformado[3])),
+                "return_air": pasar_temp(convertir_a_float(transformado[4])),
+                "evaporation_coil": pasar_temp(convertir_a_float(transformado[5])),
+                "condensation_coil": pasar_temp(convertir_a_float(transformado[6])),
+                "compress_coil_1": pasar_temp(convertir_a_float(transformado[7])),
+                "compress_coil_2": pasar_temp(convertir_a_float(transformado[8])),
+                "ambient_air": pasar_temp(convertir_a_float(transformado[9])),
+                "cargo_1_temp": pasar_temp(convertir_a_float(transformado[10])),
+                "cargo_2_temp": pasar_temp(convertir_a_float(transformado[11])),
+                "cargo_3_temp": pasar_temp(convertir_a_float(transformado[12])),
+                "cargo_4_temp": pasar_temp(convertir_a_float(transformado[13])),
+                "relative_humidity": convertir_a_float(transformado[14]),
+                "avl": convertir_a_float(transformado[15]),
+                "suction_pressure": convertir_a_float(transformado[16]),
+                "discharge_pressure": convertir_a_float(transformado[17]),
+                "line_voltage": convertir_a_float(transformado[18]),
+                "line_frequency": convertir_a_float(transformado[19]),
+                "consumption_ph_1": convertir_a_float(transformado[20]),
+                "consumption_ph_2": convertir_a_float(transformado[21]),
+                "consumption_ph_3": convertir_a_float(transformado[22]),
+                "co2_reading": convertir_a_float(transformado[23]),
+                "o2_reading": convertir_a_float(transformado[24]),
+                "evaporator_speed": convertir_a_float(transformado[25]),
+                "condenser_speed": convertir_a_float(transformado[26]),
+                "power_kwh": convertir_a_float(transformado[27]),
+                "power_trip_reading": convertir_a_float(transformado[28]),
+                "suction_temp": convertir_a_float(transformado[29]),
+                "discharge_temp": convertir_a_float(transformado[30]),
+                "supply_air_temp": convertir_a_float(transformado[31]),
+                "return_air_temp": convertir_a_float(transformado[32]),
+                "dl_battery_temp": convertir_a_float(transformado[33]),
+                "dl_battery_charge": convertir_a_float(transformado[34]),
+                "power_consumption": convertir_a_float(transformado[35]),
+                "power_consumption_avg": convertir_a_float(transformado[36]),
+                "alarm_present": convertir_a_float(transformado[37]),
+                "capacity_load": convertir_a_float(transformado[38]),
+                "power_state": convertir_a_float(con_h(transformado[39], transformado[14])),
+                "controlling_mode": transformado[40],
+                "humidity_control": convertir_a_float(transformado[41]),
+                "humidity_set_point": convertir_a_float(transformado[42]),
+                "fresh_air_ex_mode": convertir_a_float(transformado[43]),
+                "fresh_air_ex_rate": convertir_a_float(transformado[44]),
+                "fresh_air_ex_delay": convertir_a_float(transformado[45]),
+                "set_point_o2": convertir_a_float(transformado[46]),
+                "set_point_co2": convertir_a_float(transformado[47]),
+                "defrost_term_temp": convertir_a_float(transformado[48]),
+                "defrost_interval": convertir_a_float(transformado[49]),
+                "water_cooled_conde": convertir_a_float(transformado[50]),
+                "usda_trip": convertir_a_float(transformado[51]),
+                "evaporator_exp_valve": convertir_a_float(transformado[52]),
+                "suction_mod_valve": convertir_a_float(transformado[53]),
+                "hot_gas_valve": convertir_a_float(transformado[54]),
+                "economizer_valve": convertir_a_float(transformado[55]),
+                "ethylene": convertir_a_float(transformado[56]),
+                "stateProcess": config["valorP"],
+                "stateInyection": transformado[64],
+                "timerOfProcess": convertir_a_float(0),
+                "battery_voltage": convertir_a_float(0),
+                "power_trip_duration": convertir_a_float(0),
+                "modelo": "THERMOKING",
+                "latitud": config["lat"],
+                "longitud": config["lon"],
+                "created_at": trama['fecha'],
+                "telemetria_id": config["tele_dispositivo"],
+                "inyeccion_etileno": 0,
+                "defrost_prueba": 0,
+                "ripener_prueba": 0,
+                "sp_ethyleno": convertir_a_float(transformado[61]),
+                "inyeccion_hora": convertir_a_float(transformado[58]),
+                "inyeccion_pwm": convertir_a_float(transformado[63]),
+                "extra_1": 0,
+                "extra_2": 0,
+                "extra_3": 0,
+                "extra_4": 0,
+                "extra_5": 0,
+                "imei": trama['i'],
+                "tiempo_paso": comparador2,
+                "device": transformado[0]
+            }
+            
+            tramas_batch.append(objetoV)
+            trama_ids_mongo.append(trama['fecha'])
+            nuevo_id_cont += 1
+            
+            # Procesar en lotes de 50
+            if len(tramas_batch) >= 50:
+                await procesar_trama_batch(tramas_batch)
+                
+                # Actualizar estado en MongoDB (batch)
+                await unidad_collection.update_many(
+                    {"fecha": {"$in": trama_ids_mongo}},
+                    {"$set": {"estado": 0}}
+                )
+                
+                # Actualizar contador
+                await dispositivos_collection.update_one(
+                    {"imei": imei},
+                    {"$set": {"id_cont": nuevo_id_cont - 1}}
+                )
+                
+                tramas_batch = []
+                trama_ids_mongo = []
+        
+        # Procesar restantes
+        if tramas_batch:
+            await procesar_trama_batch(tramas_batch)
+            
+            await unidad_collection.update_many(
+                {"fecha": {"$in": trama_ids_mongo}},
+                {"$set": {"estado": 0}}
+            )
+            
+            await dispositivos_collection.update_one(
+                {"imei": imei},
+                {"$set": {"id_cont": nuevo_id_cont - 1}}
+            )
+        
+        dispositivos.append(notificacion)
+    
+    return dispositivos
+
+
+async def ProcesarData2():
     print("yamos jodidos")
     dispositivos=[]
     dispositivos_collection = collection(bd_gene("dispositivos"))
@@ -1283,4 +1659,5 @@ async def ProcesarData():
         dispositivos.append(notificacion)
     return dispositivos
 
+                        
                         
