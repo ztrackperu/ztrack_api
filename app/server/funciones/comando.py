@@ -31,7 +31,7 @@ async def procesar_jhon_vena():
         "evento": "demonio en accion cada 5 minutos  ",
         "user": "recurrente_jhon",
         "receta": "sin receta",
-        "tipo": 0,q
+        "tipo": 0,
 
         "status": 2,
         "dato": None
