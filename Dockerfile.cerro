@@ -1,0 +1,36 @@
+# Solo para ejecutar la lógica de las primeras ~130 líneas de cerro_prieto_antiguo.py
+#
+# Para usar TU JSON modificado y que datos_cerro_prieto_antiguo.json salga en tu carpeta,
+# ejecuta desde el directorio del proyecto (donde está test_cerro.json):
+#
+#   docker run --rm -v "$(pwd)":/data \
+#     -e INPUT_FILE=/data/test_cerro.json \
+#     -e OUTPUT_FILE=/data/datos_cerro_prieto_antiguo.json \
+#     cerro-prieto
+#
+# Así el contenedor lee tu test_cerro.json y escribe el resultado en tu máquina.
+# Sin -v solo usa el JSON de la imagen y la salida se pierde al terminar el contenedor.
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY cerro_prieto_standalone.py .
+COPY procesar_atmos.py .
+COPY test_cerro.json .
+COPY santa_anita.json .
+#COPY DICIEMBRE_867858038371947_12_2025.json .
+#COPY ENERO_867858038371947_01_2026.json .
+#COPY FEBRERO_867858038371947_01_2026.json .
+#COPY MARZO_867858038371947_01_2026.json .
+
+#COPY DICIEMBRE_862643038233353_12_2025.json .
+#COPY ENERO_862643038233353_01_2026.json .
+#COPY FEBRERO_862643038233353_02_2026.json .
+#COPY MARZO_862643038233353_03_2026.json .
+
+#COPY DICIEMBRE_867856035103578_12_2025.json .
+#COPY ENERO_867856035103578_01_2026.json .
+#COPY FEBRERO_867856035103578_02_2026.json .
+#COPY MARZO_867856035103578_03_2026.json .
+
+CMD ["python", "procesar_atmos.py"]
