@@ -96,12 +96,42 @@ def bd_gene_1(imei):
     colect ="pre_1_"+imei+part
     return colect
  
-def procesar_d00(text):
+#PARA EL TIMER DE GENSET
+def swap_endian(hex_str: str) -> int:
+    """
+    Convierte hex little-endian a entero.
+    'DE020000' → 0x000002DE → 734
+    """
+    # Invertir bytes: agrupar de 2 en 2 y revertir
+    bytes_reversed = bytes.fromhex(hex_str)[::-1]
+    return int(bytes_reversed.hex(), 16)
+
+def procesar_d00_OLD(text):
     # Dividir el texto en elementos separados por comas
     hex_elements = text.split(',')
     if len(hex_elements)==20 :
         # Convertir cada elemento hexadecimal a decimal
         decimal_array = [int(hex_elem, 16) for hex_elem in hex_elements]
+    else :
+        decimal_array=0
+    
+    return decimal_array
+
+def procesar_d00(text):
+    # Dividir el texto en elementos separados por comas
+    hex_elements = text.split(',')
+    if len(hex_elements)==20 :
+        # Convertir cada elemento hexadecimal a decimal
+        #los elemntos 1 y 2 son timer  , se deben invertir antes de tomar como hexadeciomal ejemplo vienie timer1 = "DE020000" se debe invertir a "000002DE"
+        #por ejemplo si viene: ABCDEFHG  pasa a ser HGEFCDAB
+        #"DE020000" pasa a ser "000002DE" no se agrega ceros solo se orden alos elemntos de manera inversa
+        hex_elements[0] = swap_endian(hex_elements[0])
+        hex_elements[1] = swap_endian(hex_elements[1])
+        print(hex_elements)
+
+        #CONVERTIR A TODOS MENOS A LOS ELEMENTOS 0 Y 1 DEL ARRAY EN int(hex_elem, 16) 
+
+        decimal_array = [int(hex_elem, 16) if hex_elem not in [hex_elements[0], hex_elements[1]] else hex_elem for hex_elem in hex_elements]
     else :
         decimal_array=0
     
