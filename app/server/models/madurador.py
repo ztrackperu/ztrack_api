@@ -86,6 +86,8 @@ class IntegracionZtrackSchema(BaseModel):
     longitud: Optional[float] | None =None
     latitud: Optional[float] | None =None
     ethylene: Optional[float] | None =None
+    inyeccion_hora: Optional[float] | None =None
+
     class Config:
         json_schema_extra = {
             "example": {
