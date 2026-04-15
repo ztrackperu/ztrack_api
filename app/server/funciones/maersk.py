@@ -103,6 +103,8 @@ def swap_endian(hex_str: str) -> int:
     'DE020000' → 0x000002DE → 734
     """
     # Invertir bytes: agrupar de 2 en 2 y revertir
+    print("swap_endian")
+    print(hex_str)
     bytes_reversed = bytes.fromhex(hex_str)[::-1]
     return int(bytes_reversed.hex(), 16)
 
@@ -125,21 +127,33 @@ def procesar_d00(text):
         #los elemntos 1 y 2 son timer  , se deben invertir antes de tomar como hexadeciomal ejemplo vienie timer1 = "DE020000" se debe invertir a "000002DE"
         #por ejemplo si viene: ABCDEFHG  pasa a ser HGEFCDAB
         #"DE020000" pasa a ser "000002DE" no se agrega ceros solo se orden alos elemntos de manera inversa
-        hex_elements[0] = swap_endian(hex_elements[0])
-        hex_elements[1] = swap_endian(hex_elements[1])
         print(hex_elements)
+        print(hex_elements[0])
+        print(hex_elements[1])
+        #si hex_elements[0] tien mas de 4 carcateres aplicar funcion  swap_endian 
+        if len(hex_elements[1])>4 :
+            #si tiene menos de 8 caracteres se completa con 0 ejemplo "5030000" pasa a ser "05030000" y es "530000" pasa a ser "00530000" , asi hasta completar los 8 acracteres
+            if len(hex_elements[1])<8 :
+                hex_elements[1] = "0"*(8-len(hex_elements[1]))+hex_elements[1]
+            if len(hex_elements[0])<8 :
+                hex_elements[0] = "0"*(8-len(hex_elements[0]))+hex_elements[0]
+            #
+            hex_elements[0] = swap_endian(hex_elements[0])
+            hex_elements[1] = swap_endian(hex_elements[1])
+            print(hex_elements)
+            print(hex_elements[0])
+            print(hex_elements[1])
+            #CONVERTIR A TODOS MENOS A LOS ELEMENTOS 0 Y 1 DEL ARRAY EN int(hex_elem, 16) 
+            decimal_array = [int(hex_elem, 16) if hex_elem not in [hex_elements[0], hex_elements[1]] else hex_elem for hex_elem in hex_elements]
+            print(decimal_array)
+        else :
+            decimal_array = [int(hex_elem, 16) for hex_elem in hex_elements]
 
-        #CONVERTIR A TODOS MENOS A LOS ELEMENTOS 0 Y 1 DEL ARRAY EN int(hex_elem, 16) 
-
-        decimal_array = [int(hex_elem, 16) if hex_elem not in [hex_elements[0], hex_elements[1]] else hex_elem for hex_elem in hex_elements]
-    else :
-        decimal_array=0
-    
     return decimal_array
 
 def array_datos_genset(ar):
     if ar==None :
-        #llenar array e puros ceros 
+        #llenar array e puros cero 
         ar=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     #establecer un objeto para procesar : 
     genset = {
@@ -391,6 +405,9 @@ async def procesar_genset(imei):
             cont_config+=1
         elif  notificacion['d00'] and  notificacion['d09'] and  notificacion['i'] :
             #invocar la funcion de resuelve d00 donde estan todo los datos 
+            #imprimir fecha 
+            print("fecha")
+            print(notificacion['fecha'])
             proceso_uno = procesar_d00(notificacion['d00'])
             if proceso_uno : 
                 #aqui va la conversion si todo esta bien 

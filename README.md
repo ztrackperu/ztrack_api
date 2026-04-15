@@ -14,6 +14,7 @@ myTest\Scripts\activate
 source myTest/bin/activate
 -> cade vez que haya un archivo con requerimientos se ejecuta de esta manera
 pip install -r requirements.txt
+python -m pip install -r requirements.txt
 -> se requiere crear .env
 especificando la conexion a la base de datos
 MONGO_DETAILS="mongodb://localhost:27017"
