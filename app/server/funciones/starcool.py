@@ -106,7 +106,7 @@ async def ultimo_estado_dispositivos_starcool() -> Dict[str, Any]:
             {"_id": 0},
             sort=[("_id", -1)]   # O(1) con el índice _id que ya existe por defecto
         )
-        fecha_ultima: Optional[datetime] = ultimo.get("fecha") if ultimo else None
+        fecha_ultima: Optional[datetime] = ultimo.get("created_at") if ultimo else None
         fecha_gmt5 = _fecha_ultima_como_gmt5(fecha_ultima)
         estado_conexion = _calcular_estado_conexion(fecha_ultima)
 
