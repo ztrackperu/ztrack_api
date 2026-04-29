@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from server.funciones.starcool import (
     Guardar_Datos,
     retrieve_datos,
-    
+    ultimo_estado_dispositivos_starcool,
 )
 #Aqui importamos el modelo necesario para la clase 
 from server.models.starcool import (
@@ -36,5 +36,14 @@ async def get_notificacions(imei:str):
         return ResponseModel(notificacions, "Datos  recuperados exitosamente.")
     return ResponseModel(notificacions, "Lista vacía devuelta")
 
+#aqui obtener los ultimos datos de starcool
 
+@router.get("/ultimo_estado_dispositivos/", response_description="Resumen y último estado por dispositivo para tabla.")
+async def ultimo_estado_dispositivos_ok():
+    """
+    Resumen: total, online/wait/offline (GMT-5), en_defrost, power_on/power_off.
+    Por dispositivo: campos elementales, power_state (on/off), en_rango (±5 vs set_point), en_defrost.
+    """
+    data = await ultimo_estado_dispositivos_starcool()
+    return ResponseModel(data, "Último estado por dispositivo recuperado correctamente.") 
 

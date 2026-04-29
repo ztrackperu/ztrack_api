@@ -1,0 +1,51 @@
+# Desarrollo: API (reload) + MySQL en contenedor. MongoDB remoto en .env (MONGO_DETAILS).
+#
+# Crea .env en la raíz (ver .env.example).
+#
+# Mongo en LAN y timeout desde el contenedor: ver docker-compose.host-network.yml
+
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    ports:
+      - "${MYSQL_PUBLISH_PORT:-3306}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-zgroupztrack}
+      MYSQL_USER: ${MYSQL_USER:-ztrack2023}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-lpmp2018}
+    volumes:
+      - ztrack_mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD:-root}"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+      start_period: 30s
+
+  api:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "9112:9112"
+    working_dir: /app/app
+    volumes:
+      - ./app:/app/app
+    env_file:
+      - .env
+    environment:
+      BD_DETAILS: ${BD_DETAILS:-integrado}
+      # Hostname del servicio MySQL en la red de Compose (no uses localhost aquí).
+      MYSQL_HOST: ${DOCKER_MYSQL_HOST:-mysql}
+      MYSQL_USER: ${MYSQL_USER:-ztrack2023}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-lpmp2018}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-zgroupztrack}
+      WATCHFILES_FORCE_POLLING: "true"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  ztrack_mysql_data:

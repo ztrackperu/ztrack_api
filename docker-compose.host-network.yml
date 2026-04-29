@@ -1,0 +1,25 @@
+# Mongo en la LAN (ej. 192.168.1.30) y contenedor con timeout: prueba compartir red con el "host" del daemon.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.host-network.yml up
+#
+# MySQL del compose: la API usa 127.0.0.1:3306 (mapeo publicado en el host del daemon).
+#
+# --- WSL2 ---
+#
+# Docker instalado DENTRO de la distro (apt / docker-ce): `network_mode: host` es la red de esa
+# distro WSL. Si desde WSL `ping 192.168.1.30` funciona, suele funcionar la API así.
+#
+# Docker Desktop (integración WSL): el daemon corre en una VM; `host` NO es tu Windows ni
+# siempre la misma vista que Compass en Windows. Si sigue fallando:
+#   - Desarrollar sin contenedor: venv + `python app/main.py` en WSL, o
+#   - Windows 11: en .wslconfig probar `networkingMode=mirrored` (tras `wsl --shutdown`), o
+#   - Abrir Mongo hacia la subred que usa Docker (firewall en 192.168.1.30).
+#
+# Comprobar: `ping 192.168.1.30` dentro de WSL (sin Docker) y luego con el compose host-network.
+
+services:
+  api:
+    network_mode: host
+    ports: []
+    environment:
+      MYSQL_HOST: 127.0.0.1
