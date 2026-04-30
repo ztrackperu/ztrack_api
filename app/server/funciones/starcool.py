@@ -267,11 +267,11 @@ async def buscar_datos_oficiales(imei:str, fecha_inicial:str, fecha_final:str):
     coll_oficial = collection(bd_oficial(imei))
     res = []
     #contar datos entre fecha_inicial y fecha_final
-    total_datos = await coll_oficial.count_documents({"fecha": {"$gte": fecha_inicial, "$lte": fecha_final}})
+    total_datos = await coll_oficial.count_documents({"created_at": {"$gte": fecha_inicial, "$lte": fecha_final}})
     print(f"Total de datos entre {fecha_inicial} y {fecha_final}: {total_datos}")
     #si es mayor a 0, buscar los datos entre fecha_inicial y fecha_final
     if total_datos > 0:
-        async for dato in coll_oficial.find({"fecha": {"$gte": fecha_inicial, "$lte": fecha_final}},{"_id": 0,"lecturas_erradas":0}).sort({"fecha": -1}):
+        async for dato in coll_oficial.find({"created_at": {"$gte": fecha_inicial, "$lte": fecha_final}},{"_id": 0,"lecturas_erradas":0}).sort({"created_at": -1}):
             res.append(dato)
     else:
         return "No hay datos entre las fechas"
