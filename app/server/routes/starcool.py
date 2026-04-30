@@ -48,10 +48,8 @@ async def ultimo_estado_dispositivos_ok():
     data = await ultimo_estado_dispositivos_starcool()
     return ResponseModel(data, "Último estado por dispositivo recuperado correctamente.") 
 
-async def ultimo_estado_dispositivos_starcool():
-    """
-    Resumen: total, online/wait/offline (GMT-5), en_defrost, power_on/power_off.
-    Por dispositivo: campos elementales, power_state (on/off), en_rango (±5 vs set_point), en_defrost.
-    """
-    data = await ultimo_estado_dispositivos_starcool()
-    return ResponseModel(data, "Último estado por dispositivo recuperado correctamente.") 
+
+@router.get("/buscar_datos_oficiales/{imei}", response_description="Datos recuperados")
+async def buscar_datos_oficiales_ok(imei:str, fecha_inicial:str = None, fecha_final:str = None):
+    data = await buscar_datos_oficiales(imei, fecha_inicial, fecha_final)
+    return ResponseModel(data, "Datos oficiales recuperados correctamente.")
