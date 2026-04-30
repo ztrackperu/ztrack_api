@@ -241,4 +241,45 @@ def _ahora_gmt5() -> datetime:
 
 
 
+#si fecha_inicial y fecha_final son None, buscar los datos oficiales de las ultimas 12 horas
+async def buscar_datos_oficiales(imei:str, fecha_inicial:str, fecha_final:str):
+    #validar que fecha_inicial y fecha_final sean fechas validas con este fromato AAAA-MM-DD_HH-MM-SS
+    
+    formato = "%Y-%m-%d_%H-%M-%S"
+    if fecha_inicial is None:
+        #entender que la fecha actual esta en gtm-5
+        #poner la fecha actual en gtm-5
+        fecha_inicial = datetime.now(GMT5) - timedelta(hours=12)
+    else:
+        try:
+            fecha_inicial = datetime.strptime(fecha_inicial, formato)
+        except ValueError:
+            return "Formato de fecha inválido"
+    if fecha_final is None:
+        #poner la fecha actual en gtm-5
+        fecha_final = datetime.now(GMT5)
+    else:
+        try:
+            fecha_final = datetime.strptime(fecha_final, formato)
+        except ValueError:
+            return "Formato de fecha inválido"
 
+    coll_oficial = collection(bd_oficial(imei))
+    res = []
+    #contar datos entre fecha_inicial y fecha_final
+    total_datos = await coll_oficial.count_documents({"fecha": {"$gte": fecha_inicial, "$lte": fecha_final}})
+    print(f"Total de datos entre {fecha_inicial} y {fecha_final}: {total_datos}")
+    #si es mayor a 0, buscar los datos entre fecha_inicial y fecha_final
+    if total_datos > 0:
+        async for dato in coll_oficial.find({"fecha": {"$gte": fecha_inicial, "$lte": fecha_final}},{"_id": 0,"lecturas_erradas":0}).sort({"fecha": -1}):
+            res.append(dato)
+    else:
+        return "No hay datos entre las fechas"
+    crear_json = {
+        "imei": imei,
+        "fecha_inicial": fecha_inicial,
+        "fecha_final": fecha_final,
+        "total_datos": total_datos,
+        "datos": res
+    }
+    return crear_json

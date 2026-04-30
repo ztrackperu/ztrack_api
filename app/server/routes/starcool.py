@@ -7,6 +7,7 @@ from server.funciones.starcool import (
     Guardar_Datos,
     retrieve_datos,
     ultimo_estado_dispositivos_starcool,
+    buscar_datos_oficiales,
 )
 #Aqui importamos el modelo necesario para la clase 
 from server.models.starcool import (
@@ -47,3 +48,10 @@ async def ultimo_estado_dispositivos_ok():
     data = await ultimo_estado_dispositivos_starcool()
     return ResponseModel(data, "Último estado por dispositivo recuperado correctamente.") 
 
+async def ultimo_estado_dispositivos_starcool():
+    """
+    Resumen: total, online/wait/offline (GMT-5), en_defrost, power_on/power_off.
+    Por dispositivo: campos elementales, power_state (on/off), en_rango (±5 vs set_point), en_defrost.
+    """
+    data = await ultimo_estado_dispositivos_starcool()
+    return ResponseModel(data, "Último estado por dispositivo recuperado correctamente.") 
